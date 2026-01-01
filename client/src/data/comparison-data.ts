@@ -67,23 +67,34 @@ export const KB = {
     },
     sources: [
       {
-        label:
-          "SWMM 5 Reference Manual, Volume II – Hydraulics (Rossman, May 2017)",
+        label: "SWMM 5 Reference Manual, Volume II – Hydraulics (Rossman, May 2017)",
         url: "https://downloads.tuflow.com/SWMM/SWMM5_Reference_Manual_Volume2_Hydaulics_P100S9AS.pdf",
-        notes:
-          "See Dynamic Wave Analysis (Ch. 3): node–link approach, implicit backward Euler, solution procedure, variable time step.",
+        notes: "See Dynamic Wave Analysis (Ch. 3): node–link approach, implicit backward Euler, solution procedure, variable time step.",
       },
       {
-        label:
-          "SWMM 5 Reference Manual Volume II Addendum — Preissmann Slot (Feb 2022)",
+        label: "SWMM 5 Reference Manual Volume II Addendum — Preissmann Slot (Feb 2022)",
         url: "https://www.epa.gov/system/files/documents/2022-02/swmm5-reference-manual-ii-addendum-20220210mas2wr-1.pdf",
         notes: "Explains optional Preissmann Slot method for pressurized flow in SWMM.",
       },
       {
-        label: "SWMM 5.1 User's Manual (Aug 2015 master PDF hosted by EPA)",
+        label: "SWMM 5.1 User's Manual (Aug 2015)",
         url: "https://www.epa.gov/sites/default/files/2019-02/documents/epaswmm5_1_manual_master_8-2-15.pdf",
-        notes:
-          "High-level description of Dynamic Wave routing capabilities and stability/time step considerations.",
+        notes: "High-level description of Dynamic Wave routing capabilities and stability/time step considerations.",
+      },
+      {
+        label: "EPA SWMM Website — Storm Water Management Model",
+        url: "https://www.epa.gov/water-research/storm-water-management-model-swmm",
+        notes: "Official EPA page describing SWMM applications and capabilities.",
+      },
+      {
+        label: "QA/QC Hydraulic Comparison of InfoWorks ICM, SWMM5 and XPSWMM (ICWMM 2018)",
+        url: "https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force",
+        notes: "Detailed comparison of node-link solution, area calculation, and Froude number handling across models.",
+      },
+      {
+        label: "OpenSWMM Discussion — InfoWorks and Stability",
+        url: "https://openswmm.org/Topic/4140/infoworks-and-stability",
+        notes: "User discussion on relative numerical stability of SWMM5 vs. commercial engines.",
       },
     ],
   },
@@ -170,8 +181,27 @@ export const KB = {
       {
         label: "InfoWorks ICM Online Help — Hydraulic Theory",
         url: "https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm",
-        notes:
-          "Documents Preissmann 4‑point scheme, θ≈0.65, Newton–Raphson with double-sweep, timestep halving/doubling, base flow, Preissmann slot details, conduit solution models.",
+        notes: "Documents Preissmann 4‑point scheme, θ≈0.65, Newton–Raphson with double-sweep, timestep halving/doubling, base flow, Preissmann slot details, conduit solution models.",
+      },
+      {
+        label: "Autodesk InfoWorks ICM Product Overview",
+        url: "https://www.autodesk.com/products/infoworks-icm/overview",
+        notes: "Describes InfoWorks ICM engine as 'fast, robust, stable, and efficient'.",
+      },
+      {
+        label: "Autodesk Blog — Switch from InfoSWMM to InfoWorks ICM",
+        url: "https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/",
+        notes: "Documents addition of EPA SWMM5 engine as alternative solver inside InfoWorks ICM (December 2019).",
+      },
+      {
+        label: "QA/QC Hydraulic Comparison of InfoWorks ICM, SWMM5 and XPSWMM (ICWMM 2018)",
+        url: "https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force",
+        notes: "Describes ICM's 4-point implicit link solution with computational points, Froude number handling, and base flow mechanism.",
+      },
+      {
+        label: "OpenSWMM Discussion — InfoWorks and Stability",
+        url: "https://openswmm.org/Topic/4140/infoworks-and-stability",
+        notes: "User discussion comparing numerical stability of ICM vs SWMM5.",
       },
     ],
   },
