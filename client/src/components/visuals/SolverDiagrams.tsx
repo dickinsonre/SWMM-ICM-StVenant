@@ -107,45 +107,77 @@ export function PreissmannSlotDiagram() {
            <div className="col-span-2 relative h-48 bg-muted/30 rounded-lg border border-border p-4 flex flex-col items-center justify-end overflow-hidden">
               <div className="absolute top-2 left-2 text-xs font-medium text-muted-foreground">Preissmann Slot Concept</div>
               
-              {/* The Pipe Cross Section */}
-              <div className="relative w-32 h-32 border-4 border-slate-400 dark:border-slate-600 rounded-full bg-background z-10 flex items-center justify-center overflow-visible">
+              {/* Container for pipe + slot */}
+              <div className="relative flex flex-col items-center">
+                 {/* The Slot (above pipe) */}
+                 <div className="relative w-3 h-10 bg-background border-x-2 border-slate-400 dark:border-slate-600 overflow-hidden">
+                    {/* Water in Slot - fills from bottom up when pipe is full */}
+                    <motion.div 
+                      className="absolute bottom-0 left-0 right-0 bg-blue-500/70"
+                      animate={{ 
+                        height: ["0px", "0px", "0px", "40px", "40px", "40px", "0px", "0px"]
+                      }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                 </div>
                  
-                 {/* The Slot */}
-                 <div className="absolute -top-12 w-2 h-14 bg-background border-x-4 border-slate-400 dark:border-slate-600 z-0"></div>
-                 
-                 {/* Water Level Animation */}
-                 <motion.div 
-                   className="absolute bottom-0 w-full bg-blue-500/60"
-                   initial={{ height: "40%" }}
-                   animate={{ height: ["40%", "95%", "130%", "130%", "95%", "40%"] }}
-                   transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                 />
-                 
-                 {/* Water in Slot */}
-                 <motion.div 
-                   className="absolute -top-12 w-1 h-14 bg-blue-500/60"
-                   initial={{ opacity: 0, height: 0, bottom: 0 }}
-                   animate={{ 
-                     opacity: [0, 0, 1, 1, 0, 0], 
-                     height: ["0%", "0%", "100%", "100%", "0%", "0%"],
-                     bottom: [0, 0, 0, 0, 0, 0]
-                   }}
-                   transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                 />
+                 {/* The Pipe Cross Section */}
+                 <div className="relative w-28 h-28 border-4 border-slate-400 dark:border-slate-600 rounded-full bg-background overflow-hidden">
+                    {/* Water Level Animation - clipped to circle */}
+                    <motion.div 
+                      className="absolute bottom-0 left-0 right-0 bg-blue-500/60"
+                      animate={{ 
+                        height: ["30%", "60%", "100%", "100%", "100%", "100%", "60%", "30%"]
+                      }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                 </div>
 
-                 <div className="absolute text-[10px] text-slate-500 font-mono mt-16">Pipe</div>
+                 <div className="mt-2 text-[10px] text-slate-500 font-mono">Pipe Cross-Section</div>
               </div>
               
-              <div className="absolute top-4 right-10 flex flex-col items-start gap-1">
+              {/* Legend */}
+              <div className="absolute top-4 right-6 flex flex-col items-start gap-1.5">
                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span className="text-[10px]">Free Surface</span>
+                    <div className="w-3 h-3 bg-blue-500/60 rounded-sm" />
+                    <span className="text-[10px]">Free Surface Flow</span>
                  </div>
                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500/30 rounded-full border border-blue-500" />
+                    <div className="w-3 h-3 bg-blue-500/70 rounded-sm ring-1 ring-blue-400" />
                     <span className="text-[10px]">Pressurized (in Slot)</span>
                  </div>
+                 <div className="flex items-center gap-2 mt-1">
+                    <div className="w-3 h-0.5 bg-slate-400" />
+                    <span className="text-[10px]">Pipe Wall</span>
+                 </div>
               </div>
+              
+              {/* State indicator */}
+              <motion.div 
+                className="absolute bottom-3 left-3 text-[10px] font-mono px-2 py-1 rounded bg-background border border-border"
+                animate={{
+                  opacity: [1, 1, 1, 1, 1, 1, 1, 1]
+                }}
+              >
+                <motion.span
+                  animate={{
+                    opacity: [1, 1, 0, 0, 0, 0, 1, 1]
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-blue-600"
+                >
+                  Free Surface
+                </motion.span>
+                <motion.span
+                  animate={{
+                    opacity: [0, 0, 1, 1, 1, 1, 0, 0]
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-amber-600 absolute left-2"
+                >
+                  Surcharged
+                </motion.span>
+              </motion.div>
            </div>
 
            <div className="space-y-2">
