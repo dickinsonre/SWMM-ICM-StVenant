@@ -292,8 +292,8 @@ export function NodeAreaDiagram() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          SWMM 5 assigns <strong>half the surface area</strong> of each connecting conduit to the node. 
-          This accumulated area is used in the continuity equation to compute water level changes at the node.
+          <strong>Free surface flow:</strong> SWMM 5 assigns <strong>half the surface area</strong> of each connecting conduit to the node for depth change calculations. 
+          <strong>Surcharged:</strong> Method switches to dQ/dH; half-link contribution becomes less relevant.
         </p>
       </CardContent>
     </Card>

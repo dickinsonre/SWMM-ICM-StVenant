@@ -14,10 +14,12 @@ export const KB = {
         "Node depths are calculated by explicitly integrating the conservation of mass equation: ∂H/∂t = ΣQ / SurfaceArea. This formulation requires every node to have a non-zero surface area (defaulting to a 4ft/1.2m diameter manhole) to prevent mathematical instability (division by zero).",
       ],
       node_surface_area: [
-        "Node effective surface area = Anode + ½·Σ(Wi × Li) — each connecting conduit contributes HALF its plan-view surface area (width × length) to the node.",
+        "Under FREE SURFACE flow: Node effective surface area = Anode + ½·Σ(Wi × Li) — each connecting conduit contributes HALF its top surface area to the node for depth change calculations.",
         "This approach concentrates all conduit storage at the nodes rather than along the conduit length, consistent with the single-link-per-conduit discretisation.",
+        "For nearly full conduits (≥96% full): Surface area is calculated at 0.96 × full depth to ensure links always contribute some area and prevent numerical issues.",
+        "Under SURCHARGED conditions: The calculation method switches from surface area to dQ/dH (flow change per head change); the half-link contribution becomes less relevant under pressurized flow.",
         "Minimum surface area is enforced (default: 12.566 ft² corresponding to a 4-ft diameter circle) to prevent division-by-zero errors in the head update calculation.",
-        "Surface area can vary with depth if the node has a user-defined storage curve; otherwise a constant 'ponded area' or the default is used.",
+        "Storage nodes: Receive half the surface area of connecting links PLUS their own depth-area curve. Use a 'dummy link' workaround to isolate wet well area from upstream conduit contributions.",
       ],
       time_integration: [
         "Momentum equation is solved with an implicit backward Euler method (introduced in SWMM 5 for improved stability over the explicit/modified Euler methods used historically).",
