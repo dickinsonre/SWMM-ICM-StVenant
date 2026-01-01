@@ -1,0 +1,235 @@
+References
+
+
+
+
+
+EPA SWMM Reference Manual Volume II - Hydraulics
+
+
+
+InfoWorks ICM Hydraulic Theory help documentation
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+Same as ref 3
+
+
+
+Same as ref 3
+
+
+
+Same as ref 3
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+Same as ref 3
+
+
+
+Same as ref 3
+
+
+
+Common SWMM5 modeling practice documented in various user forums
+
+
+
+EPA/600/R-06/097 September 2006 - STORM WATER MANAGEMENT MODEL QUALITY ASSURANCE REPORT: Dynamic Wave Flow Routing
+
+
+
+Standard hydraulic engineering textbooks (e.g., Chaudhry, "Open-Channel Flow")
+
+
+
+Historical SWMM documentation comparing versions 4 and 5
+
+
+
+Standard practice in computational fluid dynamics
+
+
+
+SWMM5 engine source code on GitHub
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+Standard numerical methods theory
+
+
+
+Comparative modeling experience documented in user forums
+
+
+
+EPA SWMM5 User Manual
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+Typical timestep ranges from user experience
+
+
+
+Standard CFL criterion from computational hydraulics
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+SWMM5 release notes
+
+
+
+SWMM5 and ICM documentation comparison
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+Same as ref 26
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+Same as ref 28
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+Engineering judgment and typical application experience
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+Same as ref 32
+
+
+
+User experience with model initialization
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+ICM user documentation
+
+
+
+Same as ref 36
+
+
+
+SWMM5 and ICM feature comparison
+
+
+
+https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/
+
+
+
+Same as ref 40
+
+
+
+Same as ref 40
+
+
+
+https://www.autodesk.com/blogs/water/2024/06/11/does-infoworks-icm-use-the-swmm-engine-yes-heres-everything-else-you-need-to-know/
+
+
+
+https://www.epa.gov/water-research/storm-water-management-model-swmm
+
+
+
+https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+Same as ref 46
+
+
+
+Design philosophy documented in respective software documentation
+
+
+
+Engineering judgment for appropriate application
+
+
+
+Standard modeling practice
+
+
+
+https://openswmm.org/Topic/4140/infoworks-and-stability
+
+
+
+https://aquamod.eu/infoworks-icm-en.html
+
+
+
+Comparative analysis from user experience
+
+
+
+Engineering recommendation based on application requirements
+
+
+
+Market analysis from industry reports and user surveys
+
+
+
+https://swmm5.org/
+
+
+
+User community resources and vendor documentation
+
+
+
+https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/
