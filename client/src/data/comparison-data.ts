@@ -11,6 +11,7 @@ export const KB = {
       discretisation_unknowns: [
         "Uses an EXTRAN-derived node–link approach: conduits are links between nodes, with a continuous water surface assumed between node head and conduit end conditions.",
         "Because SWMM uses a node–link approach (a conduit is a single link between two nodes), it does not automatically create internal computational points along a conduit; when finer longitudinal resolution is needed, modelers may represent a long conduit as multiple shorter links.",
+        "Node depths are calculated by explicitly integrating the conservation of mass equation: ∂H/∂t = ΣQ / SurfaceArea. This formulation requires every node to have a non-zero surface area (defaulting to a 4ft/1.2m diameter manhole) to prevent mathematical instability (division by zero).",
       ],
       time_integration: [
         "Momentum equation is solved with an implicit backward Euler method (introduced in SWMM 5 for improved stability over the explicit/modified Euler methods used historically).",
@@ -68,10 +69,12 @@ export const KB = {
       governing_equations: [
         "Uses the Saint-Venant conservation equations of mass and momentum for 1D conduits; conveyance can be based on Colebrook–White or Manning formulations.",
         "Pressurised flow can be represented via the Preissmann slot concept within the full (Saint‑Venant) conduit model.",
+        "Offers multiple conduit models to optimize simulation stability and speed: 'Full' (standard St. Venant), 'Force Main' (elastic column for pressurized lines), 'Direct' (instantaneous transfer), and 'Kinematic' or 'Diffusive' wave approximations.",
       ],
       discretisation_unknowns: [
         "Each conduit is split into N computational points (default spacing ~ 20 × conduit diameter), yielding a distributed finite-difference representation along the conduit length.",
         "Adjacent computational points are coupled via discretised Saint‑Venant equations; internal nodes satisfy a continuity equation.",
+        "Node water levels are solved simultaneously with link variables in the global matrix. Unlike SWMM, which strictly integrates net flow over surface area (requiring a minimum area), ICM's coupled approach can handle a wider variety of node boundary conditions implicitly.",
       ],
       time_integration: [
         "Approximates Saint‑Venant equations using the Preissmann 4‑point box scheme with a time-weighting parameter (q).",
