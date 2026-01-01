@@ -1,0 +1,183 @@
+References
+
+
+
+
+
+EPA SWMM5 Reference Manual Volume II (Hydraulics) and other EPA documentation detail the dynamic wave routing equations and capabilities27.
+
+
+
+InfoWorks ICM Hydraulic Theory help page describes the governing equations and Preissmann slot implementation28.
+
+
+
+Autodesk materials describe InfoWorks ICM's engine as "fast, robust, stable, and efficient"29.
+
+
+
+Search result describing SWMM5's node-link solution and area calculation30.
+
+
+
+Search result contrasting ICM's "4 point implicit link solution" with SWMM5's method31.
+
+
+
+The distributed computational point approach in ICM is a fundamental architectural difference from SWMM5's node-link storage concentration.
+
+
+
+Explicit description of SWMM5's node area calculation from storage equation and surface area of connecting links32.
+
+
+
+Description of ICM's solution as a "4 point implicit link solution with at least 5 computational points"33.
+
+
+
+EPA SWMM Quality Assurance Report: Dynamic Wave Flow Routing (2006) and subsequent manuals detail the numerical methods.
+
+
+
+The Preissmann 4-point scheme is a standard implicit finite difference method for open channel flow.
+
+
+
+SWMM5 engine source code and documentation reference the successive approximation method.
+
+
+
+SWMM5 user manuals detail the variable time step control logic.
+
+
+
+Marketing and technical literature for InfoWorks ICM emphasize its stability for large-scale modeling34.
+
+
+
+SWMM5 release notes and engine updates mention the addition of the Preissmann slot option.
+
+
+
+ICM Hydraulic Theory page documents the 'Drop inertia in pressure pipes' option35.
+
+
+
+Search result stating all three models (SWMM5, ICM, XPSWMM) phase out terms based on Froude number36.
+
+
+
+ICM Hydraulic Theory page documents the 'Drop inertia in pressure pipes' option37.
+
+
+
+Search result stating "ICM links never dry out as there is a small base flow or base depth in all links. SWMM5 and XPSWMM can simulate truly dry links and nodes."38.
+
+
+
+InfoWorks ICM Hydraulic Theory documentation lists and describes the various conduit solution models39.
+
+
+
+Autodesk blog post: "in December 2019 we added the EPA’s SWMM5 engine as an alternative solution directly inside InfoWorks ICM."40.
+
+
+
+Same as ref 20.
+
+
+
+Search results confirm ICM maintains a base flow, affecting dry network simulation41.
+
+
+
+User discussion on OpenSWMM regarding relative stability of SWMM5 vs. InfoWorks42.
+
+
+
+Search result confirming the difference in dry network handling43.
+
+
+
+EPA SWMM website describes its applications44.
+
+
+
+Autodesk InfoWorks ICM overview page45.
+
+
+
+EPA SWMM5 Reference Manual Volume II - Hydraulics.
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+https://www.autodesk.com/products/infoworks-icm/overview
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force (Description of SWMM5 node-link solution)
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force (Description of ICM's 4-point solution)
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm
+
+
+
+https://www.autodesk.com/blogs/water/2023/05/10/is-it-time-for-you-to-make-the-switch-from-infoswmm-to-infoworks-icm/
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://openswmm.org/Topic/4140/infoworks-and-stability
+
+
+
+https://www.icwmm.org/Archive/2018-C027-08/qa-qc-hydraulic-comparison-of-infoworks-icm-swmm5-and-xpswmm-for-gravity-partial-pressure-and-force
+
+
+
+https://www.epa.gov/water-research/storm-water-management-model-swmm
+
+
+
+https://www.autodesk.com/products/infoworks-icm/overview
