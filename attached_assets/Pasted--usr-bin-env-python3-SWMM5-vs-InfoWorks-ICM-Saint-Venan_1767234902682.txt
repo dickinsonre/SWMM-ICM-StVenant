@@ -1,0 +1,477 @@
+#!/usr/bin/env python3
+"""
+SWMM5 vs InfoWorks ICM — Saint-Venant (Dynamic Wave) Solver Comparison
+---------------------------------------------------------------------
+
+This is an educational, self-contained CLI program intended for use in Replit.
+
+What it does:
+- Presents a structured compare/contrast of how EPA SWMM 5 and InfoWorks ICM
+  solve the 1D Saint-Venant equations for unsteady flow.
+- Lets you browse by topic, view a side-by-side summary table, and export the
+  content to Markdown or JSON.
+
+It does NOT:
+- Run SWMM or InfoWorks ICM
+- Read SWMM/ICM model files
+- Provide engineering sign-off
+
+Sources (high-level, for traceability) are listed in the program output.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import textwrap
+from datetime import datetime
+from typing import Dict, List, Tuple
+
+
+# -----------------------------
+# Knowledge base (curated)
+# -----------------------------
+KB: Dict[str, Dict] = {
+    "swmm5": {
+        "product": "EPA SWMM 5 (Dynamic Wave routing)",
+        "tagline": "Node–link dynamic-wave solver using an implicit backward Euler formulation with successive relaxation iterations.",
+        "topics": {
+            "governing_equations": [
+                "Solves the complete 1D Saint-Venant continuity and momentum equations for conduits, "
+                "together with a nodal continuity (volume balance) relationship in a node–link network representation.",
+                "Dynamic wave accounts for storage, backwater, entrance/exit losses, flow reversal, and pressurized flow; "
+                "this generality typically requires small time steps for numerical stability."
+            ],
+            "discretisation_unknowns": [
+                "Uses an EXTRAN-derived node–link approach: conduits are links between nodes, with a continuous water surface "
+                "assumed between node head and conduit end conditions.",
+                "Because SWMM uses a node–link approach (a conduit is a single link between two nodes), it does not automatically "
+                "create internal computational points along a conduit; when finer longitudinal resolution is needed, modelers may "
+                "represent a long conduit as multiple shorter links."
+            ],
+            "time_integration": [
+                "Momentum equation is solved with an implicit backward Euler method (introduced in SWMM 5 for improved stability "
+                "over the explicit/modified Euler methods used historically).",
+                "Solution advances from t to t+Δt via an iterative procedure that alternates between updating link flows and node heads."
+            ],
+            "nonlinear_solver": [
+                "Uses a successive approximation (functional iteration) scheme with relaxation; the relaxation factor θ is 0.5.",
+                "Convergence tolerance and maximum trials are user-configurable; documented defaults are 0.005 ft and 8 trials.",
+                "Links whose end-node heads have converged can be skipped in subsequent iterations for that time step."
+            ],
+            "time_step_control": [
+                "Supports a fixed computational time step or a variable time step mode.",
+                "Variable time step mode selects the next Δt based on (a) a Courant-type criterion over conduits and (b) a head-change "
+                "limit over non-outfall, non-surcharged nodes, bounded by user-supplied Δtmin and Δtmax."
+            ],
+            "pressurisation_surcharge": [
+                "A node is considered surcharged when all connected conduits are full or when node water level exceeds the crown "
+                "of the highest connected conduit; pressurized flow can occur in a conduit even if neither end node is surcharged.",
+                "Historically SWMM used a “surcharge algorithm” at pressurized nodes; an alternative Preissmann Slot method is available "
+                "to handle pressurized flow while retaining the regular head-updating method."
+            ],
+            "inertia_supercritical_handling": [
+                "Provides options to damp or ignore inertial terms; one option corresponds to a local inertial formulation where the "
+                "convective acceleration term is dropped (while retaining local acceleration).",
+                "Uses Froude-number-based logic to help with stability near supercritical conditions."
+            ],
+            "stability_devices": [
+                "Imposes a global minimum surface area at nodes (default corresponds to a 4-ft diameter manhole) as a computational device "
+                "to prevent head update formulas from becoming unbounded as surface area vanishes.",
+                "Has multiple special-case adjustments for dry/critical conditions at conduit ends in dynamic wave analysis."
+            ],
+        },
+        "sources": [
+            {
+                "label": "SWMM 5 Reference Manual, Volume II – Hydraulics (Rossman, May 2017)",
+                "url": "https://downloads.tuflow.com/SWMM/SWMM5_Reference_Manual_Volume2_Hydaulics_P100S9AS.pdf",
+                "notes": "See Dynamic Wave Analysis (Ch. 3): node–link approach, implicit backward Euler, solution procedure, variable time step."
+            },
+            {
+                "label": "SWMM 5 Reference Manual Volume II Addendum — Preissmann Slot (Feb 2022)",
+                "url": "https://www.epa.gov/system/files/documents/2022-02/swmm5-reference-manual-ii-addendum-20220210mas2wr-1.pdf",
+                "notes": "Explains optional Preissmann Slot method for pressurized flow in SWMM."
+            },
+            {
+                "label": "SWMM 5.1 User’s Manual (Aug 2015 master PDF hosted by EPA)",
+                "url": "https://www.epa.gov/sites/default/files/2019-02/documents/epaswmm5_1_manual_master_8-2-15.pdf",
+                "notes": "High-level description of Dynamic Wave routing capabilities and stability/time step considerations."
+            },
+        ],
+    },
+    "icm": {
+        "product": "InfoWorks ICM (1D engine for InfoWorks networks)",
+        "tagline": "Distributed 1D Saint-Venant solver using a Preissmann 4‑point implicit scheme with Newton–Raphson iterations and adaptive time stepping.",
+        "topics": {
+            "governing_equations": [
+                "Uses the Saint-Venant conservation equations of mass and momentum for 1D conduits; conveyance can be based on "
+                "Colebrook–White or Manning formulations.",
+                "Pressurised flow can be represented via the Preissmann slot concept within the full (Saint‑Venant) conduit model."
+            ],
+            "discretisation_unknowns": [
+                "Each conduit is split into N computational points (default spacing ~ 20 × conduit diameter), yielding a distributed "
+                "finite-difference representation along the conduit length.",
+                "Adjacent computational points are coupled via discretised Saint‑Venant equations; internal nodes satisfy a continuity equation."
+            ],
+            "time_integration": [
+                "Approximates Saint‑Venant equations using the Preissmann 4‑point box scheme with a time-weighting parameter (q).",
+                "The implicit nature of the scheme removes a CFL restriction for stability when entering the Preissmann slot; "
+                "in practice, q ≈ 0.65 is used (introducing some numerical diffusion).",
+                "Node continuity is approximated by an implicit Euler method."
+            ],
+            "nonlinear_solver": [
+                "Forms a large coupled nonlinear algebraic system at each time level and solves it iteratively using a Newton–Raphson method.",
+                "Uses a double-sweep approach to reduce the matrix system by local elimination along links between nodes."
+            ],
+            "time_step_control": [
+                "Nonlinear effects can trigger automatic timestep reduction (progressive halvings) until Newton–Raphson convergence is achieved; "
+                "rapid convergence can trigger timestep doubling.",
+                "Uses a relative convergence check (change in every dependent variable at the new time level < 1%)."
+            ],
+            "pressurisation_surcharge": [
+                "Employs a Preissmann slot for smooth transition between free surface and surcharged conditions; includes a transition region "
+                "to avoid abrupt changes in wave celerity at the pipe soffit.",
+                "Slot width is defined such that wave celerity in the slot is ~10× that at half the conduit height, resulting in a slot width "
+                "on the order of ~2% of the conduit width (per documentation).",
+                "Provides alternative ‘Pressurised Pipe Model’ and ‘Force Main’ models for cases where always-full assumptions are more appropriate."
+            ],
+            "inertia_supercritical_handling": [
+                "Provides options to include/exclude the inertia (dQ/dt) term in pressure pipes; can be used with ‘Stay pressurised’ options to "
+                "avoid negative depths in force mains.",
+                "Phases out inertial terms as a characteristic Froude number approaches unity to preserve subcritical-like behaviour in the "
+                "core solver (finite-volume option exists for true trans-critical resolution)."
+            ],
+            "stability_devices": [
+                "Introduces a nominal base flow (defined from normal flow at a base depth) to avoid oscillations/instability associated with "
+                "multiple flow states at low depths; base depth is 5% of conduit height (documentation provides example percentages).",
+                "Notes that base flow is introduced inside the network solver and removed within boundary conditions, preserving volume conservation."
+            ],
+        },
+        "sources": [
+            {
+                "label": "InfoWorks ICM Online Help — Hydraulic Theory",
+                "url": "https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm",
+                "notes": "Documents Preissmann 4‑point scheme, q≈0.65, Newton–Raphson with double-sweep, timestep halving/doubling, base flow, Preissmann slot details."
+            }
+        ],
+    },
+}
+
+TOPIC_ORDER: List[Tuple[str, str]] = [
+    ("governing_equations", "Governing equations"),
+    ("discretisation_unknowns", "Spatial discretisation and primary unknowns"),
+    ("time_integration", "Time integration scheme"),
+    ("nonlinear_solver", "Nonlinear solution method and convergence"),
+    ("time_step_control", "Time-step control and stability management"),
+    ("pressurisation_surcharge", "Pressurised flow and surcharge handling"),
+    ("inertia_supercritical_handling", "Inertia/supercritical handling"),
+    ("stability_devices", "Additional numerical stabilisation devices"),
+]
+
+
+# -----------------------------
+# Rendering helpers
+# -----------------------------
+def wrap(text: str, width: int = 92, subsequent_indent: str = "  ") -> str:
+    return textwrap.fill(text, width=width, subsequent_indent=subsequent_indent)
+
+
+def bullet_list(items: List[str], width: int = 92) -> str:
+    out: List[str] = []
+    for i in items:
+        wrapped = textwrap.fill(i, width=width, initial_indent="• ", subsequent_indent="  ")
+        out.append(wrapped)
+    return "\n".join(out)
+
+
+def hr(char: str = "-", n: int = 92) -> str:
+    return char * n
+
+
+def ascii_table(headers: List[str], rows: List[List[str]], max_width: int = 120) -> str:
+    """
+    Minimal ASCII table printer (no external deps). Wraps cell contents.
+    """
+    col_count = len(headers)
+    assert all(len(r) == col_count for r in rows), "Row/column mismatch."
+
+    widths = [len(h) for h in headers]
+    for r in rows:
+        for c, cell in enumerate(r):
+            widths[c] = max(widths[c], min(max(len(line) for line in cell.splitlines()), max_width))
+
+    total = sum(widths) + 3 * (col_count - 1)
+    if total > max_width:
+        min_w = [min(w, 18) for w in widths]
+        widths = min_w
+        remaining = max_width - (sum(widths) + 3 * (col_count - 1))
+        if remaining > 0:
+            gi = 0
+            while remaining > 0 and gi < 2000:
+                idx = gi % col_count
+                widths[idx] += 1
+                remaining -= 1
+                gi += 1
+
+    def wrap_cell(s: str, w: int) -> List[str]:
+        parts: List[str] = []
+        for para in s.splitlines():
+            para = para.rstrip()
+            if not para:
+                parts.append("")
+                continue
+            wrapped = textwrap.wrap(para, width=w) or [""]
+            parts.extend(wrapped)
+        return parts or [""]
+
+    lines: List[str] = []
+    sep = "+".join(["-" * (w + 2) for w in widths])
+    sep = f"+{sep}+"
+
+    def row_line(cells: List[str]) -> List[str]:
+        wrapped_cols = [wrap_cell(cells[i], widths[i]) for i in range(col_count)]
+        height = max(len(wc) for wc in wrapped_cols)
+        out_lines: List[str] = []
+        for r_i in range(height):
+            pieces = []
+            for c in range(col_count):
+                txt = wrapped_cols[c][r_i] if r_i < len(wrapped_cols[c]) else ""
+                pieces.append(f" {txt.ljust(widths[c])} ")
+            out_lines.append("|" + "|".join(pieces) + "|")
+        return out_lines
+
+    lines.append(sep)
+    lines.extend(row_line(headers))
+    lines.append(sep)
+    for r in rows:
+        lines.extend(row_line(r))
+        lines.append(sep)
+    return "\n".join(lines)
+
+
+def build_side_by_side_rows() -> List[List[str]]:
+    rows: List[List[str]] = []
+    for key, label in TOPIC_ORDER:
+        sw = "\n".join([f"- {x}" for x in KB["swmm5"]["topics"][key]])
+        icm = "\n".join([f"- {x}" for x in KB["icm"]["topics"][key]])
+        rows.append([label, sw, icm])
+    return rows
+
+
+def export_markdown(path: str) -> None:
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    lines: List[str] = []
+    lines.append("# SWMM5 vs InfoWorks ICM — Saint‑Venant Solver Comparison")
+    lines.append("")
+    lines.append(f"_Generated: {now}_")
+    lines.append("")
+    lines.append("## High-level summary")
+    lines.append("")
+    lines.append(f"**SWMM 5:** {KB['swmm5']['tagline']}")
+    lines.append("")
+    lines.append(f"**InfoWorks ICM:** {KB['icm']['tagline']}")
+    lines.append("")
+    lines.append("## Detailed comparison by topic")
+    lines.append("")
+    for key, label in TOPIC_ORDER:
+        lines.append(f"### {label}")
+        lines.append("")
+        lines.append("**SWMM 5**")
+        for b in KB["swmm5"]["topics"][key]:
+            lines.append(f"- {b}")
+        lines.append("")
+        lines.append("**InfoWorks ICM**")
+        for b in KB["icm"]["topics"][key]:
+            lines.append(f"- {b}")
+        lines.append("")
+    lines.append("## Sources")
+    lines.append("")
+    for model_key in ("swmm5", "icm"):
+        lines.append(f"### {KB[model_key]['product']}")
+        for s in KB[model_key]["sources"]:
+            lines.append(f"- {s['label']} — {s['url']}")
+            if s.get("notes"):
+                lines.append(f"  - Notes: {s['notes']}")
+        lines.append("")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+
+def export_json(path: str) -> None:
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(KB, f, indent=2)
+
+
+# -----------------------------
+# CLI / Interactive UI
+# -----------------------------
+def print_header() -> None:
+    print(hr("="))
+    print("SWMM5 vs InfoWorks ICM — Saint‑Venant (Dynamic Wave) Solver Comparison")
+    print(hr("="))
+    print(wrap("This program provides a structured compare/contrast of how EPA SWMM 5 and InfoWorks ICM "
+               "solve the 1D Saint‑Venant equations for unsteady flow in drainage networks."))
+    print()
+    print("High-level taglines:")
+    print(f"• SWMM 5: {KB['swmm5']['tagline']}")
+    print(f"• InfoWorks ICM: {KB['icm']['tagline']}")
+    print()
+
+
+def show_summary_table() -> None:
+    headers = ["Topic", "SWMM 5 (Dynamic Wave)", "InfoWorks ICM (1D)"]
+    rows = build_side_by_side_rows()
+    print(ascii_table(headers, rows, max_width=120))
+
+
+def show_topic(topic_key: str) -> None:
+    label_map = {k: v for k, v in TOPIC_ORDER}
+    label = label_map.get(topic_key, topic_key)
+
+    print(hr())
+    print(label)
+    print(hr())
+    print()
+    print("SWMM 5")
+    print(hr("-", 6))
+    print(bullet_list(KB["swmm5"]["topics"][topic_key]))
+    print()
+    print("InfoWorks ICM")
+    print(hr("-", 12))
+    print(bullet_list(KB["icm"]["topics"][topic_key]))
+    print()
+
+
+def list_topics() -> None:
+    print("Topics:")
+    for i, (key, label) in enumerate(TOPIC_ORDER, start=1):
+        print(f"  {i}. {label} ({key})")
+
+
+def show_sources() -> None:
+    print(hr())
+    print("Sources (for traceability)")
+    print(hr())
+    for model_key in ("swmm5", "icm"):
+        print()
+        print(KB[model_key]["product"])
+        print(hr("-", len(KB[model_key]["product"])))
+        for s in KB[model_key]["sources"]:
+            print(f"• {s['label']}")
+            print(f"  {s['url']}")
+            if s.get("notes"):
+                print(wrap(f"Notes: {s['notes']}", subsequent_indent="        "))
+    print()
+
+
+def interactive() -> None:
+    print_header()
+    while True:
+        print(hr())
+        print("Menu")
+        print(hr())
+        print("1) View side-by-side summary table")
+        print("2) View a topic (deep dive)")
+        print("3) Export to Markdown (comparison.md)")
+        print("4) Export to JSON (comparison.json)")
+        print("5) Show sources")
+        print("0) Exit")
+        choice = input("\nSelect an option: ").strip()
+
+        if choice == "1":
+            print()
+            show_summary_table()
+            print()
+
+        elif choice == "2":
+            print()
+            list_topics()
+            sel = input("\nEnter topic number (or key): ").strip()
+            if sel.isdigit():
+                idx = int(sel)
+                if 1 <= idx <= len(TOPIC_ORDER):
+                    key = TOPIC_ORDER[idx - 1][0]
+                    show_topic(key)
+                else:
+                    print("Invalid topic number.")
+            else:
+                key = sel
+                if key in {k for k, _ in TOPIC_ORDER}:
+                    show_topic(key)
+                else:
+                    print("Unknown topic key.")
+            print()
+
+        elif choice == "3":
+            path = "comparison.md"
+            export_markdown(path)
+            print(f"\nWrote {path} to: {os.path.abspath(path)}\n")
+
+        elif choice == "4":
+            path = "comparison.json"
+            export_json(path)
+            print(f"\nWrote {path} to: {os.path.abspath(path)}\n")
+
+        elif choice == "5":
+            print()
+            show_sources()
+
+        elif choice == "0":
+            print("\nDone.")
+            break
+
+        else:
+            print("Unknown option. Try again.")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Compare SWMM5 Dynamic Wave vs InfoWorks ICM 1D Saint-Venant solver approaches."
+    )
+    parser.add_argument("--table", action="store_true", help="Print the side-by-side summary table and exit.")
+    parser.add_argument("--topic", type=str, help="Print a single topic by key (e.g., time_integration) and exit.")
+    parser.add_argument("--list-topics", action="store_true", help="List available topics and exit.")
+    parser.add_argument("--sources", action="store_true", help="Print sources and exit.")
+    parser.add_argument("--export-md", metavar="PATH", help="Export comparison to a Markdown file.")
+    parser.add_argument("--export-json", metavar="PATH", help="Export the underlying knowledge base to JSON.")
+    args = parser.parse_args()
+
+    if args.list_topics:
+        list_topics()
+        return
+
+    if args.sources:
+        show_sources()
+        return
+
+    if args.export_md:
+        export_markdown(args.export_md)
+        print(f"Wrote {args.export_md}")
+        return
+
+    if args.export_json:
+        export_json(args.export_json)
+        print(f"Wrote {args.export_json}")
+        return
+
+    if args.table:
+        print_header()
+        show_summary_table()
+        return
+
+    if args.topic:
+        if args.topic not in KB["swmm5"]["topics"]:
+            print(f"Unknown topic: {args.topic}")
+            list_topics()
+            raise SystemExit(2)
+        print_header()
+        show_topic(args.topic)
+        return
+
+    # Default: interactive
+    interactive()
+
+
+if __name__ == "__main__":
+    main()
