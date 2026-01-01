@@ -200,3 +200,102 @@ export function PreissmannSlotDiagram() {
     </Card>
   );
 }
+
+export function NodeAreaDiagram() {
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle className="text-lg">SWMM Node Surface Area</CardTitle>
+        <CardDescription>How link areas contribute to node storage</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="relative h-56 bg-muted/30 rounded-lg border border-border p-4 overflow-hidden">
+          <div className="absolute top-2 left-2 text-xs font-medium text-muted-foreground">Node-Link Area Assignment</div>
+          
+          {/* Central Node */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+            <div className="relative">
+              <div className="h-16 w-16 rounded-full border-3 border-blue-500 bg-blue-500/20 flex items-center justify-center shadow-lg">
+                <div className="text-xs font-mono font-bold text-blue-700 dark:text-blue-300">Node</div>
+              </div>
+              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-blue-600 whitespace-nowrap">
+                A<sub>node</sub>
+              </div>
+            </div>
+          </div>
+
+          {/* Link 1 - Top */}
+          <div className="absolute left-1/2 top-4 -translate-x-1/2">
+            <div className="flex flex-col items-center">
+              <div className="h-3 w-3 rounded-full bg-slate-400" />
+              <div className="h-12 w-6 bg-gradient-to-b from-slate-300 to-amber-400/60 dark:from-slate-600 dark:to-amber-500/60 rounded-sm border border-slate-400">
+                <div className="h-1/2 w-full border-b border-dashed border-slate-500" />
+              </div>
+            </div>
+            <div className="absolute -right-12 top-6 text-[8px] font-mono text-amber-600">½ A<sub>1</sub></div>
+          </div>
+
+          {/* Link 2 - Right */}
+          <div className="absolute right-8 top-1/2 -translate-y-1/2">
+            <div className="flex items-center">
+              <div className="w-16 h-6 bg-gradient-to-r from-amber-400/60 to-slate-300 dark:from-amber-500/60 dark:to-slate-600 rounded-sm border border-slate-400">
+                <div className="w-1/2 h-full border-r border-dashed border-slate-500" />
+              </div>
+              <div className="h-3 w-3 rounded-full bg-slate-400" />
+            </div>
+            <div className="absolute -bottom-4 left-2 text-[8px] font-mono text-amber-600">½ A<sub>2</sub></div>
+          </div>
+
+          {/* Link 3 - Bottom */}
+          <div className="absolute left-1/2 bottom-4 -translate-x-1/2">
+            <div className="flex flex-col items-center">
+              <div className="h-12 w-8 bg-gradient-to-t from-slate-300 to-amber-400/60 dark:from-slate-600 dark:to-amber-500/60 rounded-sm border border-slate-400">
+                <div className="h-1/2 w-full border-b border-dashed border-slate-500" />
+              </div>
+              <div className="h-3 w-3 rounded-full bg-slate-400" />
+            </div>
+            <div className="absolute -right-12 top-2 text-[8px] font-mono text-amber-600">½ A<sub>3</sub></div>
+          </div>
+
+          {/* Link 4 - Left */}
+          <div className="absolute left-8 top-1/2 -translate-y-1/2">
+            <div className="flex items-center">
+              <div className="h-3 w-3 rounded-full bg-slate-400" />
+              <div className="w-12 h-5 bg-gradient-to-l from-amber-400/60 to-slate-300 dark:from-amber-500/60 dark:to-slate-600 rounded-sm border border-slate-400">
+                <div className="w-1/2 h-full border-r border-dashed border-slate-500" />
+              </div>
+            </div>
+            <div className="absolute -bottom-4 right-2 text-[8px] font-mono text-amber-600">½ A<sub>4</sub></div>
+          </div>
+
+          {/* Legend */}
+          <div className="absolute bottom-2 right-2 flex flex-col gap-1">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-2 bg-amber-400/60 rounded-sm" />
+              <span className="text-[9px]">Area → Node</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-2 bg-slate-300 dark:bg-slate-600 rounded-sm" />
+              <span className="text-[9px]">Area → Other Node</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Formula */}
+        <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 border border-border">
+          <div className="text-center font-mono text-sm text-blue-700 dark:text-blue-300">
+            A<sub>effective</sub> = A<sub>node</sub> + ½·Σ(W<sub>i</sub> × L<sub>i</sub>)
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center mt-2">
+            Each connecting link contributes half its surface area (width × length) to the node's storage
+          </p>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          SWMM 5 assigns <strong>half the surface area</strong> of each connecting conduit to the node. 
+          This accumulated area is used in the continuity equation to compute water level changes at the node.
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
