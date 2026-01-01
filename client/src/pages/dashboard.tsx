@@ -6,19 +6,19 @@ import {
   ExternalLink,
   Table as TableIcon,
   LayoutGrid,
-  Download
+  Download,
+  FileCode,
+  HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
-  CardContent, 
   CardHeader, 
   CardTitle, 
   CardDescription 
 } from "@/components/ui/card";
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
@@ -31,15 +31,84 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { KB, TOPIC_ORDER, TopicKey } from "@/data/comparison-data";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { KB, TOPIC_ORDER } from "@/data/comparison-data";
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState<"topic" | "table">("topic");
 
   const handleExport = (format: "json" | "md") => {
-    // In a real app this would download a file. 
-    // Since this is a mockup, we'll just log it or show a toast if we had one.
-    console.log(`Exporting to ${format}`);
+    let content = "";
+    let filename = "";
+    let type = "";
+
+    if (format === "json") {
+      content = JSON.stringify(KB, null, 2);
+      filename = "comparison.json";
+      type = "application/json";
+    } else {
+      // Markdown generation matching the Python script's logic
+      const now = new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
+      const lines = [
+        "# SWMM5 vs InfoWorks ICM — Saint‑Venant Solver Comparison",
+        "",
+        `_Generated: ${now}_`,
+        "",
+        "## High-level summary",
+        "",
+        `**SWMM 5:** ${KB.swmm5.tagline}`,
+        "",
+        `**InfoWorks ICM:** ${KB.icm.tagline}`,
+        "",
+        "## Detailed comparison by topic",
+        ""
+      ];
+
+      TOPIC_ORDER.forEach(topic => {
+        lines.push(`### ${topic.label}`);
+        lines.push("");
+        lines.push("**SWMM 5**");
+        (KB.swmm5.topics as any)[topic.key].forEach((b: string) => lines.push(`- ${b}`));
+        lines.push("");
+        lines.push("**InfoWorks ICM**");
+        (KB.icm.topics as any)[topic.key].forEach((b: string) => lines.push(`- ${b}`));
+        lines.push("");
+      });
+
+      lines.push("## Sources");
+      lines.push("");
+      
+      (["swmm5", "icm"] as const).forEach(key => {
+        lines.push(`### ${KB[key].product}`);
+        KB[key].sources.forEach(s => {
+          lines.push(`- ${s.label} — ${s.url}`);
+          if (s.notes) lines.push(`  - Notes: ${s.notes}`);
+        });
+        lines.push("");
+      });
+
+      content = lines.join("\n");
+      filename = "comparison.md";
+      type = "text/markdown";
+    }
+
+    // Create download link
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -75,7 +144,50 @@ export default function Dashboard() {
               <Download className="h-3.5 w-3.5" />
               <span>Markdown</span>
             </Button>
+            
             <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                   <HelpCircle className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+              <DialogTrigger asChild>
+                 <Button variant="ghost" size="sm" className="hidden md:flex gap-2">
+                   <HelpCircle className="h-4 w-4" />
+                   <span>About</span>
+                 </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>About this Tool</DialogTitle>
+                  <DialogDescription className="pt-4 space-y-4">
+                    <p>
+                      This is an educational, self-contained comparison tool intended for hydraulic modelers.
+                    </p>
+                    <div className="space-y-2">
+                      <p className="font-medium text-foreground">What it does:</p>
+                      <ul className="list-disc pl-5 text-sm space-y-1">
+                        <li>Presents a structured compare/contrast of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow.</li>
+                        <li>Lets you browse by topic, view a side-by-side summary table, and export the content to Markdown or JSON.</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-medium text-foreground">It does NOT:</p>
+                      <ul className="list-disc pl-5 text-sm space-y-1">
+                        <li>Run SWMM or InfoWorks ICM</li>
+                        <li>Read SWMM/ICM model files</li>
+                        <li>Provide engineering sign-off</li>
+                      </ul>
+                    </div>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+
+            <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
+
             <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[200px]">
               <TabsList className="grid w-full grid-cols-2 h-9">
                 <TabsTrigger value="topic" className="text-xs">
@@ -128,8 +240,27 @@ export default function Dashboard() {
           </Card>
         </div>
 
+        {/* Python Script Download Banner */}
+        <div className="mb-8 p-4 border border-dashed border-border rounded-lg bg-muted/30 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-yellow-500/10 rounded-md flex items-center justify-center">
+              <FileCode className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm">Original Python Tool</h3>
+              <p className="text-xs text-muted-foreground">Download the CLI version of this comparison tool.</p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" asChild>
+            <a href="/comparison_tool.py" download>
+              <Download className="h-3.5 w-3.5 mr-2" />
+              Download Script
+            </a>
+          </Button>
+        </div>
+
         {activeView === "topic" ? (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Detailed Comparison by Topic</h2>
