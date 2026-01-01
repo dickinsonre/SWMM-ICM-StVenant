@@ -46,6 +46,12 @@ export const KB = {
         "Imposes a global minimum surface area at nodes (default corresponds to a 4-ft diameter manhole) as a computational device to prevent head update formulas from becoming unbounded as surface area vanishes.",
         "Has multiple special-case adjustments for dry/critical conditions at conduit ends in dynamic wave analysis.",
       ],
+      conduit_models: [
+        "SWMM uses a single Dynamic Wave routing approach for all conduits — no per-conduit solution model selection.",
+        "Conduit cross-sections: Supports circular, rectangular, trapezoidal, irregular, and user-defined shapes; geometry affects hydraulic radius and conveyance calculations.",
+        "Force mains: Modeled using the same dynamic wave equations; pressurized flow handled via surcharge algorithm or optional Preissmann Slot.",
+        "No specialized 'permeable pipe' or 'finite volume' models — advanced applications may require workarounds or external coupling.",
+      ],
     },
     sources: [
       {
