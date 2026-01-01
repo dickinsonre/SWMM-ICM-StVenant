@@ -13,6 +13,12 @@ export const KB = {
         "Because SWMM uses a node–link approach (a conduit is a single link between two nodes), it does not automatically create internal computational points along a conduit; when finer longitudinal resolution is needed, modelers may represent a long conduit as multiple shorter links.",
         "Node depths are calculated by explicitly integrating the conservation of mass equation: ∂H/∂t = ΣQ / SurfaceArea. This formulation requires every node to have a non-zero surface area (defaulting to a 4ft/1.2m diameter manhole) to prevent mathematical instability (division by zero).",
       ],
+      node_surface_area: [
+        "Node effective surface area = Anode + ½·Σ(Wi × Li) — each connecting conduit contributes HALF its plan-view surface area (width × length) to the node.",
+        "This approach concentrates all conduit storage at the nodes rather than along the conduit length, consistent with the single-link-per-conduit discretisation.",
+        "Minimum surface area is enforced (default: 12.566 ft² corresponding to a 4-ft diameter circle) to prevent division-by-zero errors in the head update calculation.",
+        "Surface area can vary with depth if the node has a user-defined storage curve; otherwise a constant 'ponded area' or the default is used.",
+      ],
       time_integration: [
         "Momentum equation is solved with an implicit backward Euler method (introduced in SWMM 5 for improved stability over the explicit/modified Euler methods used historically).",
         "Solution advances from t to t+Δt via an iterative procedure that alternates between updating link flows and node heads.",
@@ -28,7 +34,7 @@ export const KB = {
       ],
       pressurisation_surcharge: [
         "A node is considered surcharged when all connected conduits are full or when node water level exceeds the crown of the highest connected conduit; pressurized flow can occur in a conduit even if neither end node is surcharged.",
-        "Historically SWMM used a “surcharge algorithm” at pressurized nodes; an alternative Preissmann Slot method is available to handle pressurized flow while retaining the regular head-updating method.",
+        "Historically SWMM used a 'surcharge algorithm' at pressurized nodes; an alternative Preissmann Slot method is available to handle pressurized flow while retaining the regular head-updating method.",
       ],
       inertia_supercritical_handling: [
         "Provides options to damp or ignore inertial terms; one option corresponds to a local inertial formulation where the convective acceleration term is dropped (while retaining local acceleration).",
@@ -54,7 +60,7 @@ export const KB = {
         notes: "Explains optional Preissmann Slot method for pressurized flow in SWMM.",
       },
       {
-        label: "SWMM 5.1 User’s Manual (Aug 2015 master PDF hosted by EPA)",
+        label: "SWMM 5.1 User's Manual (Aug 2015 master PDF hosted by EPA)",
         url: "https://www.epa.gov/sites/default/files/2019-02/documents/epaswmm5_1_manual_master_8-2-15.pdf",
         notes:
           "High-level description of Dynamic Wave routing capabilities and stability/time step considerations.",
@@ -67,40 +73,62 @@ export const KB = {
       "Distributed 1D Saint-Venant solver using a Preissmann 4‑point implicit scheme with Newton–Raphson iterations and adaptive time stepping.",
     topics: {
       governing_equations: [
-        "Uses the Saint-Venant conservation equations of mass and momentum for 1D conduits; conveyance can be based on Colebrook–White or Manning formulations.",
-        "Pressurised flow can be represented via the Preissmann slot concept within the full (Saint‑Venant) conduit model.",
-        "Offers multiple conduit models to optimize simulation stability and speed: 'Full' (standard St. Venant), 'Force Main' (elastic column for pressurized lines), 'Direct' (instantaneous transfer), and 'Kinematic' or 'Diffusive' wave approximations.",
+        "Uses the Saint-Venant conservation equations of mass (∂A/∂t + ∂Q/∂x = q) and momentum for 1D conduits; conveyance can be based on Colebrook–White or Manning formulations.",
+        "The momentum equation includes terms for discharge, cross-sectional area, gravity, bed slope, and conveyance: ∂Q/∂t + ∂(Q²/A)/∂x + gA·cos(θ)·∂h/∂x = gA(S₀ − Q|Q|/K²).",
+        "Pressurised flow replaces free surface width with B = g·Af/Cp², enabling the Preissmann slot concept for smooth surcharge transitions.",
+        "Offers multiple solution models per conduit: 'Full' (Saint-Venant), 'Pressurised Pipe', 'Force Main', 'Permeable', and 'Finite Volume' for trans-critical flow.",
       ],
       discretisation_unknowns: [
         "Each conduit is split into N computational points (default spacing ~ 20 × conduit diameter), yielding a distributed finite-difference representation along the conduit length.",
-        "Adjacent computational points are coupled via discretised Saint‑Venant equations; internal nodes satisfy a continuity equation.",
+        "Adjacent computational points are coupled via discretised Saint‑Venant equations; internal nodes satisfy a continuity equation: Σ(Qi,n + Qi,n+1)/2 = Si,n+1(yi,n+1 − yi,n)/Δt.",
         "Node water levels are solved simultaneously with link variables in the global matrix. Unlike SWMM, which strictly integrates net flow over surface area (requiring a minimum area), ICM's coupled approach can handle a wider variety of node boundary conditions implicitly.",
+        "Boundary conditions between links and nodes are of outfall or headloss type, relating discharge Qi and level yi.",
+      ],
+      node_surface_area: [
+        "Manhole/node area in ICM is the ACTUAL shaft area only — typically the physical chamber dimensions (e.g., 1.2m diameter circle ≈ 1.13 m²).",
+        "Conduit storage is computed WITHIN each conduit via the distributed computational points, not lumped at nodes.",
+        "Because storage is distributed along conduits, ICM does not need to add half the conduit surface area to the node area (unlike SWMM).",
+        "Node area is used only for storage above the highest connecting pipe soffit (chamber/shaft storage) and for ponding calculations.",
+        "No minimum area constraint is required for numerical stability because the coupled matrix solution does not use an explicit ∂H/∂t = ΣQ/A formulation.",
       ],
       time_integration: [
-        "Approximates Saint‑Venant equations using the Preissmann 4‑point box scheme with a time-weighting parameter (q).",
-        "The implicit nature of the scheme removes a CFL restriction for stability when entering the Preissmann slot; in practice, q ≈ 0.65 is used (introducing some numerical diffusion).",
+        "Approximates Saint‑Venant equations using the Preissmann 4‑point box scheme with a time-weighting parameter θ; functions and derivatives are replaced by weighted averages over four corners of a box in (x,t) space.",
+        "The implicit nature of the scheme removes CFL restrictions for stability; in practice, θ ≈ 0.65 is used (introducing some numerical diffusion for stability).",
         "Node continuity is approximated by an implicit Euler method.",
+        "For Finite Volume solver: equations are discretised implicitly in time with first-order spatial discretisation, using a Roe Riemann solver for flux terms at cell interfaces.",
       ],
       nonlinear_solver: [
-        "Forms a large coupled nonlinear algebraic system at each time level and solves it iteratively using a Newton–Raphson method.",
-        "Uses a double-sweep approach to reduce the matrix system by local elimination along links between nodes.",
+        "Forms a large coupled nonlinear algebraic system at each time level and solves it iteratively using the Newton–Raphson method for stability in transitions between pressurised and free surface flow.",
+        "Uses a double-sweep method (Liggett and Cunge, 1975) to reduce the matrix by local elimination of computational nodes along links between nodes.",
+        "The implicit terms at time n+1 are linearised with a first-order Taylor series expansion and re-arranged into a system of linear equations.",
       ],
       time_step_control: [
         "Nonlinear effects can trigger automatic timestep reduction (progressive halvings) until Newton–Raphson convergence is achieved; rapid convergence can trigger timestep doubling.",
         "Uses a relative convergence check (change in every dependent variable at the new time level < 1%).",
+        "The implicit scheme has no CFL-based timestep restriction, unlike explicit methods.",
       ],
       pressurisation_surcharge: [
-        "Employs a Preissmann slot for smooth transition between free surface and surcharged conditions; includes a transition region to avoid abrupt changes in wave celerity at the pipe soffit.",
-        "Slot width is defined such that wave celerity in the slot is ~10× that at half the conduit height, resulting in a slot width on the order of ~2% of the conduit width (per documentation).",
-        "Provides alternative ‘Pressurised Pipe Model’ and ‘Force Main’ models for cases where always-full assumptions are more appropriate.",
+        "Employs a Preissmann slot for smooth transition between free surface and surcharged conditions; the slot is a conceptual vertical narrow slot at the pipe soffit.",
+        "A transition region (monotonic cubic) is included between the true pipe geometry and the Preissmann slot width to avoid abrupt changes in surface width derivative and wave celerity.",
+        "Slot width is defined such that wave celerity in the slot is ~10× that at half the conduit height, resulting in a slot width of approximately 2% of the conduit width.",
+        "Note: Maximum conveyance in a closed pipe occurs below the pipe soffit; ICM imposes monotonicity on conveyance to avoid turning points and multiple numerical solutions.",
       ],
       inertia_supercritical_handling: [
-        "Provides options to include/exclude the inertia (dQ/dt) term in pressure pipes; can be used with ‘Stay pressurised’ options to avoid negative depths in force mains.",
-        "Phases out inertial terms as a characteristic Froude number approaches unity to preserve subcritical-like behaviour in the core solver (finite-volume option exists for true trans-critical resolution).",
+        "Provides option to exclude the inertia (dQ/dt) term via 'Drop inertia in pressure pipes' setting; can be used with 'Stay pressurised' option to prevent negative depths in force mains.",
+        "Phases out inertial terms as characteristic Froude number approaches unity to preserve subcritical-like behaviour in the core solver.",
+        "Finite Volume solver option available for complex trans-critical flow scenarios, properly resolving hydraulic jumps within conduits using a Roe Riemann solver.",
       ],
       stability_devices: [
-        "Introduces a nominal base flow (defined from normal flow at a base depth) to avoid oscillations/instability associated with multiple flow states at low depths; base depth is 5% of conduit height (documentation provides example percentages).",
-        "Notes that base flow is introduced inside the network solver and removed within boundary conditions, preserving volume conservation.",
+        "Introduces a nominal base flow (defined from normal flow at a base depth of 5% of conduit height) to avoid oscillations/instability associated with multiple flow states at low depths.",
+        "Base flow is introduced inside the network solver and removed within boundary conditions, preserving volume conservation.",
+        "For Force Mains: water level is maintained at least to pipe soffit level at the interface with gravity solutions throughout simulation.",
+      ],
+      conduit_models: [
+        "Full (Conduit) Model: Standard Saint-Venant equations with Preissmann slot for surcharge handling; supports variable roughness (bottom third vs remainder) and permanent sediment depth.",
+        "Pressurised Pipe Model: For rising mains/inverted siphons; more accurately predicts velocities and storage than Full model as it doesn't assign base flow or Preissmann slot.",
+        "Force Main Model: Advanced model for long rising mains under low hydraulic heads; assumes pipe is always full even if hydraulic grade line drops below soffit (can show negative depths like a siphon).",
+        "Permeable Model: For permeable pavements; uses Darcy's Law (Q = K·A·Δh/L) with porosity considerations.",
+        "Finite Volume Model: Prototype solver for trans-critical flow with hydraulic jumps; uses conservative vector form and Roe Riemann solver at cell interfaces.",
       ],
     },
     sources: [
@@ -108,7 +136,7 @@ export const KB = {
         label: "InfoWorks ICM Online Help — Hydraulic Theory",
         url: "https://help2.innovyze.com/infoworksicm/Content/HTML/ICM_ILCM/Hydraulic_Theory.htm",
         notes:
-          "Documents Preissmann 4‑point scheme, q≈0.65, Newton–Raphson with double-sweep, timestep halving/doubling, base flow, Preissmann slot details.",
+          "Documents Preissmann 4‑point scheme, θ≈0.65, Newton–Raphson with double-sweep, timestep halving/doubling, base flow, Preissmann slot details, conduit solution models.",
       },
     ],
   },
@@ -120,6 +148,7 @@ export const TOPIC_ORDER = [
     key: "discretisation_unknowns",
     label: "Spatial discretisation and primary unknowns",
   },
+  { key: "node_surface_area", label: "Node/manhole surface area treatment" },
   { key: "time_integration", label: "Time integration scheme" },
   { key: "nonlinear_solver", label: "Nonlinear solution method and convergence" },
   { key: "time_step_control", label: "Time-step control and stability management" },
@@ -129,6 +158,7 @@ export const TOPIC_ORDER = [
   },
   { key: "inertia_supercritical_handling", label: "Inertia/supercritical handling" },
   { key: "stability_devices", label: "Additional numerical stabilisation devices" },
+  { key: "conduit_models", label: "Conduit solution models" },
 ] as const;
 
-export type TopicKey = typeof TOPIC_ORDER[number]["key"];
+export type TopicKey = (typeof TOPIC_ORDER)[number]["key"];
