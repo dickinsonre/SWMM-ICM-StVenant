@@ -8,7 +8,8 @@ import {
   LayoutGrid,
   Download,
   FileCode,
-  HelpCircle
+  HelpCircle,
+  BarChart2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -40,9 +41,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
+import { DiscretizationDiagram, PreissmannSlotDiagram } from "@/components/visuals/SolverDiagrams";
+import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
-  const [activeView, setActiveView] = useState<"topic" | "table">("topic");
+  const [activeView, setActiveView] = useState<"visuals" | "topic" | "table">("visuals");
 
   const handleExport = (format: "json" | "md") => {
     let content = "";
@@ -188,8 +191,12 @@ export default function Dashboard() {
 
             <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
 
-            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[200px]">
-              <TabsList className="grid w-full grid-cols-2 h-9">
+            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[300px]">
+              <TabsList className="grid w-full grid-cols-3 h-9">
+                <TabsTrigger value="visuals" className="text-xs">
+                  <BarChart2 className="h-3.5 w-3.5 mr-2" />
+                  Visuals
+                </TabsTrigger>
                 <TabsTrigger value="topic" className="text-xs">
                   <LayoutGrid className="h-3.5 w-3.5 mr-2" />
                   Topic
@@ -259,7 +266,24 @@ export default function Dashboard() {
           </Button>
         </div>
 
-        {activeView === "topic" ? (
+        {activeView === "visuals" && (
+           <div className="space-y-6 animate-in fade-in duration-500">
+             <div className="relative h-48 w-full rounded-xl overflow-hidden mb-8 border border-border shadow-md">
+                <img src={heroImage} alt="Fluid Dynamics Visualization" className="w-full h-full object-cover opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-transparent flex flex-col justify-center px-8">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Visual Analysis</h2>
+                  <p className="text-muted-foreground max-w-md">Key architectural differences between the solvers visualized.</p>
+                </div>
+             </div>
+
+             <div className="grid md:grid-cols-2 gap-6 min-h-[400px]">
+                <DiscretizationDiagram />
+                <PreissmannSlotDiagram />
+             </div>
+           </div>
+        )}
+
+        {activeView === "topic" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="h-5 w-5 text-primary" />
@@ -321,7 +345,9 @@ export default function Dashboard() {
               ))}
             </Accordion>
           </div>
-        ) : (
+        )}
+        
+        {activeView === "table" && (
           <div className="space-y-6 animate-in fade-in duration-500">
              <div className="flex items-center gap-2 mb-4">
               <TableIcon className="h-5 w-5 text-primary" />
