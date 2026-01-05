@@ -124,7 +124,7 @@ export default function Dashboard() {
               <Activity className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM</h1>
+              <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider mt-1">Hydraulic Solver Comparison</p>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function Dashboard() {
           </CardHeader>
           {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm" role="table" aria-label="Executive summary comparing SWMM5 and InfoWorks ICM">
+            <table className="w-full text-sm" role="table" aria-label="Executive summary comparing SWMM5 and ICM InfoWorks Networks">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
                   <th className="text-left p-3 font-bold" scope="col">Characteristic</th>
