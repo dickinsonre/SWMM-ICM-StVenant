@@ -49,6 +49,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
+import { SOURCE_CODE_FILES, FILE_PATHS } from "@/data/source-code-snippets";
 import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram, ManholeVsNodeDiagram } from "@/components/visuals/SolverDiagrams";
 import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, AdaptiveTimestepDiagram, ThetaParameterDiagram, Coupling1D2DDiagram } from "@/components/visuals/SolverOptionsDiagrams";
 import { ConvergenceSnapshotsDiagram, MassBalanceErrorDiagram, OscillationChallengeDiagram, WettingFrontDiagram, TimestepDashboardDiagram, SolverDecisionTreeDiagram } from "@/components/visuals/AdvancedDiagrams";
@@ -57,7 +58,7 @@ import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparis
 import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/components/visuals/ClimateInfiltrationDiagrams";
 import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
 import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
-import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram } from "@/components/visuals/ICMSimulationDiagrams";
+import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram, HeadlossJunctionDiagram, HeadlossSurchargeTransitionDiagram, HeadlossInferenceDiagram } from "@/components/visuals/ICMSimulationDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -90,6 +91,7 @@ const DIAGRAM_CATEGORIES = [
 export default function Dashboard() {
   const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
   const [activeCategory, setActiveCategory] = useState("solver");
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const handleExport = (format: "json" | "md") => {
     let content = "";
@@ -171,7 +173,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">40 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">43 Interactive Diagrams</Badge>
               </div>
             </div>
           </div>
@@ -569,6 +571,15 @@ export default function Dashboard() {
                     <HeadlossTransitionDiagram />
                     <ColdStartInitializationDiagram />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Junction Headloss Mechanics</h4>
+                   <p className="text-muted-foreground text-sm">Physics of energy loss at junctions and transitions.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <HeadlossJunctionDiagram />
+                    <HeadlossSurchargeTransitionDiagram />
+                    <HeadlossInferenceDiagram />
+                 </div>
                </div>
              )}
 
@@ -765,7 +776,27 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 mb-4">
               <FileCode className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold" data-testid="text-source-title">Source Code Files</h2>
+              <span className="text-sm text-muted-foreground ml-2">(Click a file to view source code)</span>
             </div>
+            
+            <Dialog open={selectedFile !== null} onOpenChange={(open) => !open && setSelectedFile(null)}>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <FileCode className="h-5 w-5" />
+                    {selectedFile}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {selectedFile && FILE_PATHS[selectedFile]}
+                  </DialogDescription>
+                </DialogHeader>
+                <ScrollArea className="flex-1 mt-4">
+                  <pre className="text-xs font-mono bg-slate-950 text-slate-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                    <code>{selectedFile && SOURCE_CODE_FILES[selectedFile]}</code>
+                  </pre>
+                </ScrollArea>
+              </DialogContent>
+            </Dialog>
             
             <Card className="border-border/60 shadow-md" data-testid="card-visualization-components">
               <CardHeader className="pb-2 bg-muted/30">
@@ -782,7 +813,12 @@ export default function Dashboard() {
                       { file: "AdvancedDiagrams.tsx", components: ["ConvergenceSnapshotsDiagram", "MassBalanceErrorDiagram", "OscillationChallengeDiagram", "WettingFrontDiagram", "TimestepDashboardDiagram", "SolverDecisionTreeDiagram"] },
                       { file: "TimestepComparisonDiagram.tsx", components: ["TimestepComparisonDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-solver-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-solver-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-solver-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -802,7 +838,12 @@ export default function Dashboard() {
                     {[
                       { file: "HydrologicDiagrams.tsx", components: ["RunoffProcessDiagram", "RTKDiagram", "BuildupWashoffDiagram", "HydrologicWorkflowDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-hydro-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-hydro-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-hydro-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -822,7 +863,12 @@ export default function Dashboard() {
                     {[
                       { file: "ClimateInfiltrationDiagrams.tsx", components: ["SnowmeltAlgorithmsDiagram", "InfiltrationShootoutDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-climate-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-climate-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-climate-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -842,7 +888,12 @@ export default function Dashboard() {
                     {[
                       { file: "GreenInfraDiagrams.tsx", components: ["LIDvsSUDSDiagram", "DualSolverArchitectureDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-green-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-green-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-green-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -862,7 +913,12 @@ export default function Dashboard() {
                     {[
                       { file: "ArchitecturalDiagrams.tsx", components: ["InputFileParserDiagram", "MatrixSolverDiagram", "RTCRulesDiagram", "MassRoutingDiagram", "SurchargeCodeDiagram", "GroundwaterExchangeDiagram", "MinorLossesDiagram", "ReportingSystemDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-arch-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-arch-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-arch-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -880,9 +936,14 @@ export default function Dashboard() {
                   <h4 className="font-medium text-sm text-cyan-600 dark:text-cyan-400 uppercase tracking-wide">ICM Simulation</h4>
                   <div className="grid md:grid-cols-2 gap-2">
                     {[
-                      { file: "ICMSimulationDiagrams.tsx", components: ["BaseFlowStabilityDiagram", "SpatialDiscretizationDiagram", "ICMPreissmannSlotDiagram", "AdaptiveTimeSteppingDiagram", "HeadlossTransitionDiagram", "ColdStartInitializationDiagram"] },
+                      { file: "ICMSimulationDiagrams.tsx", components: ["BaseFlowStabilityDiagram", "SpatialDiscretizationDiagram", "ICMPreissmannSlotDiagram", "AdaptiveTimeSteppingDiagram", "HeadlossTransitionDiagram", "ColdStartInitializationDiagram", "HeadlossJunctionDiagram", "HeadlossSurchargeTransitionDiagram", "HeadlossInferenceDiagram"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-icm-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-icm-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-icm-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
@@ -903,7 +964,12 @@ export default function Dashboard() {
                       { file: "comparison-data.ts", components: ["KB (Knowledge Base)", "TOPIC_ORDER"] },
                       { file: "comparison_tool.py", components: ["CLI Tool (Python)"] },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-data-${i}`}>
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-data-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
                         <code className="text-xs font-mono text-primary" data-testid={`text-filename-data-${i}`}>{item.file}</code>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
-import { Droplets, Grid3X3, Gauge, Timer, TrendingUp, Play, RotateCcw, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import { Droplets, Grid3X3, Gauge, Timer, TrendingUp, Play, Pause, RotateCcw, CheckCircle2, XCircle, AlertTriangle, Waves } from "lucide-react";
 
 export function BaseFlowStabilityDiagram() {
   const [baseFlowFactor, setBaseFlowFactor] = useState([0.001]);
@@ -31,11 +31,11 @@ export function BaseFlowStabilityDiagram() {
   const sedHeight = ySed * pipeRadius * 2;
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-blue-950/50 to-cyan-950/50 border-blue-800/30" data-testid="diagram-base-flow-stability">
+    <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-blue-100/80 dark:from-sky-900/30 dark:to-blue-900/30 border-sky-300/50 dark:border-sky-700/30" data-testid="diagram-base-flow-stability">
       <div className="flex items-center gap-2 mb-4">
         <Droplets className="h-5 w-5 text-blue-400" />
-        <h3 className="font-semibold text-lg text-blue-100">Base Flow for Numerical Stability</h3>
-        <Badge variant="outline" className="ml-auto text-blue-400 border-blue-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-blue-800 dark:text-blue-100">Base Flow for Numerical Stability</h3>
+        <Badge variant="outline" className="ml-auto text-blue-600 dark:text-blue-400 border-blue-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -226,11 +226,11 @@ export function SpatialDiscretizationDiagram() {
   );
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-emerald-950/50 to-teal-950/50 border-emerald-800/30" data-testid="diagram-spatial-discretization">
+    <Card className="p-6 bg-gradient-to-br from-cyan-100/80 to-teal-100/80 dark:from-cyan-900/30 dark:to-teal-900/30 border-cyan-300/50 dark:border-cyan-700/30" data-testid="diagram-spatial-discretization">
       <div className="flex items-center gap-2 mb-4">
         <Grid3X3 className="h-5 w-5 text-emerald-400" />
-        <h3 className="font-semibold text-lg text-emerald-100">Spatial Discretization & Computational Nodes</h3>
-        <Badge variant="outline" className="ml-auto text-emerald-400 border-emerald-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-cyan-800 dark:text-cyan-100">Spatial Discretization & Computational Nodes</h3>
+        <Badge variant="outline" className="ml-auto text-cyan-600 dark:text-cyan-400 border-cyan-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -388,11 +388,11 @@ export function ICMPreissmannSlotDiagram() {
   const slotPixelWidth = Math.max(2, effectiveSlotWidth * 200);
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-purple-950/50 to-violet-950/50 border-purple-800/30" data-testid="diagram-preissmann-slot">
+    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-indigo-100/80 dark:from-blue-900/30 dark:to-indigo-900/30 border-blue-300/50 dark:border-blue-700/30" data-testid="diagram-preissmann-slot">
       <div className="flex items-center gap-2 mb-4">
         <Gauge className="h-5 w-5 text-purple-400" />
-        <h3 className="font-semibold text-lg text-purple-100">Preissmann Slot & Pressurization</h3>
-        <Badge variant="outline" className="ml-auto text-purple-400 border-purple-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-blue-800 dark:text-blue-100">Preissmann Slot & Pressurization</h3>
+        <Badge variant="outline" className="ml-auto text-blue-600 dark:text-blue-400 border-blue-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -628,11 +628,11 @@ export function AdaptiveTimeSteppingDiagram() {
   }, []);
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-amber-950/50 to-orange-950/50 border-amber-800/30" data-testid="diagram-adaptive-time-stepping">
+    <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-cyan-100/80 dark:from-sky-900/30 dark:to-cyan-900/30 border-sky-300/50 dark:border-sky-700/30" data-testid="diagram-adaptive-time-stepping">
       <div className="flex items-center gap-2 mb-4">
         <Timer className="h-5 w-5 text-amber-400" />
-        <h3 className="font-semibold text-lg text-amber-100">Adaptive Time Stepping & Convergence</h3>
-        <Badge variant="outline" className="ml-auto text-amber-400 border-amber-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-sky-800 dark:text-sky-100">Adaptive Time Stepping & Convergence</h3>
+        <Badge variant="outline" className="ml-auto text-sky-600 dark:text-sky-400 border-sky-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -848,11 +848,11 @@ export function HeadlossTransitionDiagram() {
   ).join(' ');
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-rose-950/50 to-pink-950/50 border-rose-800/30" data-testid="diagram-headloss-transition">
+    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-sky-100/80 dark:from-blue-900/30 dark:to-sky-900/30 border-blue-300/50 dark:border-blue-700/30" data-testid="diagram-headloss-transition">
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp className="h-5 w-5 text-rose-400" />
-        <h3 className="font-semibold text-lg text-rose-100">Headloss Transition Zone</h3>
-        <Badge variant="outline" className="ml-auto text-rose-400 border-rose-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-blue-800 dark:text-blue-100">Headloss Transition Zone</h3>
+        <Badge variant="outline" className="ml-auto text-blue-600 dark:text-blue-400 border-blue-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -1065,11 +1065,11 @@ export function ColdStartInitializationDiagram() {
   }, []);
   
   return (
-    <Card className="p-6 bg-gradient-to-br from-indigo-950/50 to-blue-950/50 border-indigo-800/30" data-testid="diagram-cold-start">
+    <Card className="p-6 bg-gradient-to-br from-indigo-100/80 to-blue-100/80 dark:from-indigo-900/30 dark:to-blue-900/30 border-indigo-300/50 dark:border-indigo-700/30" data-testid="diagram-cold-start">
       <div className="flex items-center gap-2 mb-4">
         <Play className="h-5 w-5 text-indigo-400" />
-        <h3 className="font-semibold text-lg text-indigo-100">Initialization Process (Cold Start)</h3>
-        <Badge variant="outline" className="ml-auto text-indigo-400 border-indigo-400/30">ICM Parameter</Badge>
+        <h3 className="font-semibold text-lg text-indigo-800 dark:text-indigo-100">Initialization Process (Cold Start)</h3>
+        <Badge variant="outline" className="ml-auto text-indigo-600 dark:text-indigo-400 border-indigo-400/50">ICM Parameter</Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
@@ -1241,6 +1241,587 @@ export function ColdStartInitializationDiagram() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function HeadlossJunctionDiagram() {
+  const [pipeAngle, setPipeAngle] = useState([90]);
+  const [headlossType, setHeadlossType] = useState<"normal" | "high" | "fixed" | "fhwa">("normal");
+  const [flowRate, setFlowRate] = useState([0.5]);
+  const [surchargeRatio, setSurchargeRatio] = useState([0.8]);
+  
+  const angle = pipeAngle[0];
+  const kuTable: Record<number, number> = { 30: 3.3, 45: 4.5, 60: 5.5, 90: 6.6, 120: 7.5, 150: 8.0 };
+  const closestAngle = [30, 45, 60, 90, 120, 150].reduce((prev, curr) => 
+    Math.abs(curr - angle) < Math.abs(prev - angle) ? curr : prev
+  );
+  const ku = kuTable[closestAngle];
+  
+  const sr = surchargeRatio[0];
+  let ks = 0;
+  if (headlossType === "normal" || headlossType === "high") {
+    if (sr < 0.5) ks = 0.05;
+    else if (sr < 1.0) ks = 0.05 + (sr - 0.5) * 1.9;
+    else if (sr < 1.2) ks = 1.0 - (sr - 1.0) * 0.5;
+    else ks = 0.9;
+    if (headlossType === "high") ks *= 1.5;
+  } else if (headlossType === "fixed") {
+    ks = 1.0;
+  } else {
+    ks = 0.8;
+  }
+  
+  const velocity = flowRate[0] * 2;
+  const kv = Math.min(1.0, 0.5 + velocity * 0.25);
+  const g = 9.81;
+  const velocityHead = (velocity * velocity) / (2 * g);
+  const headloss = ku * ks * kv * velocityHead;
+  
+  return (
+    <Card className="p-6 bg-gradient-to-br from-cyan-100/80 to-sky-100/80 dark:from-cyan-900/30 dark:to-sky-900/30 border-cyan-300/50 dark:border-cyan-700/30" data-testid="diagram-headloss-junction">
+      <div className="flex items-center gap-2 mb-4">
+        <TrendingUp className="h-5 w-5 text-orange-400" />
+        <h3 className="font-semibold text-lg text-cyan-800 dark:text-cyan-100">Headloss at Junction (Minor Loss Calculator)</h3>
+        <Badge variant="outline" className="ml-auto text-cyan-600 dark:text-cyan-400 border-cyan-400/50">ICM Headloss</Badge>
+      </div>
+      
+      <p className="text-sm text-muted-foreground mb-4">
+        Δh = k<sub>u</sub> × k<sub>s</sub> × k<sub>v</sub> × (v²/2g) — Visualize how geometry, submergence, and velocity combine to create energy loss.
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div>
+            <Label className="text-xs text-orange-300">Pipe Entry Angle: {pipeAngle[0]}°</Label>
+            <Slider
+              value={pipeAngle}
+              onValueChange={setPipeAngle}
+              min={30}
+              max={150}
+              step={1}
+              className="mt-2"
+              data-testid="slider-pipe-angle"
+            />
+            <p className="text-[10px] text-orange-400 mt-1">k<sub>u</sub> = {ku.toFixed(1)} (from angle table)</p>
+          </div>
+          
+          <div>
+            <Label className="text-xs text-orange-300">Headloss Type</Label>
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {(["normal", "high", "fixed", "fhwa"] as const).map(type => (
+                <Button
+                  key={type}
+                  variant={headlossType === type ? "default" : "outline"}
+                  size="sm"
+                  className="text-xs capitalize"
+                  onClick={() => setHeadlossType(type)}
+                  data-testid={`button-headloss-${type}`}
+                >
+                  {type}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <Label className="text-xs text-orange-300">Flow Rate: {flowRate[0].toFixed(2)} m³/s</Label>
+            <Slider
+              value={flowRate}
+              onValueChange={setFlowRate}
+              min={0.1}
+              max={2.0}
+              step={0.05}
+              className="mt-2"
+              data-testid="slider-flow-rate"
+            />
+          </div>
+          
+          <div>
+            <Label className="text-xs text-orange-300">Surcharge Ratio: {surchargeRatio[0].toFixed(2)}</Label>
+            <Slider
+              value={surchargeRatio}
+              onValueChange={setSurchargeRatio}
+              min={0.2}
+              max={1.5}
+              step={0.05}
+              className="mt-2"
+              data-testid="slider-surcharge-ratio"
+            />
+            <p className="text-[10px] text-orange-400 mt-1">Depth / Pipe Height (1.0 = pipe full)</p>
+          </div>
+          
+          <div className="p-3 rounded bg-orange-900/30 border border-orange-700/30 space-y-2">
+            <div className="text-xs font-mono text-orange-300">
+              Δh = {ku.toFixed(1)} × {ks.toFixed(3)} × {kv.toFixed(3)} × {velocityHead.toFixed(4)}
+            </div>
+            <div className="text-lg font-bold text-orange-200" data-testid="text-headloss-result">
+              Headloss: {(headloss * 1000).toFixed(2)} mm
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-[10px] text-orange-300">
+              <div>k<sub>u</sub>: {ku.toFixed(1)}</div>
+              <div>k<sub>s</sub>: {ks.toFixed(3)}</div>
+              <div>k<sub>v</sub>: {kv.toFixed(3)}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex flex-col items-center justify-center">
+          <svg viewBox="0 0 200 200" className="w-full max-w-[200px]">
+            <circle cx="100" cy="100" r="30" fill="#1e293b" stroke="#f97316" strokeWidth="3" />
+            <text x="100" y="105" textAnchor="middle" className="text-[8px] fill-orange-300">Junction</text>
+            
+            <motion.line
+              x1="100"
+              y1="100"
+              x2={100 + 60 * Math.cos((angle - 90) * Math.PI / 180)}
+              y2={100 + 60 * Math.sin((angle - 90) * Math.PI / 180)}
+              stroke="#3b82f6"
+              strokeWidth="12"
+              strokeLinecap="round"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            />
+            <text 
+              x={100 + 75 * Math.cos((angle - 90) * Math.PI / 180)}
+              y={100 + 75 * Math.sin((angle - 90) * Math.PI / 180)}
+              textAnchor="middle"
+              className="text-[7px] fill-blue-400"
+            >
+              In ({angle}°)
+            </text>
+            
+            <line x1="100" y1="130" x2="100" y2="190" stroke="#22c55e" strokeWidth="12" strokeLinecap="round" />
+            <text x="100" y="198" textAnchor="middle" className="text-[7px] fill-green-400">Out</text>
+            
+            <motion.path
+              d={`M ${100 + 20 * Math.cos((angle - 90) * Math.PI / 180)} ${100 + 20 * Math.sin((angle - 90) * Math.PI / 180)} A 20 20 0 0 1 100 120`}
+              fill="none"
+              stroke="#fbbf24"
+              strokeWidth="2"
+              strokeDasharray="4,2"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+            
+            <motion.circle
+              cx="100"
+              cy="140"
+              r="3"
+              fill="#ef4444"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.5, 1, 0.5], y: [0, 5, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+            <text x="115" y="145" className="text-[6px] fill-red-400">Δh</text>
+          </svg>
+          
+          <div className="mt-4 p-2 rounded bg-slate-800 text-[10px] text-center">
+            <div className="text-slate-400">Velocity Head</div>
+            <div className="text-white font-mono">{velocityHead.toFixed(4)} m</div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function HeadlossSurchargeTransitionDiagram() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [simTime, setSimTime] = useState(0);
+  const [headlossType, setHeadlossType] = useState<"normal" | "fixed">("normal");
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  const maxTime = 120;
+  const depthProgress = Math.min(1.5, simTime / 80);
+  const surchargeRatio = depthProgress;
+  
+  let ks = 0;
+  if (headlossType === "normal") {
+    if (surchargeRatio < 0.5) ks = 0.05;
+    else if (surchargeRatio < 1.0) ks = 0.05 + (surchargeRatio - 0.5) * 1.9;
+    else if (surchargeRatio < 1.2) ks = 1.0 - (surchargeRatio - 1.0) * 0.5;
+    else ks = 0.9;
+  } else {
+    ks = 1.0;
+  }
+  
+  const velocity = 1.5 + depthProgress * 0.5;
+  const g = 9.81;
+  const headloss = 6.6 * ks * 0.8 * (velocity * velocity) / (2 * g);
+  
+  const togglePlay = () => {
+    if (isPlaying) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(true);
+      intervalRef.current = setInterval(() => {
+        setSimTime(prev => {
+          if (prev >= maxTime) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 100);
+    }
+  };
+  
+  const reset = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setIsPlaying(false);
+    setSimTime(0);
+  };
+  
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+  
+  const historyPoints = Array.from({ length: Math.min(simTime, 100) }, (_, i) => {
+    const t = i;
+    const sr = Math.min(1.5, t / 80);
+    let k = 0;
+    if (headlossType === "normal") {
+      if (sr < 0.5) k = 0.05;
+      else if (sr < 1.0) k = 0.05 + (sr - 0.5) * 1.9;
+      else if (sr < 1.2) k = 1.0 - (sr - 1.0) * 0.5;
+      else k = 0.9;
+    } else {
+      k = 1.0;
+    }
+    return { x: i * 2.8, y: 80 - k * 70 };
+  });
+  
+  return (
+    <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-blue-100/80 dark:from-sky-900/30 dark:to-blue-900/30 border-sky-300/50 dark:border-sky-700/30" data-testid="diagram-headloss-surcharge">
+      <div className="flex items-center gap-2 mb-4">
+        <Waves className="h-5 w-5 text-rose-400" />
+        <h3 className="font-semibold text-lg text-sky-800 dark:text-sky-100">Headloss Type & Surcharge Transition</h3>
+        <Badge variant="outline" className="ml-auto text-sky-600 dark:text-sky-400 border-sky-400/50">ICM Headloss</Badge>
+      </div>
+      
+      <p className="text-sm text-muted-foreground mb-4">
+        Observe how headloss behavior changes as flow transitions from open-channel to pressurized (surcharged).
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <Button
+              variant={headlossType === "normal" ? "default" : "outline"}
+              size="sm"
+              onClick={() => { setHeadlossType("normal"); reset(); }}
+              data-testid="button-normal-type"
+            >
+              Normal
+            </Button>
+            <Button
+              variant={headlossType === "fixed" ? "default" : "outline"}
+              size="sm"
+              onClick={() => { setHeadlossType("fixed"); reset(); }}
+              data-testid="button-fixed-type"
+            >
+              Fixed
+            </Button>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={togglePlay} data-testid="button-play-storm">
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {isPlaying ? "Pause" : "Play Storm"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={reset} data-testid="button-reset-storm">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <div className="p-3 rounded bg-rose-900/30 border border-rose-700/30 space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-rose-300">Time:</span>
+              <span className="text-white font-mono">{simTime}s</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-rose-300">Surcharge Ratio:</span>
+              <span className={`font-mono ${surchargeRatio >= 1 ? 'text-red-400' : 'text-green-400'}`} data-testid="text-surcharge-ratio">
+                {surchargeRatio.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-rose-300">k<sub>s</sub> Coefficient:</span>
+              <span className="text-white font-mono" data-testid="text-ks-value">{ks.toFixed(3)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-rose-300">Headloss:</span>
+              <span className="text-white font-mono font-bold" data-testid="text-headloss-value">{(headloss * 1000).toFixed(1)} mm</span>
+            </div>
+          </div>
+          
+          <div className="text-[10px] text-rose-300 bg-rose-900/20 p-2 rounded">
+            {headlossType === "normal" ? (
+              <>For "Normal" headloss, energy loss peaks during transition to pressurization (SR ≈ 1.0), reflecting real-world turbulence at manholes during filling.</>
+            ) : (
+              <>For "Fixed" headloss, k<sub>s</sub> remains constant at 1.0 regardless of depth. Loss is simply proportional to v²/2g at all times.</>
+            )}
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="bg-slate-900 rounded-lg p-2">
+            <div className="text-[9px] text-slate-400 mb-1">k<sub>s</sub> vs Time</div>
+            <svg viewBox="0 0 280 100" className="w-full h-24">
+              <line x1="0" y1="80" x2="280" y2="80" stroke="#475569" strokeWidth="1" />
+              <line x1="0" y1="10" x2="0" y2="80" stroke="#475569" strokeWidth="1" />
+              
+              <line x1="0" y1="10" x2="280" y2="10" stroke="#ef4444" strokeWidth="1" strokeDasharray="4,4" strokeOpacity="0.5" />
+              <text x="282" y="14" className="text-[6px] fill-red-400">k<sub>s</sub>=1.0</text>
+              
+              <line x1={80 * 2.8} y1="10" x2={80 * 2.8} y2="80" stroke="#fbbf24" strokeWidth="1" strokeDasharray="2,2" />
+              <text x={80 * 2.8 - 20} y="95" className="text-[6px] fill-yellow-400">SR=1.0</text>
+              
+              {historyPoints.length > 1 && (
+                <motion.path
+                  d={`M ${historyPoints[0].x} ${historyPoints[0].y} ${historyPoints.map(p => `L ${p.x} ${p.y}`).join(' ')}`}
+                  fill="none"
+                  stroke={headlossType === "normal" ? "#f43f5e" : "#22c55e"}
+                  strokeWidth="2"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                />
+              )}
+              
+              {historyPoints.length > 0 && (
+                <circle
+                  cx={historyPoints[historyPoints.length - 1]?.x || 0}
+                  cy={historyPoints[historyPoints.length - 1]?.y || 80}
+                  r="4"
+                  fill={headlossType === "normal" ? "#f43f5e" : "#22c55e"}
+                />
+              )}
+            </svg>
+          </div>
+          
+          <div className="relative h-20 bg-slate-800 rounded-lg overflow-hidden">
+            <div className="absolute inset-x-0 bottom-0 h-full flex items-end">
+              <div className="w-8 h-full bg-slate-700 border-r-2 border-slate-500 relative">
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 bg-blue-500/70"
+                  style={{ height: `${Math.min(100, surchargeRatio * 70)}%` }}
+                />
+                <div className="absolute top-1 left-1 text-[7px] text-slate-400">Node</div>
+              </div>
+              
+              <div className="flex-1 h-8 relative">
+                <div className="absolute inset-0 bg-slate-600 rounded-r" />
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 bg-blue-500/60 rounded-r"
+                  style={{ height: `${Math.min(100, surchargeRatio * 100)}%` }}
+                />
+                <div className="absolute top-1 right-2 text-[7px] text-slate-400">Conduit</div>
+              </div>
+            </div>
+            {surchargeRatio >= 1 && (
+              <div className="absolute top-1 left-10 text-[8px] text-red-400 font-bold">SURCHARGED</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function HeadlossInferenceDiagram() {
+  const [pipes, setPipes] = useState([
+    { id: 1, angle: 90, diameter: 0.6, isMajor: true },
+    { id: 2, angle: 45, diameter: 0.3, isMajor: false },
+    { id: 3, angle: 135, diameter: 0.3, isMajor: false },
+  ]);
+  const [showInference, setShowInference] = useState(false);
+  const [equalInverts, setEqualInverts] = useState(true);
+  
+  const kuTable: Record<number, number> = { 30: 3.3, 45: 4.5, 60: 5.5, 90: 6.6, 120: 7.5, 135: 7.8, 150: 8.0 };
+  
+  const getKu = (angle: number) => {
+    const angles = Object.keys(kuTable).map(Number);
+    const closest = angles.reduce((prev, curr) => 
+      Math.abs(curr - angle) < Math.abs(prev - angle) ? curr : prev
+    );
+    return kuTable[closest];
+  };
+  
+  const majorPipe = pipes.find(p => p.isMajor);
+  const minorPipes = pipes.filter(p => !p.isMajor);
+  const totalArea = pipes.reduce((sum, p) => sum + Math.PI * (p.diameter / 2) ** 2, 0);
+  
+  const kuMajor = majorPipe ? getKu(majorPipe.angle) : 0;
+  const weightedMinorKu = minorPipes.reduce((sum, p) => {
+    const area = Math.PI * (p.diameter / 2) ** 2;
+    const proportion = area / totalArea;
+    return sum + proportion * getKu(p.angle);
+  }, 0);
+  
+  const totalKu = kuMajor + weightedMinorKu;
+  
+  const runInference = () => {
+    setShowInference(true);
+    const widest = [...pipes].sort((a, b) => b.diameter - a.diameter)[0];
+    setPipes(pipes.map(p => ({ ...p, isMajor: p.id === widest.id })));
+  };
+  
+  const setMajor = (id: number) => {
+    setPipes(pipes.map(p => ({ ...p, isMajor: p.id === id })));
+    setShowInference(false);
+  };
+  
+  return (
+    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-cyan-100/80 dark:from-blue-900/30 dark:to-cyan-900/30 border-blue-300/50 dark:border-blue-700/30" data-testid="diagram-headloss-inference">
+      <div className="flex items-center gap-2 mb-4">
+        <Grid3X3 className="h-5 w-5 text-teal-400" />
+        <h3 className="font-semibold text-lg text-blue-800 dark:text-blue-100">Headloss Inference Tool</h3>
+        <Badge variant="outline" className="ml-auto text-blue-600 dark:text-blue-400 border-blue-400/50">ICM Headloss</Badge>
+      </div>
+      
+      <p className="text-sm text-muted-foreground mb-4">
+        Explore how ICM automatically assigns k<sub>u</sub> values at complex junctions, and when manual review is needed.
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="text-sm font-medium text-teal-300">Incoming Pipes</div>
+          {pipes.map(pipe => (
+            <div key={pipe.id} className={`p-2 rounded border ${pipe.isMajor ? 'border-teal-500 bg-teal-900/30' : 'border-slate-600 bg-slate-800/50'}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-teal-300">Pipe {pipe.id}</span>
+                <Button
+                  variant={pipe.isMajor ? "default" : "ghost"}
+                  size="sm"
+                  className="text-[10px] h-5"
+                  onClick={() => setMajor(pipe.id)}
+                  data-testid={`button-major-pipe-${pipe.id}`}
+                >
+                  {pipe.isMajor ? "Major" : "Set Major"}
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-2 text-[10px]">
+                <div>
+                  <span className="text-slate-400">Angle: </span>
+                  <span className="text-white">{pipe.angle}°</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Ø: </span>
+                  <span className="text-white">{pipe.diameter}m</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">k<sub>u</sub>: </span>
+                  <span className="text-teal-400">{getKu(pipe.angle).toFixed(1)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={equalInverts}
+              onCheckedChange={setEqualInverts}
+              data-testid="switch-equal-inverts"
+            />
+            <Label className="text-xs text-teal-300">Equal Inverts</Label>
+          </div>
+          
+          {!equalInverts && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="p-2 rounded bg-yellow-900/30 border border-yellow-700/30 text-[10px] text-yellow-300"
+            >
+              <AlertTriangle className="h-3 w-3 inline mr-1" />
+              Inference assumes equal inverts. Different inverts require manual adjustment.
+            </motion.div>
+          )}
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={runInference}
+            className="w-full"
+            data-testid="button-run-inference"
+          >
+            Run Inference
+          </Button>
+          
+          {showInference && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="p-2 rounded bg-teal-900/30 border border-teal-700/30 text-[10px] text-teal-300"
+            >
+              <CheckCircle2 className="h-3 w-3 inline mr-1 text-teal-400" />
+              Inference selected widest pipe (Ø{Math.max(...pipes.map(p => p.diameter))}m) as major branch.
+              <p className="mt-1 text-slate-400 italic">Note: Does not account for multiple branches or unequal inverts.</p>
+            </motion.div>
+          )}
+        </div>
+        
+        <div className="space-y-4">
+          <svg viewBox="0 0 200 200" className="w-full max-w-[200px] mx-auto">
+            <circle cx="100" cy="100" r="25" fill="#1e293b" stroke="#14b8a6" strokeWidth="3" />
+            <text x="100" y="105" textAnchor="middle" className="text-[7px] fill-teal-300">Manhole</text>
+            
+            {pipes.map(pipe => {
+              const rad = (pipe.angle - 90) * Math.PI / 180;
+              const x2 = 100 + 70 * Math.cos(rad);
+              const y2 = 100 + 70 * Math.sin(rad);
+              const strokeWidth = pipe.diameter * 20;
+              return (
+                <g key={pipe.id}>
+                  <motion.line
+                    x1="100"
+                    y1="100"
+                    x2={x2}
+                    y2={y2}
+                    stroke={pipe.isMajor ? "#14b8a6" : "#64748b"}
+                    strokeWidth={strokeWidth}
+                    strokeLinecap="round"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  />
+                  <text
+                    x={100 + 85 * Math.cos(rad)}
+                    y={100 + 85 * Math.sin(rad)}
+                    textAnchor="middle"
+                    className={`text-[7px] ${pipe.isMajor ? 'fill-teal-400' : 'fill-slate-400'}`}
+                  >
+                    {pipe.angle}°
+                  </text>
+                </g>
+              );
+            })}
+            
+            <line x1="100" y1="125" x2="100" y2="190" stroke="#22c55e" strokeWidth="12" strokeLinecap="round" />
+            <text x="100" y="198" textAnchor="middle" className="text-[7px] fill-green-400">Out</text>
+          </svg>
+          
+          <div className="p-3 rounded bg-teal-900/30 border border-teal-700/30 space-y-2">
+            <div className="text-xs font-medium text-teal-300">Calculated k<sub>u</sub></div>
+            <div className="text-xs text-slate-400">
+              k<sub>u</sub> = k<sub>u,major</sub> + Σ(proportion × k<sub>u,minor</sub>)
+            </div>
+            <div className="text-xs font-mono text-white">
+              = {kuMajor.toFixed(1)} + {weightedMinorKu.toFixed(2)}
+            </div>
+            <div className="text-lg font-bold text-teal-200" data-testid="text-total-ku">
+              Total k<sub>u</sub>: {totalKu.toFixed(2)}
+            </div>
           </div>
         </div>
       </div>

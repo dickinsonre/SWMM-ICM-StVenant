@@ -1,0 +1,82 @@
+Excellent addition. The headloss documentation you've linked is a perfect companion to the core simulation parameters. It deals with the **physics of junction transitions**, while the simulation parameters govern the **numerical engine**. Here are interactive diagram ideas specifically for visualizing the headloss mechanics in InfoWorks ICM.
+
+### 7. **Interactive Diagram: Headloss at a Junction (The "Minor Loss Calculator")**
+
+**Purpose:** To demystify the headloss equation`Δh = ku * ks * kv * (v²/2g)` and show how each component (`ku`,`ks`,`kv`) is determined based on geometry, flow, and user selection.
+
+**Visual Concept:** A T-junction or cross-junction schematic showing flow paths.
+
+**Interactive Elements & Dynamics:**
+
+1.  **Geometry Setup:**
+    *   **Conduit Editor:** Allow user to set diameters/widths for incoming and outgoing pipes.
+    *   **Angle of Approach Tool:** Drag the incoming pipes to change their entry angles relative to the outgoing pipe (e.g., 30°, 60°, 90°, >90°). The diagram automatically suggests a`ku` (user-defined factor) based on Table 1 from the guide (e.g., 3.3 for 30°, 6.6 for 90°). A slider also allows manual override of`ku`.
+
+2.  **Headloss Type Selector:**
+    *   A dropdown menu lets the user select: **None, Normal, High, Fixed, User Defined, FHWA**.
+    *   The visual changes based on the selection:
+        *   **Normal/High:** A graph of`ks` (surcharge ratio coefficient) vs.`Surcharge Ratio` (depth/pipe height) appears, showing the hard-coded relationship (negligible loss below half-full, peak just above full). Visual feedback shows`ks` value updating as depth changes.
+        *   **Fixed:** The`ks` and`kv` values lock to 1.0.
+        *   **User Defined:** Two graph widgets appear, allowing the user to draw custom curves for`ks` vs. Surcharge Ratio and`kv` vs. Velocity.
+        *   **FHWA:** Shows a simplified schematic of the HEC-22 energy loss method with its components (inlet, bend, etc.).
+
+3.  **Flow & Results Simulator:**
+    *   **Flow Slider:** Adjust the flow (`Q`) into the junction.
+    *   **Depth Gauge:** Shows the water depth in the upstream manhole, which determines the`Surcharge Ratio`.
+    *   **Velocity Display:** Calculates`v = Q/A`. A toggle switches between **"Use Full Area"** and **"Use Flow Area"** for the calculation, visually showing how the velocity used in the headloss equation (`v_hl`) can differ from the reported velocity (`v_net`).
+    *   **Real-time Calculation:** The diagram solves the headloss equation in real-time, displaying:
+        *`v²/2g` (Velocity Head)
+        *   Current`ks` and`kv` coefficients
+        *   Final`Δh` (Headloss)
+    *   The **Hydraulic Grade Line (HGL)** is plotted through the junction, showing a visible drop at the upstream end of the outgoing conduit equal to`Δh`.
+
+**Educational Insight:** Makes the abstract headloss formula concrete. Users see how bend angle (`ku`), submergence (`ks`), and flow velocity (`kv`) combine to create energy loss. It clarifies the critical difference between "Normal" headloss (where downstream loss gets a -0.1 factor) and "Fixed." It also demonstrates the practical impact of the **"Use full area for headloss calculations"** simulation option.
+
+---
+
+### 8. **Interactive Diagram: Headloss Type & Surcharge Transition**
+
+**Purpose:** To show how headloss behavior changes dramatically as a conduit transitions from open-channel to pressurized (surcharged) flow.
+
+**Visual Concept:** A long-section view of a single conduit between two manholes. The left side focuses on the upstream junction headloss.
+
+**Interactive Elements & Dynamics:**
+
+1.  **Scenario Control:**
+    *   **"Storm" Timeline:** A play/pause/slider controls simulation time, gradually increasing inflow to the upstream node.
+    *   A water level gauge in the upstream node rises over time.
+
+2.  **Headloss Coefficient Visualization:**
+    *   A dynamic, multi-axis graph is linked to the conduit:
+        *   **X-Axis:** Time or Upstream Node Depth.
+        *   **Left Y-Axis:** Surcharge Ratio (Depth / Pipe Height). A horizontal line marks Surcharge Ratio = 1.0 (pipe full).
+        *   **Right Y-Axis:** Headloss Coefficient (`ks`).
+    *   As the water level rises, the`Surcharge Ratio` line increases.
+    *   The`ks` line plots according to the selected **Headloss Type**. For **"Normal"**, it will be near zero until ~0.5, then climb sharply to a peak just above 1.0, before dropping slightly for deeper surcharge. For **"Fixed"**, it remains at 1.0. For **"User Defined"**, it follows the user-drawn curve.
+
+3.  **Result Visualization:**
+    *   A second plot shows the resulting **Headloss (Δh)** and the **Upstream HGL**.
+    *   The user can observe that for "Normal" headloss, the energy loss peaks during the transition to pressurization, which can significantly impact the upstream hydraulic grade line during surcharge events. For "Fixed" headloss, the loss is proportional to`v²/2g` at all depths.
+
+**Educational Insight:** Teaches why correct headloss type selection is critical for modeling surcharged systems. It visually explains that "Normal" headloss reflects real-world turbulence effects at manholes during filling, which is not a simple constant coefficient. This helps justify the default "Normal" setting for most applications.
+
+---
+
+### 9. **Interactive Diagram: Headloss Inference Tool (Automating`ku`)**
+
+**Purpose:** To illustrate the logic behind the automated`ku` (headloss factor) assignment tool, including its assumptions and limitations at complex junctions.
+
+**Visual Concept:** A network diagram with multiple conduits converging on a single manhole.
+
+**Interactive Elements & Dynamics:**
+
+1.  **Build a Junction:** The user places 3-4 pipes of different diameters and orientations into a single manhole.
+2.  **Manual Calculation Mode:**
+    *   The tool measures the **"Angle of Approach"** for each incoming pipe relative to the outgoing pipe.
+    *   It displays the suggested`ku` for each angle from the standard table.
+    *   The user is prompted: **"Which pipe is the 'major' branch?"** They click on the largest incoming pipe. The tool then applies the logic from the guide's "More Complex Junction" example.
+    *   It calculates a weighted`ku` for the upstream end of the outgoing pipe:`H = ku_major + Σ(proportion_i * ku_i)` for minor branches, where`proportion_i` is based on pipe area. The user sees this calculation step-by-step.
+3.  **"Run Inference" Button:** Clicking this simulates the ICM inference utility. It highlights the pipe it selects as the major branch and shows the`ku` value it would assign. A pop-up note explains its limitations: *"Inference uses the widest pipe. It does not account for multiple branches or unequal inverts."*
+4.  **"Equal Inverts" Toggle:** Turning this off introduces different pipe invert elevations into the junction. A warning appears: **"Warning: Inference and manual calculation assume equal inverts. Different inverts require additional adjustment."**
+
+**Educational Insight:** Moves beyond the simple table of`ku` values. It reveals the engineering judgment and simplifying assumptions baked into the automated tool, empowering users to know when to trust inference and when to manually review and override headloss coefficients at complex junctions.
