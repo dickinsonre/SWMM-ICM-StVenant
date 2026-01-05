@@ -37,7 +37,7 @@ export const KB = {
       ],
       pressurisation_surcharge: [
         "Historically used a 'surcharge algorithm'.",
-        "An alternative Preissmann Slot method is available to handle pressurized flow while retaining the regular head-updating method.",
+        "Preissmann Slot method available since version 5.1.013 (~2018) to handle pressurized flow while retaining the regular head-updating method.",
         "ICM standardly uses a Preissmann slot with a smooth transition region; SWMM5 offers this as an option.",
       ],
       inertia_supercritical_handling: [
@@ -75,6 +75,12 @@ export const KB = {
       use_case_strengths: [
         "Optimal for: Regulatory compliance modeling (NPDES), long-term continuous simulation, water quality and LID analysis, academic research.",
         "Strengths: Zero cost (public domain), transparent source code, strong water quality capabilities, wide regulatory acceptance.",
+      ],
+      practical_implications: [
+        "Model setup: Simpler network definition (one link per conduit); may need manual subdivision for long conduits requiring finer resolution.",
+        "Runtime: Generally faster per time step due to simpler computation; may require more time steps due to CFL constraint.",
+        "Results interpretation: Outputs at nodes and link ends only; intermediate points require post-interpolation or model subdivision.",
+        "Typical timesteps: 0.5–30 seconds depending on network characteristics and stability requirements.",
       ],
     },
     sources: [
@@ -209,6 +215,12 @@ export const KB = {
         "Optimal for: Large-scale integrated catchment modeling (1D/2D), real-time operational forecasting and control, flood risk assessment, complex scenario analysis, enterprise-level multi-user modeling.",
         "Strengths: Superior numerical stability, integrated 1D/2D capabilities, efficient handling of large networks (100,000+ nodes), built-in sensitivity and optimization tools.",
       ],
+      practical_implications: [
+        "Model setup: Automatic internal discretization; user specifies conduit geometry, solver determines computational points.",
+        "Runtime: More computation per time step but allows larger time steps; generally faster for large complex networks.",
+        "Results interpretation: Detailed outputs at multiple points along each conduit; richer spatial resolution without model subdivision.",
+        "Timestep adaptation: Solver automatically adjusts based on convergence; typical effective timesteps can be 30–120+ seconds.",
+      ],
     },
     sources: [
       {
@@ -276,6 +288,7 @@ export const TOPIC_ORDER = [
   { key: "dry_network_handling", label: "Dry network handling and initialization" },
   { key: "stability_robustness", label: "Comparative stability and robustness" },
   { key: "use_case_strengths", label: "Primary use cases and strengths" },
+  { key: "practical_implications", label: "Practical implications for modelers" },
 ] as const;
 
 export type TopicKey = (typeof TOPIC_ORDER)[number]["key"];

@@ -14,7 +14,7 @@ export function DiscretizationDiagram() {
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-sm font-semibold text-blue-600 dark:text-blue-400">SWMM 5: Node-Link</h4>
-            <Badge variant="outline" className="text-[10px]">EXTRAN-based</Badge>
+            <Badge variant="outline" className="text-[10px]">EXTRAN-derived</Badge>
           </div>
           <div className="relative h-24 bg-muted/30 rounded-lg border border-border flex items-center justify-center p-4">
             {/* Pipe */}
@@ -46,6 +46,9 @@ export function DiscretizationDiagram() {
           </div>
           <p className="text-xs text-muted-foreground">
             Calculates Head (H) at nodes and Flow (Q) in the link. No internal computation points.
+          </p>
+          <p className="text-[10px] text-muted-foreground/80 italic">
+            Historical note: EXTRAN (Extended Transport) was SWMM's predecessor module for dynamic wave routing in earlier versions.
           </p>
         </div>
 
@@ -184,7 +187,7 @@ export function PreissmannSlotDiagram() {
              <h4 className="text-sm font-semibold text-blue-600 dark:text-blue-400">SWMM 5</h4>
              <p className="text-xs text-muted-foreground">
                Historically used a "Surcharge Algorithm" (vertical walls). 
-               Newer versions support Preissmann Slot as an option to handle pressurization smoothly.
+               Preissmann Slot option available since <strong>v5.1.013</strong> (~2018) for smooth pressurization handling.
              </p>
            </div>
 
@@ -287,13 +290,24 @@ export function NodeAreaDiagram() {
             A<sub>effective</sub> = A<sub>node</sub> + ½·Σ(W<sub>i</sub> × L<sub>i</sub>)
           </div>
           <p className="text-[10px] text-muted-foreground text-center mt-2">
-            Each connecting link contributes half its surface area (width × length) to the node's storage
+            Each connecting link contributes half its top surface area (width × length) to the node's storage capacity
           </p>
         </div>
 
+        {/* Legend for diagram labels */}
+        <div className="bg-muted/20 rounded-lg p-3 border border-border text-xs space-y-1" role="note" aria-label="Diagram legend explaining surface area notation">
+          <p className="font-medium text-foreground/80">Diagram Key:</p>
+          <ul className="space-y-1 text-muted-foreground">
+            <li><span className="font-mono text-amber-600" aria-label="One-half A subscript 1, one-half A subscript 2">½ A₁, ½ A₂...</span> = Half of each link's surface area assigned to this node</li>
+            <li><span className="font-mono text-blue-600" aria-label="A subscript node">A<sub>node</sub></span> = Node's own surface area (manhole shaft)</li>
+            <li><span className="text-amber-500">Orange gradient</span> = Portion of link area contributing to this node</li>
+            <li><span className="text-slate-400">Gray gradient</span> = Portion contributing to the other end node</li>
+          </ul>
+        </div>
+
         <p className="text-xs text-muted-foreground">
-          <strong>Free surface flow:</strong> SWMM 5 assigns <strong>half the surface area</strong> of each connecting conduit to the node for depth change calculations. 
-          <strong>Surcharged:</strong> Method switches to dQ/dH; half-link contribution becomes less relevant.
+          <strong>Free surface flow:</strong> SWMM 5 assigns <strong>half the top surface area</strong> of each connecting conduit to the node for depth change calculations (∂H/∂t = ΣQ / A<sub>effective</sub>). 
+          <strong>Surcharged:</strong> Method switches to dQ/dH relationship; half-link contribution becomes less relevant.
         </p>
       </CardContent>
     </Card>

@@ -214,6 +214,65 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
         
+        {/* Executive Summary Table */}
+        <Card className="mb-8 border-border/60 shadow-sm overflow-hidden" data-testid="executive-summary">
+          <CardHeader className="pb-2 bg-muted/30">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TableIcon className="h-4 w-4" />
+              Executive Summary
+            </CardTitle>
+            <CardDescription>Key differences at a glance</CardDescription>
+          </CardHeader>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" role="table" aria-label="Executive summary comparing SWMM5 and InfoWorks ICM">
+              <thead>
+                <tr className="border-b border-border bg-muted/20">
+                  <th className="text-left p-3 font-medium" scope="col">Characteristic</th>
+                  <th className="text-left p-3 font-medium text-blue-600 dark:text-blue-400" scope="col">SWMM 5</th>
+                  <th className="text-left p-3 font-medium text-emerald-600 dark:text-emerald-400" scope="col">InfoWorks ICM</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/50" data-testid="row-solution-method">
+                  <td className="p-3 font-medium">Solution Method</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-solution">Implicit backward Euler with successive relaxation</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-solution">Preissmann 4-point scheme with Newton-Raphson</td>
+                </tr>
+                <tr className="border-b border-border/50 bg-muted/10" data-testid="row-discretization">
+                  <td className="p-3 font-medium">Discretization</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-discretization">Node-link (1 link per conduit)</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-discretization">Distributed (N points per conduit)</td>
+                </tr>
+                <tr className="border-b border-border/50" data-testid="row-surcharge">
+                  <td className="p-3 font-medium">Surcharge Handling</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-surcharge">Surcharge algorithm or Preissmann Slot (v5.1.013+)</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-surcharge">Preissmann Slot (default)</td>
+                </tr>
+                <tr className="border-b border-border/50 bg-muted/10" data-testid="row-timestep">
+                  <td className="p-3 font-medium">Time Step</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-timestep">CFL-based variable (typically 0.5-30s)</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-timestep">Convergence-based adaptive (larger steps possible)</td>
+                </tr>
+                <tr className="border-b border-border/50" data-testid="row-dry-networks">
+                  <td className="p-3 font-medium">Dry Networks</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-dry">Fully supported (zero flow)</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-dry">Base flow maintained (~5% depth)</td>
+                </tr>
+                <tr className="border-b border-border/50 bg-muted/10" data-testid="row-best-for">
+                  <td className="p-3 font-medium">Best For</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-usecase">Regulatory compliance, water quality, LID, research</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-usecase">Large networks, 1D/2D integration, real-time control</td>
+                </tr>
+                <tr data-testid="row-license">
+                  <td className="p-3 font-medium">License</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-license">Public domain (free)</td>
+                  <td className="p-3 text-muted-foreground" data-testid="text-icm-license">Commercial (Autodesk)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
         {/* Intro Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-card to-blue-50/5 dark:to-blue-900/10">
