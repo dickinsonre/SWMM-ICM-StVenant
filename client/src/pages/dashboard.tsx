@@ -223,53 +223,81 @@ export default function Dashboard() {
             </CardTitle>
             <CardDescription>Key differences at a glance</CardDescription>
           </CardHeader>
-          <div className="overflow-x-auto">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm" role="table" aria-label="Executive summary comparing SWMM5 and InfoWorks ICM">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
-                  <th className="text-left p-3 font-medium" scope="col">Characteristic</th>
-                  <th className="text-left p-3 font-medium text-blue-600 dark:text-blue-400" scope="col">SWMM 5</th>
-                  <th className="text-left p-3 font-medium text-emerald-600 dark:text-emerald-400" scope="col">InfoWorks ICM</th>
+                  <th className="text-left p-3 font-bold" scope="col">Characteristic</th>
+                  <th className="text-left p-3 font-bold text-blue-600 dark:text-blue-400" scope="col">SWMM 5</th>
+                  <th className="text-left p-3 font-bold text-emerald-600 dark:text-emerald-400" scope="col">InfoWorks ICM</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-border/50" data-testid="row-solution-method">
-                  <td className="p-3 font-medium">Solution Method</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-solution">Implicit backward Euler with successive relaxation</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-solution">Preissmann 4-point scheme with Newton-Raphson</td>
+                  <td className="p-3 font-semibold">Solution Method</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-solution">Implicit backward Euler with successive relaxation</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-solution">Preissmann 4-point scheme with Newton-Raphson</td>
                 </tr>
                 <tr className="border-b border-border/50 bg-muted/10" data-testid="row-discretization">
-                  <td className="p-3 font-medium">Discretization</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-discretization">Node-link (1 link per conduit)</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-discretization">Distributed (N points per conduit)</td>
+                  <td className="p-3 font-semibold">Discretization</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-discretization">Node-link (1 link per conduit)</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-discretization">Distributed (N points per conduit)</td>
                 </tr>
                 <tr className="border-b border-border/50" data-testid="row-surcharge">
-                  <td className="p-3 font-medium">Surcharge Handling</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-surcharge">Surcharge algorithm or Preissmann Slot (v5.1.013+)</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-surcharge">Preissmann Slot (default)</td>
+                  <td className="p-3 font-semibold">Surcharge Handling</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-surcharge">Surcharge algorithm or Preissmann Slot (v5.1.013+)</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-surcharge">Preissmann Slot (default)</td>
                 </tr>
                 <tr className="border-b border-border/50 bg-muted/10" data-testid="row-timestep">
-                  <td className="p-3 font-medium">Time Step</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-timestep">CFL-based variable (typically 0.5-30s)</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-timestep">Convergence-based adaptive (larger steps possible)</td>
+                  <td className="p-3 font-semibold">Time Step</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-timestep">CFL-based variable (typically 0.5-30s)</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-timestep">Convergence-based adaptive (larger steps possible)</td>
                 </tr>
                 <tr className="border-b border-border/50" data-testid="row-dry-networks">
-                  <td className="p-3 font-medium">Dry Networks</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-dry">Fully supported (zero flow)</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-dry">Base flow maintained (~5% depth)</td>
+                  <td className="p-3 font-semibold">Dry Networks</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-dry">Fully supported (zero flow)</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-dry">Base flow maintained (~5% depth)</td>
                 </tr>
                 <tr className="border-b border-border/50 bg-muted/10" data-testid="row-best-for">
-                  <td className="p-3 font-medium">Best For</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-usecase">Regulatory compliance, water quality, LID, research</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-usecase">Large networks, 1D/2D integration, real-time control</td>
+                  <td className="p-3 font-semibold">Best For</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-usecase">Regulatory compliance, water quality, LID, research</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-usecase">Large networks, 1D/2D integration, real-time control</td>
                 </tr>
                 <tr data-testid="row-license">
-                  <td className="p-3 font-medium">License</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-swmm-license">Public domain (free)</td>
-                  <td className="p-3 text-muted-foreground" data-testid="text-icm-license">Commercial (Autodesk)</td>
+                  <td className="p-3 font-semibold">License</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-swmm-license">Public domain (free)</td>
+                  <td className="p-3 text-foreground/80 font-medium" data-testid="text-icm-license">Commercial (Autodesk)</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3 p-4">
+            {[
+              { label: "Solution Method", swmm: "Implicit backward Euler", icm: "Preissmann 4-point + Newton-Raphson" },
+              { label: "Discretization", swmm: "Node-link (1 link/conduit)", icm: "Distributed (N points/conduit)" },
+              { label: "Surcharge", swmm: "Surcharge algo or Preissmann Slot (v5.1.013+)", icm: "Preissmann Slot (default)" },
+              { label: "Time Step", swmm: "CFL-based (0.5-30s)", icm: "Convergence-based (larger)" },
+              { label: "Dry Networks", swmm: "Fully supported", icm: "Base flow (~5% depth)" },
+              { label: "Best For", swmm: "Regulatory, WQ, LID, research", icm: "Large networks, 1D/2D, RTC" },
+              { label: "License", swmm: "Public domain (free)", icm: "Commercial (Autodesk)" },
+            ].map((row, i) => (
+              <div key={i} className="border border-border rounded-lg p-3 bg-card">
+                <div className="font-bold text-sm mb-2">{row.label}</div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="font-semibold text-blue-600 dark:text-blue-400 mb-1">SWMM 5</div>
+                    <div className="text-foreground/80 font-medium">{row.swmm}</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-emerald-600 dark:text-emerald-400 mb-1">ICM</div>
+                    <div className="text-foreground/80 font-medium">{row.icm}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </Card>
 
