@@ -188,6 +188,29 @@ export default function Dashboard() {
                 <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">63 Interactive Diagrams</Badge>
               </div>
             </div>
+            
+            <Separator orientation="vertical" className="h-6 mx-3 hidden md:block" />
+            
+            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[400px] hidden md:block">
+              <TabsList className="grid w-full grid-cols-4 h-9">
+                <TabsTrigger value="visuals" className="text-xs">
+                  <BarChart2 className="h-3.5 w-3.5 mr-1" />
+                  Visuals
+                </TabsTrigger>
+                <TabsTrigger value="topic" className="text-xs">
+                  <LayoutGrid className="h-3.5 w-3.5 mr-1" />
+                  Topic
+                </TabsTrigger>
+                <TabsTrigger value="table" className="text-xs">
+                  <TableIcon className="h-3.5 w-3.5 mr-1" />
+                  Table
+                </TabsTrigger>
+                <TabsTrigger value="source" className="text-xs" data-testid="tab-source">
+                  <FileCode className="h-3.5 w-3.5 mr-1" />
+                  Source
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
           <div className="flex items-center gap-2">
             <Button 
@@ -195,6 +218,7 @@ export default function Dashboard() {
               size="sm" 
               className="hidden md:flex gap-2"
               onClick={() => handleExport("json")}
+              title="Download comparison data as JSON file"
             >
               <Download className="h-3.5 w-3.5" />
               <span>JSON</span>
@@ -204,6 +228,7 @@ export default function Dashboard() {
               size="sm" 
               className="hidden md:flex gap-2"
               onClick={() => handleExport("md")}
+              title="Download comparison data as Markdown document"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Markdown</span>
@@ -245,33 +270,17 @@ export default function Dashboard() {
                         <li>Provide engineering sign-off</li>
                       </ul>
                     </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <p className="font-medium text-foreground">Export Options:</p>
+                      <ul className="list-disc pl-5 text-sm space-y-1">
+                        <li><strong>JSON:</strong> Raw data format for developers or importing into other tools</li>
+                        <li><strong>Markdown:</strong> Formatted document for Word, Notion, or documentation systems</li>
+                      </ul>
+                    </div>
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
             </Dialog>
-
-            <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
-
-            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[400px]">
-              <TabsList className="grid w-full grid-cols-4 h-9">
-                <TabsTrigger value="visuals" className="text-xs">
-                  <BarChart2 className="h-3.5 w-3.5 mr-1" />
-                  Visuals
-                </TabsTrigger>
-                <TabsTrigger value="topic" className="text-xs">
-                  <LayoutGrid className="h-3.5 w-3.5 mr-1" />
-                  Topic
-                </TabsTrigger>
-                <TabsTrigger value="table" className="text-xs">
-                  <TableIcon className="h-3.5 w-3.5 mr-1" />
-                  Table
-                </TabsTrigger>
-                <TabsTrigger value="source" className="text-xs" data-testid="tab-source">
-                  <FileCode className="h-3.5 w-3.5 mr-1" />
-                  Source
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
         </div>
       </header>
