@@ -453,8 +453,11 @@ export function BuildupWashoffDiagram() {
       
       if (washoffFunction === "emc") {
         load = 10 * runoffRate;
-      } else {
+      } else if (washoffFunction === "rating") {
         load = 0.5 * Math.pow(runoffRate, 1.5) * (currentMass / 10);
+      } else {
+        const k = 0.3;
+        load = k * currentMass * runoffRate;
       }
       
       currentMass = Math.max(0, currentMass - load * 0.3);
@@ -632,6 +635,7 @@ export function BuildupWashoffDiagram() {
                   <SelectContent>
                     <SelectItem value="emc">EMC (Constant)</SelectItem>
                     <SelectItem value="rating">Rating Curve</SelectItem>
+                    <SelectItem value="exponential">Exponential</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
