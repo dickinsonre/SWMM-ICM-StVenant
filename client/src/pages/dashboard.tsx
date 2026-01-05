@@ -16,7 +16,8 @@ import {
   Cloud,
   Leaf,
   Code,
-  ChevronRight
+  ChevronRight,
+  Gauge
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -56,6 +57,7 @@ import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparis
 import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/components/visuals/ClimateInfiltrationDiagrams";
 import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
 import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
+import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram } from "@/components/visuals/ICMSimulationDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const DIAGRAM_CATEGORIES = [
@@ -64,6 +66,7 @@ const DIAGRAM_CATEGORIES = [
   { id: "advanced", label: "Advanced Analysis", icon: "chart" },
   { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
+  { id: "icm", label: "ICM Simulation", icon: "gauge" },
   { id: "green", label: "Green Infrastructure", icon: "leaf" },
   { id: "architecture", label: "Code Architecture", icon: "code" },
 ];
@@ -392,7 +395,8 @@ export default function Dashboard() {
                                        cat.id === "advanced" ? BarChart2 : 
                                        cat.id === "hydrologic" ? Droplet : 
                                        cat.id === "climate" ? Cloud : 
-                                       cat.id === "green" ? Leaf : Code;
+                                       cat.id === "green" ? Leaf : 
+                                       cat.id === "icm" ? Gauge : Code;
                  return (
                    <Button
                      key={cat.id}
@@ -527,6 +531,24 @@ export default function Dashboard() {
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
                     <DualSolverArchitectureDiagram />
+                 </div>
+               </div>
+             )}
+
+             {/* ICM Simulation Parameters */}
+             {activeCategory === "icm" && (
+               <div className="space-y-6" data-testid="section-icm">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">ICM Simulation Parameters</h3>
+                   <p className="text-muted-foreground">Interactive diagrams explaining InfoWorks ICM's critical solver parameters and numerical stability controls.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <BaseFlowStabilityDiagram />
+                    <SpatialDiscretizationDiagram />
+                    <ICMPreissmannSlotDiagram />
+                    <AdaptiveTimeSteppingDiagram />
+                    <HeadlossTransitionDiagram />
+                    <ColdStartInitializationDiagram />
                  </div>
                </div>
              )}
@@ -788,6 +810,26 @@ export default function Dashboard() {
                 <Separator />
 
                 <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-cyan-600 dark:text-cyan-400 uppercase tracking-wide">ICM Simulation</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "ICMSimulationDiagrams.tsx", components: ["BaseFlowStabilityDiagram", "SpatialDiscretizationDiagram", "ICMPreissmannSlotDiagram", "AdaptiveTimeSteppingDiagram", "HeadlossTransitionDiagram", "ColdStartInitializationDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-icm-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-icm-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-icm-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
                   <h4 className="font-medium text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">Data & Configuration</h4>
                   <div className="grid md:grid-cols-2 gap-2">
                     {[
@@ -824,9 +866,10 @@ export default function Dashboard() {
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-5">client/src/components/visuals/ClimateInfiltrationDiagrams.tsx</div>
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-6">client/src/components/visuals/GreenInfraDiagrams.tsx</div>
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/components/visuals/ArchitecturalDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/src/data/comparison-data.ts</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/public/comparison_tool.py</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-10">client/src/pages/dashboard.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/src/components/visuals/ICMSimulationDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/src/data/comparison-data.ts</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-10">client/public/comparison_tool.py</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-11">client/src/pages/dashboard.tsx</div>
                   </div>
                 </ScrollArea>
               </div>
