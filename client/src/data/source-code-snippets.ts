@@ -972,6 +972,47 @@ export const TOPIC_ORDER: { key: string; title: string }[] = [
   { key: "practical_implications", title: "Practical Implications" },
 ];`,
 
+  "TemporalDynamicsDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Clock, Waves, Ruler, Droplets, Play, Pause, RotateCcw, AlertTriangle, CheckCircle, XCircle, Zap } from "lucide-react";
+
+// 4 Interactive Diagrams for Temporal Dynamics & Solver Stability:
+// 1. WaveTravelVsTimestepDiagram - CFL condition visualization
+// 2. AdaptiveTimestepSimulatorDiagram - SWMM5 fixed vs ICM adaptive stepping
+// 3. ConduitLengtheningCheatCodeDiagram - Virtual pipe stretcher detail view
+// 4. DryStartVsBaseFlowDiagram - Startup stability comparison
+
+export function WaveTravelVsTimestepDiagram() {
+  // Shows a pipe with wave propagation
+  // Compares SWMM5 node-link (wave crosses entire pipe) vs ICM distributed (segments)
+  // Demonstrates physics violation when Δt >> wave travel time
+}
+
+export function AdaptiveTimestepSimulatorDiagram() {
+  // Three modes: SWMM5 Fixed (30s), SWMM5 Fixed (900s - crashes), ICM Adaptive
+  // Shows timestep and convergence error graphs during a storm
+  // ICM's halving algorithm provides stability "safety net"
+}
+
+export function ConduitLengtheningCheatCodeDiagram() {
+  // Side-by-side real vs lengthened pipe
+  // Shows L_virtual = c × Δt_lengthening calculation
+  // Explains why Summary Reports show >1000% pipe lengths
+}
+
+export function DryStartVsBaseFlowDiagram() {
+  // Tank with valve opening at t=0
+  // SWMM5 dry start: oscillations before settling
+  // ICM base flow: smooth transition
+  // Flow response graph shows the difference
+}`,
+
   "DynamicWaveOptionsDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1241,6 +1282,7 @@ export const FILE_PATHS: Record<string, string> = {
   "SolverDiagrams.tsx": "client/src/components/visuals/SolverDiagrams.tsx",
   "SolverOptionsDiagrams.tsx": "client/src/components/visuals/SolverOptionsDiagrams.tsx",
   "DynamicWaveOptionsDiagrams.tsx": "client/src/components/visuals/DynamicWaveOptionsDiagrams.tsx",
+  "TemporalDynamicsDiagrams.tsx": "client/src/components/visuals/TemporalDynamicsDiagrams.tsx",
   "AdvancedDiagrams.tsx": "client/src/components/visuals/AdvancedDiagrams.tsx",
   "TimestepComparisonDiagram.tsx": "client/src/components/visuals/TimestepComparisonDiagram.tsx",
   "HydrologicDiagrams.tsx": "client/src/components/visuals/HydrologicDiagrams.tsx",
