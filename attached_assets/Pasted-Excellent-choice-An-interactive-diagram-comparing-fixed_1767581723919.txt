@@ -1,0 +1,61 @@
+Excellent choice. An interactive diagram comparing **fixed vs. variable time-stepping** gets to the heart of solver stability, efficiency, and accuracy. Here's a concept for a clear, educational visualization.
+
+### **Interactive Diagram: Fixed vs. Adaptive Time-Stepping**
+
+**Purpose:** To visually demonstrate how the choice of time-stepping strategy (fixed vs. variable/adaptive) affects a simulation's efficiency, stability, and ability to capture hydraulic events.
+
+---
+
+#### **Visual Concept: The "Hydraulic Wave Runner"**
+Imagine a simple, horizontal conduit with a wave (a rising and falling hydrograph) moving through it from left to right. Above the conduit, two parallel "control panels" and timelines show how each method computes the solution.
+
+**Panel Layout:**
+*   **Left Side:** Controls and Legend.
+*   **Main Area:** Two side-by-side simulations of the **same wave event** in the **same pipe**.
+    *   **TOP SIMULATION:** Labeled **"SWMM5 Fixed Time Step"**.
+    *   **BOTTOM SIMULATION:** Labeled **"Adaptive/Variable Time Step"**.
+
+---
+
+#### **Interactive Elements & Dynamics:**
+
+1.  **Wave Event Selector:**
+    *   A dropdown or buttons to choose a **"Test Wave"**:
+        *`Gentle Ramp` (slowly varying flow)
+        *`Sharp Surge` (fast-rising hydrograph)
+        *`Dry Start` (flow starting from empty pipe)
+
+2.  **Solver Controls:**
+    *   **For FIXED (SWMM5-like):**
+        *   Slider: **`Routing Time Step (Δt_fixed)`** (e.g., 1 sec to 60 sec).
+        *   Display: **Calculated Courant Number (`Cr`)** based on wave speed and pipe length.
+    *   **For ADAPTIVE (ICM-like):**
+        *   Slider: **`Minimum Δt`** (e.g., 0.1 sec)
+        *   Slider: **`Maximum Δt`** (e.g., 60 sec)
+        *   Slider: **`Convergence Tolerance`** (Tight ↔ Loose)
+
+3.  **The Animation & Visualization:**
+    *   As the wave moves, a **clock** advances the simulation time.
+    *   **In the FIXED timeline:** A metronome-like tick marks each **fixed interval**. The solution (wave height/flow) is calculated *only* at these ticks. The wave is approximated as a series of straight lines between these points.
+    *   **In the ADAPTIVE timeline:** The ticks are **irregular**. As the wave begins to rise sharply, the ticks become very frequent (close to`Minimum Δt`). During slow, steady periods, the ticks spread out (towards`Maximum Δt`).
+    *   **Key visual feedback:**
+        *   Color-code the wave trajectory: **Green** where the numerical solution closely matches a "true" smooth curve, **Yellow/Orange** where there's minor error/dispersion, **Red** where the approximation is poor or becomes unstable.
+        *   For the **Fixed** method, using a`Δt` that is too large for the`Sharp Surge` wave will cause the red zones to appear (numerical damping/oscillation) and a warning like **"High Courant Number: Risk of Instability"**.
+        *   For the **Adaptive** method, show a secondary plot of **`Δt used` vs. Time**, which visibly shrinks and grows with the wave's activity.
+
+4.  **"Step-Through" Mode:**
+    *   Allow the user to pause and advance the simulation one time step at a time.
+    *   For each step, display a tooltip or side-panel explaining:
+        *   **Fixed:** *"Computing new heads and flows for time = X. Using the same Δt as previous step."*
+        *   **Adaptive:** *"Previous step did not converge to tolerance. Reducing Δt from Y to Z and re-running step."* or *"Flow change is minimal. Increasing Δt from A to B for next step."*
+
+---
+
+#### **Educational Insights to Highlight:**
+
+*   **Trade-off - Stability vs. Speed:** A small fixed`Δt` is stable but computationally expensive for long simulations. A large fixed`Δt` is fast but can "miss" fast dynamics or crash.
+*   **Adaptive Efficiency:** The adaptive method **automatically finds the optimal balance**, spending computational effort only when and where it's needed.
+*   **The Courant Condition (`Cr`):** Explain that for explicit schemes,`Cr < 1` is required for stability. Implicit schemes (like SWMM5's) are more stable but can still produce inaccurate results if`Δt` is too large relative to the wave speed. The adaptive method inherently manages this.
+*   **Practical Implication:** This is a key reason why complex, surcharging systems in SWMM5 often require very short (1-5 second) time steps for the *entire simulation*, while ICM can start with a 30-second step and only drop to 1 second during a surge, resulting in faster overall runtimes.
+
+This diagram would powerfully illustrate a fundamental numerical concept that directly impacts every modeler's experience (waiting for runs to finish, debugging crashes).

@@ -45,6 +45,7 @@ import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, D
 import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, AdaptiveTimestepDiagram, ThetaParameterDiagram, Coupling1D2DDiagram } from "@/components/visuals/SolverOptionsDiagrams";
 import { ConvergenceSnapshotsDiagram, MassBalanceErrorDiagram, OscillationChallengeDiagram, WettingFrontDiagram, TimestepDashboardDiagram, SolverDecisionTreeDiagram } from "@/components/visuals/AdvancedDiagrams";
 import { RunoffProcessDiagram, RTKDiagram, BuildupWashoffDiagram, HydrologicWorkflowDiagram } from "@/components/visuals/HydrologicDiagrams";
+import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparisonDiagram";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -488,6 +489,10 @@ export default function Dashboard() {
                <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <TimestepDashboardDiagram />
                   <SolverDecisionTreeDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-1 gap-6 mt-6">
+                  <TimestepComparisonDiagram />
                </div>
              </div>
 

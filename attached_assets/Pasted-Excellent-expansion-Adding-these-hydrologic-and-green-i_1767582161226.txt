@@ -1,0 +1,92 @@
+Excellent expansion. Adding these **hydrologic and green infrastructure components** transforms your app from a pure hydraulic comparison into a complete **urban water management modeling showcase**. Here are interactive diagram concepts for each.
+
+---
+
+### **1. Interactive Diagram: Snowmelt Algorithms**
+
+**Purpose:** To compare how SWMM5 and ICM InfoWorks simulate snow accumulation, heat exchange, and meltwater generation.
+
+**Visual Concept: The "Snowpack Energy Balance" Diagram.**
+A cross-section of a snowpack on a subcatchment, with **energy inputs/outputs** as arrows affecting the pack.
+
+**Interactive Elements & Dynamics:**
+*   **Weather Controls:** Sliders for`Air Temperature`,`Wind Speed`,`Solar Radiation`, and`Rainfall Intensity`.
+*   **Snowpack State Display:** Shows`Snow Depth (cm)`,`Liquid Water Content (%)`,`Pack Temperature`.
+*   **Model Toggle:** Switch between **"SWMM5 (Degree-Day/Energy Balance)"** and **"ICM InfoWorks (Enhanced Energy Balance)"**.
+*   **Diagram Interaction:**
+    1.  In **SWMM5 Mode**, the primary melt drivers are`Air Temp` (degree-day factor) and`Rainfall Temp`. The user adjusts a "Degree-Day Factor" slider. The visualization shows meltwater as a simple, proportional outflow from the pack base.
+    2.  In **ICM InfoWorks Mode**, the visualization becomes more detailed. Arrows for each energy flux (solar radiation, long-wave radiation, convective heat, latent heat, advective heat from rain, ground heat) appear. Adjusting the weather controls changes the size of these arrows. The **net energy flux** is calculated and drives the melt rate, which is shown as a more dynamic, nuanced outflow.
+*   **Educational Insight:** Contrasts SWMM5's more empirical, lumped approach with ICM's (typically) more physically-based, distributed energy balance approach, highlighting when the added complexity is warranted (e.g., in complex terrain or for climate change studies).
+
+---
+
+### **2. Interactive Diagram: LID Controls (SWMM5) vs. SUDS (ICM InfoWorks)**
+
+**Purpose:** To compare the conceptualization and parameterization of decentralized stormwater controls in each platform.
+
+**Visual Concept: A "Control Practice Builder" with Layer-by-Layer Visualization.**
+A side-by-side builder for a **Green Roof** or **Permeable Pavement** system.
+
+**Interactive Elements & Dynamics:**
+*   **Practice Selector:** Choose`Green Roof`,`Permeable Pavement`,`Bio-Retention Cell`,`Infiltration Trench`.
+*   **SWMM5 (LID Control) Panel:**
+    *   The practice is shown as distinct, vertical **"LID Layers"** (Surface, Soil, Storage, Drain).
+    *   The user can adjust layer-specific parameters:`Surface Roughness`,`Soil Thickness/Conductivity`,`Storage Void Ratio`,`Drain Coefficient/Exponent`.
+    *   A rainfall hyetograph is applied. The animation shows water moving down through each layer, with outflows from each layer (runoff, infiltration, underdrain flow) plotted on a graph.
+*   **ICM InfoWorks (SUDS) Panel:**
+    *   The same practice is shown, but it is defined as a **network of standard objects** (a subcatchment, a storage node, an orifice, a soakaway).
+    *   The user adjusts parameters of these hydraulic objects (e.g., storage node dimensions, orifice settings, infiltration model for the soakaway).
+    *   The same rainfall is applied. The animation shows flow through the *network* of objects, with the same output hydrograph.
+*   **Key Comparison Graph:** Show the **outflow hydrographs** from both models on the same chart. Initially, with default parameters, they will differ. The user's challenge is to **"Calibrate to Match"** by tweaking parameters in one model to replicate the results of the other.
+*   **Educational Insight:** Highlights the fundamental difference: SWMM5 LIDs are **pre-packaged vertical columns** with specialized algorithms, while ICM SUDS are **flexible, engineered networks** using standard hydraulic elements. This explains SWMM5's simplicity vs. ICM's flexibility for complex designs.
+
+---
+
+### **3. Interactive Diagram: ICM's Dual-Solver Architecture (Native vs. SWMM5 Engine)**
+
+**Purpose:** To clarify how InfoWorks ICM can host two separate solver engines and the implications for model building.
+
+**Visual Concept: A "Network Map" with Solver Assignment.**
+A schematic of a city with different drainage subsystems (e.g., a combined sewer area, a sanitary sewer, a storm channel).
+
+**Interactive Elements & Dynamics:**
+*   **Network Elements:** Draggable icons for`Manhole`,`Pipe`,`Pump`,`Outfall`.
+*   **Solver Assignment Tool:** Two highlight colors (e.g., Blue for **ICM Native Solver**, Green for **Embedded SWMM5 Engine**).
+*   **Interaction:**
+    1.  The user draws two small networks or uses pre-built ones.
+    2.  They select a network and assign it a solver by clicking a "Use ICM Solver" or "Use SWMM5 Engine" button.
+    3.  **Critical Visual Feedback:** The assigned network's elements change color. A pop-up explains the consequence: *"This network will use the Preissmann Slot and adaptive time-stepping"* (ICM) vs. *"This network will use the node-link method and user-defined time steps"* (SWMM5).
+    4.  A **"Run Simulation"** button executes both networks simultaneously. Results (hydrographs) are shown in separate graphs but on the same time axis.
+*   **Advanced Mode:** Show a scenario where the two modeled networks **interact** at a boundary (e.g., a flow diversion). A special "transfer node" icon appears, illustrating how ICM manages data exchange between the two different solvers at a defined interface.
+*   **Educational Insight:** Makes concrete the powerful but complex idea that within one ICM project, you can have independent networks using different hydraulic cores, allowing for legacy model integration or solver-appropriate application.
+
+---
+
+### **4. Interactive Diagram: Infiltration Method Shootout**
+
+**Purpose:** To compare the mathematics, assumptions, and outputs of different infiltration methods across both platforms.
+
+**Visual Concept: A "Soil Column Infiltrometer" Test.**
+A side-by-side view of a soil column with water ponded on top. The column has moisture sensors at different depths.
+
+**Interactive Elements & Dynamics:**
+*   **Soil & Rain Controls:**
+    *   Soil Type:`Sand`,`Loam`,`Clay` (pre-sets parameters).
+    *   Initial Condition:`Dry`,`Average`,`Wet` (sets initial deficit).
+    *   Rain Pattern:`Constant Intensity`,`Design Storm`.
+*   **Method Selector (SWMM5):** Buttons for`Horton`,`Green-Ampt`,`Curve Number`.
+*   **Method Selector (ICM InfoWorks):** Buttons for`Green-Ampt`,`Horton`,`Wallford`. (Note: Explain Wallford is a common proprietary method in UK-based models).
+*   **Animated Visualization:**
+    1.  Rain begins. A ponding depth is shown on the surface.
+    2.  A **wetting front** moves down the soil column. The speed of this front is governed by the selected method's equations.
+    3.  A real-time graph plots **Infiltration Rate (mm/hr) vs. Time**. The characteristic curves for each method are drawn:
+        *   **Horton:** Exponential decay from`f0` to`fmin`.
+        *   **Green-Ampt:** Sharper initial decay, asymptotically approaching`Ksat`.
+        *   **Curve Number:** Not a rate-based method; instead, show the **Cumulative Infiltration (Loss)** as a function of cumulative rainfall, following the SCS curve.
+*   **Educational Insight:**
+    *   **Horton:** Best for empirical calibration to data. Simple but not physically based.
+    *   **Green-Ampt:** Physically based (suction, conductivity). Better for event-based modeling where the wetting front is distinct.
+    *   **Curve Number (CN):** A lumped, event-total loss method. Not suitable for continuous simulation without modification. Highlight that this is a major conceptual difference between simple and complex models.
+    *   **Platform Nuance:** While both have Horton and Green-Ampt, their parameter names and default values may differ. The diagram can show these side-by-side (e.g., SWMM's "Max Infil Rate" vs. ICM's "f0").
+
+By adding these four diagrams, your app will offer an unparalleled, holistic understanding of the entire urban water modeling stack, from the sky (snow/rain) to the ground (infiltration/LIDs) and through the pipes (hydraulics).
