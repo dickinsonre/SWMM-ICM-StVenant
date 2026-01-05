@@ -18,7 +18,8 @@ import {
   Code,
   ChevronRight,
   Gauge,
-  Grid3X3
+  Grid3X3,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -61,6 +62,7 @@ import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/vi
 import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
 import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram, HeadlossJunctionDiagram, HeadlossSurchargeTransitionDiagram, HeadlossInferenceDiagram } from "@/components/visuals/ICMSimulationDiagrams";
 import { InletElementDiagram, HEC22InletCalculatorDiagram, FlowTransitionDiagram, InletEfficiencyCurvesDiagram } from "@/components/visuals/InletDiagrams";
+import { InertialTermsDiagram, NormalFlowCriterionDiagram, SurchargeMethodDeepDiveDiagram, VariableTimestepDiagram, ConduitLengtheningDiagram, MinNodalSurfaceAreaDiagram, ConvergenceTolerancesDiagram, ParallelThreadsDiagram } from "@/components/visuals/DynamicWaveOptionsDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -82,6 +84,7 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 const DIAGRAM_CATEGORIES = [
   { id: "solver", label: "Solver Mechanics", icon: "cpu" },
   { id: "options", label: "Solver Options", icon: "settings" },
+  { id: "dynwave", label: "Dynamic Wave Options", icon: "zap" },
   { id: "advanced", label: "Advanced Analysis", icon: "chart" },
   { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
@@ -176,7 +179,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">47 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">55 Interactive Diagrams</Badge>
               </div>
             </div>
           </div>
@@ -416,6 +419,7 @@ export default function Dashboard() {
                {DIAGRAM_CATEGORIES.map(cat => {
                  const IconComponent = cat.id === "solver" ? Cpu : 
                                        cat.id === "options" ? Settings : 
+                                       cat.id === "dynwave" ? Zap : 
                                        cat.id === "advanced" ? BarChart2 : 
                                        cat.id === "hydrologic" ? Droplet : 
                                        cat.id === "climate" ? Cloud : 
@@ -583,6 +587,42 @@ export default function Dashboard() {
                     <HeadlossJunctionDiagram />
                     <HeadlossSurchargeTransitionDiagram />
                     <HeadlossInferenceDiagram />
+                 </div>
+               </div>
+             )}
+
+             {/* Dynamic Wave Options */}
+             {activeCategory === "dynwave" && (
+               <div className="space-y-6" data-testid="section-dynwave">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Dynamic Wave Options</h3>
+                   <p className="text-muted-foreground">SWMM5's "control panel" for the numerical engine—inertia handling, flow limits, surcharge methods, and solver tuning.</p>
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Momentum & Flow Regime Controls</h4>
+                   <p className="text-muted-foreground text-sm">Settings that control how the solver handles inertia and limits flow conditions.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <InertialTermsDiagram />
+                    <NormalFlowCriterionDiagram />
+                    <SurchargeMethodDeepDiveDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Timestep & Stability Controls</h4>
+                   <p className="text-muted-foreground text-sm">Parameters that govern computational timesteps and numerical stability.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <VariableTimestepDiagram />
+                    <ConduitLengtheningDiagram />
+                    <MinNodalSurfaceAreaDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Solver Performance</h4>
+                   <p className="text-muted-foreground text-sm">Convergence settings and parallel processing options.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ConvergenceTolerancesDiagram />
+                    <ParallelThreadsDiagram />
                  </div>
                </div>
              )}
@@ -830,6 +870,7 @@ export default function Dashboard() {
                     {[
                       { file: "SolverDiagrams.tsx", components: ["DiscretizationDiagram", "PreissmannSlotDiagram", "WavePropagationDiagram", "DryNetworkDiagram", "NodeAreaDiagram", "ManholeVsNodeDiagram"] },
                       { file: "SolverOptionsDiagrams.tsx", components: ["CFLStabilityDiagram", "SurchargeMethodDiagram", "RoutingMethodFlowchart", "AdaptiveTimestepDiagram", "ThetaParameterDiagram", "Coupling1D2DDiagram"] },
+                      { file: "DynamicWaveOptionsDiagrams.tsx", components: ["InertialTermsDiagram", "NormalFlowCriterionDiagram", "SurchargeMethodDeepDiveDiagram", "VariableTimestepDiagram", "ConduitLengtheningDiagram", "MinNodalSurfaceAreaDiagram", "ConvergenceTolerancesDiagram", "ParallelThreadsDiagram"] },
                       { file: "AdvancedDiagrams.tsx", components: ["ConvergenceSnapshotsDiagram", "MassBalanceErrorDiagram", "OscillationChallengeDiagram", "WettingFrontDiagram", "TimestepDashboardDiagram", "SolverDecisionTreeDiagram"] },
                       { file: "TimestepComparisonDiagram.tsx", components: ["TimestepComparisonDiagram"] },
                     ].map((item, i) => (
@@ -1038,16 +1079,18 @@ export default function Dashboard() {
                   <div className="space-y-1 font-mono text-xs">
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-0">client/src/components/visuals/SolverDiagrams.tsx</div>
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-1">client/src/components/visuals/SolverOptionsDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-2">client/src/components/visuals/AdvancedDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-3">client/src/components/visuals/TimestepComparisonDiagram.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-4">client/src/components/visuals/HydrologicDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-5">client/src/components/visuals/ClimateInfiltrationDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-6">client/src/components/visuals/GreenInfraDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/components/visuals/ArchitecturalDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/src/components/visuals/ICMSimulationDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/src/data/comparison-data.ts</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-10">client/public/comparison_tool.py</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-11">client/src/pages/dashboard.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-2">client/src/components/visuals/DynamicWaveOptionsDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-3">client/src/components/visuals/AdvancedDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-4">client/src/components/visuals/TimestepComparisonDiagram.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-5">client/src/components/visuals/HydrologicDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-6">client/src/components/visuals/ClimateInfiltrationDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/components/visuals/GreenInfraDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/src/components/visuals/ArchitecturalDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/src/components/visuals/ICMSimulationDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-10">client/src/components/visuals/InletDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-11">client/src/data/comparison-data.ts</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-12">client/public/comparison_tool.py</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-13">client/src/pages/dashboard.tsx</div>
                   </div>
                 </ScrollArea>
               </div>

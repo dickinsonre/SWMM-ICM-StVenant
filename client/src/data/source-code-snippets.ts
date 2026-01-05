@@ -972,6 +972,75 @@ export const TOPIC_ORDER: { key: string; title: string }[] = [
   { key: "practical_implications", title: "Practical Implications" },
 ];`,
 
+  "DynamicWaveOptionsDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Zap, Waves, Gauge, Timer, Ruler, Box, Target, Cpu, Play, Pause, RotateCcw, AlertTriangle, CheckCircle } from "lucide-react";
+
+// 8 Interactive Diagrams for SWMM5 Dynamic Wave Options:
+// 1. InertialTermsDiagram - KEEP/DAMPEN/IGNORE momentum equation tuner
+// 2. NormalFlowCriterionDiagram - Slope & Froude flow regime limiter
+// 3. SurchargeMethodDeepDiveDiagram - EXTRAN vs Preissmann Slot algorithms
+// 4. VariableTimestepDiagram - CFL condition governor with Courant display
+// 5. ConduitLengtheningDiagram - Virtual pipe stretcher for short pipes
+// 6. MinNodalSurfaceAreaDiagram - Junction "bathtub" storage parameter
+// 7. ConvergenceTolerancesDiagram - Iterative solver tolerance visualizer
+// 8. ParallelThreadsDiagram - Multi-core workload dispatcher
+
+export function InertialTermsDiagram() {
+  // KEEP: Full inertia - accurate but can oscillate
+  // DAMPEN: Reduces inertia near critical flow - default/recommended
+  // IGNORE: Diffusion wave approximation - very stable but less accurate
+  const [inertiaMode, setInertiaMode] = useState("dampen");
+  // Animated wave showing effect of each mode on flow response
+}
+
+export function NormalFlowCriterionDiagram() {
+  // Criterion options: Slope, Froude, Both, None
+  // Shows pipe profile with real-time Fr and S_w calculation
+  // Demonstrates when normal flow limit is applied to cap supercritical flow
+}
+
+export function SurchargeMethodDeepDiveDiagram() {
+  // EXTRAN: dH/dt = (ΣQ_in - ΣQ_out) / (dΣQ/dH) - derivative-based
+  // SLOT: dH/dt = (ΣQ_in - ΣQ_out) / A_slot - continuity-based
+  // Visual comparison of algorithms with animated junction
+}
+
+export function VariableTimestepDiagram() {
+  // Shows Courant number for each pipe
+  // Displays variable timestep history vs fixed routing step
+  // Demonstrates CFL stability with color-coded indicators
+}
+
+export function ConduitLengtheningDiagram() {
+  // L_virtual = c × Δt_lengthening
+  // Shows original vs lengthened pipe when wave travel < timestep
+  // Displays lengthening ratio percentage
+}
+
+export function MinNodalSurfaceAreaDiagram() {
+  // dH/dt = Q_in / A_surface
+  // Animated junction filling with adjustable surface area
+  // Shows how larger area dampens water level oscillations
+}
+
+export function ConvergenceTolerancesDiagram() {
+  // Simulated iterative solver with error gauge
+  // Shows convergence vs max trials reached scenarios
+}
+
+export function ParallelThreadsDiagram() {
+  // Task distribution across multiple threads
+  // Shows diminishing returns with thread overhead
+}`,
+
   "InletDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1171,6 +1240,7 @@ if __name__ == "__main__":
 export const FILE_PATHS: Record<string, string> = {
   "SolverDiagrams.tsx": "client/src/components/visuals/SolverDiagrams.tsx",
   "SolverOptionsDiagrams.tsx": "client/src/components/visuals/SolverOptionsDiagrams.tsx",
+  "DynamicWaveOptionsDiagrams.tsx": "client/src/components/visuals/DynamicWaveOptionsDiagrams.tsx",
   "AdvancedDiagrams.tsx": "client/src/components/visuals/AdvancedDiagrams.tsx",
   "TimestepComparisonDiagram.tsx": "client/src/components/visuals/TimestepComparisonDiagram.tsx",
   "HydrologicDiagrams.tsx": "client/src/components/visuals/HydrologicDiagrams.tsx",

@@ -1,0 +1,97 @@
+Excellent addition. These SWMM5 Dynamic Wave options are the "control panel" for the solver's numerical engine, and visualizing them would provide immense practical value. Here are interactive diagram ideas for each major parameter group.
+
+### 1. **Inertial Terms Selector (KEEP/DAMPEN/IGNORE)**
+*   **Purpose:** To visualize the impact of the inertia term (`∂Q/∂t`) in the Saint-Venant momentum equation on flow stability and realism.
+*   **Interactive Diagram: The Momentum Equation Tuner**
+    *   **Visual:** The full 1D momentum equation is displayed:`∂Q/∂t + ∂(Q²/A)/∂x + gA(∂H/∂x) + gAS_f = 0`
+    *   **Three Interactive Toggles:**`KEEP`,`DAMPEN`,`IGNORE`. Selecting one highlights/grays out the`∂Q/∂t` (local) and`∂(Q²/A)/∂x` (convective) inertia terms in the equation.
+    *   **Side-by-Side Simulation:**
+        *   A simple channel with a rapidly rising upstream hydrograph is shown.
+        *   Three result lines (HGL or flow) animate simultaneously for each setting.
+        *`KEEP`: Shows potential oscillations/instability if the time step is too large for the wave speed (high Courant number).
+        *`DAMPEN`: Shows a stabilized, slightly diffused wave (the default and recommended setting for most models).
+        *`IGNORE`: Shows a heavily damped, smooth wave (Diffusion Wave approximation), missing the inertial "overshoot" often seen in real surge events.
+    *   **Educational Insight:** Teaches why`DAMPEN` is the default—it provides a stability "safety net" by reducing the influence of inertia as flow approaches critical/supercritical conditions, preventing blow-ups while retaining most dynamic wave fidelity.
+
+### 2. **Normal Flow Criterion & Flow Regime Map**
+*   **Purpose:** To show how and when SWMM5 limits conduit flow to normal (uniform) flow, preventing unrealistic supercritical flow in steep pipes.
+*   **Interactive Diagram: The Pipe Profile & Regime Checker**
+    *   **Visual:** A longitudinal profile of a steep conduit. Graphs show Water Surface Slope (S_w) and Froude Number (Fr) along its length.
+    *   **Criterion Selector:** A dropdown with`Slope`,`Froude No.`,`Slope & Froude`,`None`.
+    *   **Animation:** A flow wave moves down the pipe. The calculated S_w and Fr values are plotted in real-time.
+        *   With`Slope & Froude` selected, the moment **either** S_w > Conduit Slope **or** Fr > 1.0, the flow line in the conduit turns red and a note appears: **"Normal Flow Limit Applied."** The flow rate is capped at Manning's equation for that depth.
+        *   Switching to`None` shows the uncapped dynamic wave solution, which may show supercritical flow (Fr > 1).
+    *   **Educational Insight:** Demonstrates that the`Slope & Froude` criterion is the most robust safeguard. It prevents the model from generating unrealistic, frictionless supercritical flow in steep pipes, which is a common source of mass balance errors.
+
+### 3. **Surcharge Method (EXTRAN vs. Slot) Deep Dive**
+*   **Purpose:** To expand on the earlier Preissmann slot diagram by showing the *algorithmic difference* and its consequence.
+*   **Interactive Diagram: The Nodal Head Update Algorithm**
+    *   **Visual:** A junction node with multiple surcharged pipes connected.
+    *   **Two Modes:**`EXTRAN Surcharge Alg.` vs.`Preissmann Slot`.
+    *   **`EXTRAN` Mode Animation:**
+        1.  Shows all connecting links as "full." The node is highlighted.
+        2.  A simplified equation appears:`dH/dt = (ΣQ_in - ΣQ_out) / (dΣQ/dH)`. A note explains: "Head updated using a linear approximation (derivative). No physical storage change."
+        3.  A potential issue is noted: "Can become unstable if derivatives are large or change quickly."
+    *   **`Slot` Mode Animation:**
+        1.  Shows the same full pipes, but with a thin, imaginary "slot" atop each.
+        2.  The node's continuity equation is shown:`dH/dt = (ΣQ_in - ΣQ_out) / A_slot`.
+        3.  The head rises smoothly into the slot area. "Wave speed continuity maintained. Generally more stable."
+    *   **Educational Insight:** Explains that the **Slot** method isn't just a conceptual trick; it changes the fundamental numerical method at surcharged nodes from a derivative-based update to a continuity-based update, improving stability.
+
+### 4. **Variable Time Step & Courant Condition Governor**
+*   **Purpose:** To show how SWMM5 dynamically adjusts its computational time step to maintain stability (CFL condition).
+*   **Interactive Diagram: The Adaptive Time Step Engine**
+    *   **Visual:** A network with several pipes of different lengths and slopes. A wave is propagating through it.
+    *   **Controls:** Sliders for`Routing Step` (fixed),`Adjustment Factor` (e.g., 0.75), and`Min Variable Step`.
+    *   **Real-Time Display:**
+        *   A timeline shows the **actual variable time step** used (a bar) vs. the fixed`Routing Step` (a line).
+        *   For each conduit, the`Courant Number (Cr = c*Δt/Δx)` is calculated and color-coded (Green: Cr ≤ 1, Red: Cr > 1).
+    *   **Interaction:** The user adjusts pipe length or wave speed (via depth). They see the`Δt` shrink automatically in the shortest/fastest conduit to keep Cr ≤ 1 * Adjustment Factor. If it hits the`Min Variable Step`, that cell flashes.
+    *   **Educational Insight:** Makes the "black box" of variable time-stepping transparent. Shows why models with short, steep pipes require tiny time steps and longer run times, and how the adjustment factor adds a safety margin.
+
+### 5. **Conduit Lengthening (The "Virtual Pipe Stretcher")**
+*   **Purpose:** To demystify one of SWMM5's most unique stability features.
+*   **Interactive Diagram:**
+    *   **Visual:** Two side-by-side representations of the same short, steep pipe.
+        *   **Left (Original):** Shows the wave speed`c` and length`L`. Calculates`Wave Travel Time = L/c`.
+        *   **Right (Lengthened):** Shows the pipe visually "stretched." The new, longer`L_virtual` is displayed.
+    *   **Control:** A slider for`Time Step for Conduit Lengthening`.
+    *   **Logic:** The diagram calculates`Wave Travel Time`. If it is **less than** the`Time Step for Lengthening`, the right pipe stretches until`L_virtual / c = [Lengthening Time Step]`.
+    *   **Output:** It displays the`Lengthening Ratio = L_virtual / L_original`. A note explains: "This artificial wave travel time slows down the solution, allowing a larger global time step without violating stability."
+    *   **Educational Insight:** Answers the common user question: "Why does my Summary Report show pipe lengths > 1000% of actual?" It's a necessary numerical stabilization for very short pipes, traded off against some temporal smoothing of the hydrograph.
+
+### 6. **Minimum Nodal Surface Area & Storage Effect**
+*   **Purpose:** To illustrate how this parameter prevents unrealistically rapid water level changes in small junctions.
+*   **Interactive Diagram: The Junction "Bathtub"**
+    *   **Visual:** A junction node represented as a cylindrical storage unit.
+    *   **Control:** A slider for`Minimum Nodal Surface Area`.
+    *   **Scenario:** A sudden, large inflow`Q_in` enters the node.
+    *   **Animation:** The continuity equation`dH/dt = Q_in / A_surface` is shown.
+        *   With a small`A_surface` (e.g., pipe area only),`dH/dt` is huge, causing the water level to spike unrealistically fast.
+        *   As the user increases`Minimum Nodal Surface Area` to the default (π*(2ft)² ≈ 12.6 ft²), the same`Q_in` causes a much gentler, more physically plausible rise in water level.
+    *   **Educational Insight:** Clarifies that this is a **numerical storage parameter**, not a physical one. It adds artificial surface area to nodes (like small manholes) to dampen oscillations and improve stability, mimicking the "swirl and storage" effect not explicitly modeled.
+
+### 7. **Convergence Tolerances & Iteration Limit**
+*   **Purpose:** To show the "stop button" for SWMM5's iterative matrix solver within each time step.
+*   **Interactive Diagram: The Iterative Solver Window**
+    *   **Visual:** A simple 3-node, 2-link network. For a given time step, the solver needs to find heads`H1, H2, H3` that satisfy flow continuity.
+    *   **Animation:** It shows an iterative guess-check cycle:
+        1.  **Guess** initial heads.
+        2.  **Calculate** flows based on head differences.
+        3.  **Check** continuity error at each node (`ΣQ ≠ 0`?).
+        4.  **Adjust** heads (solving`A x = b`).
+    *   **Controls & Gauges:**
+        *`Head Convergence Tolerance`: A horizontal line on a "Max Node Error" gauge.
+        *`Maximum Trials`: A counter.
+    *   **The user clicks "Solve This Time Step":** The iteration runs. The "Max Node Error" gauge drops with each trial. The process stops **either** when the error falls below the tolerance line (✔ CONVERGED) **or** when the trial counter hits the maximum (`X` MAX TRIALS REACHED).
+    *   **Educational Insight:** Explains what "NO CONVERGENCE" warnings mean. A tight tolerance with low max trials may fail to converge; a loose tolerance may converge quickly but give a less accurate solution.
+
+### 8. **Parallel Threads Selector**
+*   **Purpose:** A simple visual for multi-core performance scaling.
+*   **Interactive Diagram: The Workload Dispatcher**
+    *   **Visual:** A "Task List" of conduits that need flow routing calculations in a time step.
+    *   **Control:** A slider for`Number of Parallel Threads` from 1 to`N` (e.g., 8).
+    *   **Animation:** With 1 thread, tasks are processed sequentially in a single queue. With 2+ threads, the task list is split into separate queues that are processed simultaneously. A timer shows the simulated "computation time" decreasing with more threads, but with diminishing returns (due to overhead).
+    *   **Educational Insight:** Clarifies that parallelism speeds up the *matrix assembly and conduit flow calculations*, not the linear solver itself. It's most effective for large, branched networks, not small or highly looped ones.
+
+Integrating these diagrams would transform SWMM5's "Dynamic Wave Options" dialog from a list of cryptic settings into a comprehensible control panel for the numerical engine, perfectly complementing the app's existing solver architecture explanations.
