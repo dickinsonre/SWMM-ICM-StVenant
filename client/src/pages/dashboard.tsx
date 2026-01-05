@@ -60,6 +60,22 @@ import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRouti
 import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram } from "@/components/visuals/ICMSimulationDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
+const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
+  governing_equations: [{ category: "solver", label: "Wave Propagation" }],
+  discretisation_unknowns: [{ category: "solver", label: "Discretization" }, { category: "icm", label: "Spatial Discretization" }],
+  node_surface_area: [{ category: "solver", label: "Node Area" }, { category: "solver", label: "Manhole vs Node" }],
+  time_integration: [{ category: "options", label: "Theta Parameter" }],
+  nonlinear_solver: [{ category: "architecture", label: "Matrix Solver" }, { category: "icm", label: "Adaptive Time Stepping" }],
+  time_step_control: [{ category: "options", label: "Adaptive Timestep" }, { category: "options", label: "CFL Stability" }, { category: "advanced", label: "Timestep Dashboard" }],
+  pressurisation_surcharge: [{ category: "solver", label: "Preissmann Slot" }, { category: "icm", label: "ICM Preissmann Slot" }, { category: "options", label: "Surcharge Method" }],
+  inertia_supercritical_handling: [{ category: "solver", label: "Wave Propagation" }],
+  stability_devices: [{ category: "icm", label: "Base Flow Stability" }, { category: "icm", label: "Headloss Transition" }],
+  conduit_models: [{ category: "options", label: "Routing Flowchart" }],
+  dry_network_handling: [{ category: "solver", label: "Dry Network" }, { category: "advanced", label: "Wetting Front" }, { category: "icm", label: "Cold Start" }],
+  stability_robustness: [{ category: "advanced", label: "Convergence Snapshots" }, { category: "advanced", label: "Mass Balance Error" }, { category: "advanced", label: "Oscillation Challenge" }],
+  practical_implications: [{ category: "advanced", label: "Timestep Dashboard" }, { category: "advanced", label: "Solver Decision Tree" }],
+};
+
 const DIAGRAM_CATEGORIES = [
   { id: "solver", label: "Solver Mechanics", icon: "cpu" },
   { id: "options", label: "Solver Options", icon: "settings" },
@@ -153,7 +169,10 @@ export default function Dashboard() {
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
-              <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider mt-1">Hydraulic Solver Comparison</p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
+                <Badge variant="secondary" className="text-[9px] px-1.5 py-0" data-testid="badge-diagram-count">40 Interactive Diagrams</Badge>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -596,14 +615,42 @@ export default function Dashboard() {
                   className="border border-border rounded-lg bg-card px-4 shadow-sm overflow-hidden"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
-                    <div className="flex items-center gap-3 text-left">
+                    <div className="flex items-center gap-3 text-left flex-1">
                       <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0 text-muted-foreground text-xs font-mono font-medium">
                         {topic.key.substring(0, 2).toUpperCase()}
                       </div>
                       <span className="font-semibold text-lg">{topic.label}</span>
+                      {TOPIC_DIAGRAM_MAP[topic.key] && (
+                        <Badge variant="secondary" className="ml-2 text-[10px]" data-testid={`badge-diagram-${topic.key}`}>
+                          {TOPIC_DIAGRAM_MAP[topic.key].length} diagram{TOPIC_DIAGRAM_MAP[topic.key].length > 1 ? 's' : ''}
+                        </Badge>
+                      )}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="pb-6 pt-2">
+                    {TOPIC_DIAGRAM_MAP[topic.key] && (
+                      <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/50">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs text-muted-foreground">Related diagrams:</span>
+                          {TOPIC_DIAGRAM_MAP[topic.key].map((diag, idx) => (
+                            <Button 
+                              key={idx}
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 text-xs gap-1"
+                              onClick={() => {
+                                setActiveView("visuals");
+                                setActiveCategory(diag.category);
+                              }}
+                              data-testid={`button-view-diagram-${topic.key}-${idx}`}
+                            >
+                              <BarChart2 className="h-3 w-3" />
+                              {diag.label}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="grid md:grid-cols-2 gap-8 relative">
                       {/* Vertical separator line for desktop */}
                       <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2"></div>
@@ -668,8 +715,28 @@ export default function Dashboard() {
                       key={topic.key} 
                       className={`grid grid-cols-[250px_1fr_1fr] border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors ${index % 2 === 0 ? 'bg-card' : 'bg-card/50'}`}
                     >
-                      <div className="p-4 text-sm font-medium text-foreground/80">
-                        {topic.label}
+                      <div className="p-4 text-sm font-medium text-foreground/80 space-y-2">
+                        <span>{topic.label}</span>
+                        {TOPIC_DIAGRAM_MAP[topic.key] && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {TOPIC_DIAGRAM_MAP[topic.key].map((diag, idx) => (
+                              <Button 
+                                key={idx}
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-5 text-[10px] px-1.5 gap-0.5"
+                                onClick={() => {
+                                  setActiveView("visuals");
+                                  setActiveCategory(diag.category);
+                                }}
+                                data-testid={`button-table-diagram-${topic.key}-${idx}`}
+                              >
+                                <BarChart2 className="h-2.5 w-2.5" />
+                                {diag.label}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="p-4 text-sm text-muted-foreground border-l border-border/50 space-y-2">
                          <ul className="list-disc pl-4 space-y-1 marker:text-blue-300">
