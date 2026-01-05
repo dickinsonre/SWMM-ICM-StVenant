@@ -1,0 +1,62 @@
+Based on this detailed list of ICM InfoWorks simulation parameters, here are ideas for interactive diagrams that would demystify their functions and illustrate their impact on a simulation. These visualizations would turn abstract numerical settings into tangible concepts.
+
+### 1. **Base Flow for Numerical Stability**
+*   **Core Parameters:**`base_flow_factor`,`min_base_flow_depth`,`slope_where_base_flow_doubled`
+*   **Interactive Diagram: The "Virtual Wetting" Concept**
+    *   **Visual:** A side-view of a dry or near-dry conduit with a small base flow depth (`y_base`) visualized as a thin blue film along the invert.
+    *   **Sliders:**
+        *`Base Flow Factor`: Adjusts the height of the blue film as a percentage of the pipe's full height.
+        *`Minimum Base Flow Depth`: Sets an absolute minimum film thickness.
+    *   **Interaction & Educational Goal:** As the user adjusts the factor, the diagram shows the calculated`y_base` using the provided formula:`y_base = y_sed + MAX(DLMIN, DLFAC * (y_full - y_sed))`. A second slider for conduit slope can show when the base flow depth doubles. The key lesson is that this **virtual flow** is added at the upstream boundary for stability but subtracted at the downstream node, so it doesn't affect the reported **net flow** or mass balance. It explains *why* velocities at very low depths might be underestimated in the model versus reality.
+
+### 2. **Spatial Discretization & Computational Nodes**
+*   **Core Parameters:**`min_space_step`,`max_space_step`,`width_multiplier`,`min_computational_nodes`
+*   **Interactive Diagram: The Computational Mesh Builder**
+    *   **Visual:** A single conduit of variable length and width is displayed.
+    *   **Controls:**
+        *   Inputs: Conduit`Length`,`Width`,`Height`.
+        *   Sliders:`Conduit Width Multiplier`,`Min/Max Space Step`.
+    *   **Interaction & Educational Goal:** The diagram calculates and visualizes the red computational nodes placed along the conduit. The number of nodes is determined by:`Space Step = Width Multiplier * MIN(Width, Height)`, bounded by`Min/Max Space Step`. The user can see how wider pipes or a larger multiplier lead to more nodes (finer resolution) and increased computational cost. It visually enforces the rule of a minimum of 5 nodes per link.
+
+### 3. **Preissmann Slot & Pressurization**
+*   **Core Parameters:**`min_slot_width`,`celerity_ratio`
+*   **Interactive Diagram: The "Virtual Slot" Width Tuner**
+    *   **Visual:** A cross-section of a circular pipe transitioning from free-surface to surcharged flow. The Preissmann slot is shown as a narrow vertical extension above the crown.
+    *   **Sliders:**
+        *`Celerity Ratio`: Primary control for slot width.
+        *`Minimum Slot Width`: Absolute lower bound.
+    *   **Interaction & Educational Goal:** As the user adjusts the`Celerity Ratio`, the slot width changes dynamically according to the formula`BSLOT = G * AREAF / (CELRAT * CELCHR)**2`. Text explains that a higher ratio creates a narrower slot, increasing wave speed in surcharged conditions but potentially adding "virtual storage." The diagram contrasts a wide slot (stable, adds storage) with a narrow slot (more physically accurate for large trunks, less stable).
+
+### 4. **Adaptive Time Stepping & Convergence Control**
+*   **Core Parameters:**`sim_time_weighting` (Theta θ),`sim_tolerance_flow/depth/level`,`sim_max_iterations`,`sim_max_halvings`
+*   **Interactive Diagram: The Newton-Raphson Solver "Engine Room"**
+    *   **Visual:** A flowchart or control panel representing a single timestep's solution process.
+    *   **Process Simulation:**
+        1.  **Start:** Uses θ (`sim_time_weighting`) to weight the scheme (slider from 0.5 to 1.0).
+        2.  **Iterate:** A counter shows Newton-Raphson iterations increasing toward`sim_max_iterations`.
+        3.  **Check Convergence:** Compares the incremental change (Δx) to the tolerance (`sim_tolerance_flow`, etc.). If met, the step is accepted, and the timestep may double.
+        4.  **Fail & Retry:** If`max_iterations` is hit without convergence, the "timestep halving" counter increments. After`sim_max_halvings`, the run fails.
+    *   **Educational Goal:** Shows how θ controls numerical damping (0.65 = stable, slight smoothing). Explains the trade-off between tight tolerances (accuracy, more iterations) and loose tolerances (speed, potential mass balance errors). Makes the convergence loop tangible.
+
+### 5. **Headloss Transition Zone**
+*   **Core Parameters:**`hl_trans_bottom`,`hl_trans_top`,`dont_linearise_k`
+*   **Interactive Diagram: Headloss "Ramp" Visualizer**
+    *   **Visual:** A graph with flow depth (from 0 to pipe full) on the X-axis and applied friction headloss (as a multiplier from 0 to 1) on the Y-axis.
+    *   **Sliders:**`Bottom of headloss transition`,`Top of headloss transition`.
+    *   **Interaction:** The graph shows a ramp. From depth=0 to the`Bottom` value, headloss is 0. From the`Bottom` to`Top` value, headloss scales linearly from 0 to 100%. Above the`Top` value, full headloss is applied. The`dont_linearise_k` toggle would overlay a second, non-linear "true" conveyance curve, highlighting the potential instability (turning point) vs. the stable, linearized default.
+    *   **Educational Goal:** Clearly illustrates how ICM phases in friction at low depths to avoid unrealistically high resistance that can stall a model, a common stabilization technique.
+
+### 6. **Initialization Process (The "Cold Start")**
+*   **Core Parameters:**`phase_in_time`,`steady_tol_flow/depth`,`ini_time_weighting` (θ=1.0)
+*   **Interactive Diagram: The Ramp-Up Sequence**
+    *   **Visual:** A timeline from t=0 to the end of the`phase_in_time`.
+    *   **Animation:** Shows boundary conditions (inflows, tidal levels) starting at zero and ramping up linearly to their initial values over the specified`phase_in_time`. A progress bar shows the steady-state solver working with θ=1.0 (maximum damping) to find a stable initial condition before the main simulation begins.
+    *   **Educational Goal:** Explains why initialization is a separate, damped process to avoid numerical shock at the start of a simulation, especially for dry or complex systems. Shows how failure here leads to repeated attempts with a longer phase-in time.
+
+### Summary & Implementation Priority
+
+1.  **High Impact (Critical for Stability):** "Base Flow" and "Adaptive Time Stepping" diagrams. These explain the most common reasons for model crashes or inaccuracies.
+2.  **Core Solver Understanding:** "Preissmann Slot" and "Spatial Discretization" diagrams. These explain fundamental architectural choices in ICM.
+3.  **Advanced Tuning:** "Headloss Transition" and "Initialization" diagrams. These are for users troubleshooting specific low-flow or start-up issues.
+
+Creating these interactive controls would transform the "Model Parameters" dialog from a list of mysterious numbers into a dynamic learning laboratory, empowering users to make informed decisions rather than just using defaults.

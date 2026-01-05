@@ -9,7 +9,14 @@ import {
   Download,
   FileCode,
   HelpCircle,
-  BarChart2
+  BarChart2,
+  Cpu,
+  Settings,
+  Droplet,
+  Cloud,
+  Leaf,
+  Code,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -48,10 +55,22 @@ import { RunoffProcessDiagram, RTKDiagram, BuildupWashoffDiagram, HydrologicWork
 import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparisonDiagram";
 import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/components/visuals/ClimateInfiltrationDiagrams";
 import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
+import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
+
+const DIAGRAM_CATEGORIES = [
+  { id: "solver", label: "Solver Mechanics", icon: "cpu" },
+  { id: "options", label: "Solver Options", icon: "settings" },
+  { id: "advanced", label: "Advanced Analysis", icon: "chart" },
+  { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
+  { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
+  { id: "green", label: "Green Infrastructure", icon: "leaf" },
+  { id: "architecture", label: "Code Architecture", icon: "code" },
+];
 
 export default function Dashboard() {
   const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
+  const [activeCategory, setActiveCategory] = useState("solver");
 
   const handleExport = (format: "json" | "md") => {
     let content = "";
@@ -365,184 +384,178 @@ export default function Dashboard() {
 
         {activeView === "visuals" && (
            <div className="space-y-6 animate-in fade-in duration-500">
-             <div className="relative h-56 w-full rounded-xl overflow-hidden mb-8 border border-border shadow-md">
-                {/* Network Pattern Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                  <svg className="absolute inset-0 w-full h-full opacity-30" aria-hidden="true">
-                    <defs>
-                      <pattern id="network-grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                        <circle cx="30" cy="30" r="3" className="fill-blue-400" />
-                        <circle cx="0" cy="0" r="2" className="fill-emerald-400" />
-                        <circle cx="60" cy="0" r="2" className="fill-emerald-400" />
-                        <circle cx="0" cy="60" r="2" className="fill-emerald-400" />
-                        <circle cx="60" cy="60" r="2" className="fill-emerald-400" />
-                        <line x1="0" y1="0" x2="30" y2="30" className="stroke-blue-400/50" strokeWidth="1" />
-                        <line x1="60" y1="0" x2="30" y2="30" className="stroke-emerald-400/50" strokeWidth="1" />
-                        <line x1="0" y1="60" x2="30" y2="30" className="stroke-blue-400/50" strokeWidth="1" />
-                        <line x1="60" y1="60" x2="30" y2="30" className="stroke-emerald-400/50" strokeWidth="1" />
-                        <line x1="30" y1="0" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
-                        <line x1="30" y1="60" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
-                        <line x1="0" y1="30" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
-                        <line x1="60" y1="30" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#network-grid)" />
-                  </svg>
-                  {/* Animated flow lines */}
-                  <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
-                    <defs>
-                      <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="transparent" />
-                        <stop offset="50%" stopColor="rgba(59, 130, 246, 0.6)" />
-                        <stop offset="100%" stopColor="transparent" />
-                      </linearGradient>
-                    </defs>
-                    <line x1="0" y1="80" x2="100%" y2="80" stroke="url(#flow-gradient)" strokeWidth="3" strokeLinecap="round">
-                      <animate attributeName="x1" values="-200;100%" dur="4s" repeatCount="indefinite" />
-                      <animate attributeName="x2" values="0;200%" dur="4s" repeatCount="indefinite" />
-                    </line>
-                    <line x1="0" y1="140" x2="100%" y2="140" stroke="url(#flow-gradient)" strokeWidth="2" strokeLinecap="round">
-                      <animate attributeName="x1" values="-300;100%" dur="6s" repeatCount="indefinite" />
-                      <animate attributeName="x2" values="0;200%" dur="6s" repeatCount="indefinite" />
-                    </line>
-                  </svg>
-                  {/* Pipe-like decorative elements */}
-                  <div className="absolute bottom-4 right-8 flex items-center gap-2 opacity-40">
-                    <div className="h-4 w-24 bg-slate-600 rounded-full" />
-                    <div className="h-8 w-8 rounded-full border-2 border-slate-500 bg-slate-700" />
-                    <div className="h-4 w-16 bg-slate-600 rounded-full" />
-                  </div>
-                  <div className="absolute top-4 right-16 flex items-center gap-1 opacity-30">
-                    <div className="h-3 w-12 bg-emerald-600/50 rounded-full" />
-                    <div className="h-5 w-5 rounded-full border border-emerald-500/50" />
-                    <div className="h-3 w-20 bg-emerald-600/50 rounded-full" />
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent flex flex-col justify-center px-8">
-                  <h2 className="text-3xl font-bold tracking-tight mb-2">Visual Analysis</h2>
-                  <p className="text-muted-foreground max-w-md">Key architectural differences between the solvers visualized.</p>
-                  <div className="flex items-center gap-4 mt-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <div className="h-2 w-2 rounded-full bg-blue-500" />
-                      <span>SWMM5</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                      <span>ICM</span>
-                    </div>
-                  </div>
-                </div>
+             {/* Category Menu */}
+             <div className="flex flex-wrap gap-2 p-4 bg-muted/30 rounded-lg border border-border" data-testid="diagram-category-menu">
+               {DIAGRAM_CATEGORIES.map(cat => {
+                 const IconComponent = cat.id === "solver" ? Cpu : 
+                                       cat.id === "options" ? Settings : 
+                                       cat.id === "advanced" ? BarChart2 : 
+                                       cat.id === "hydrologic" ? Droplet : 
+                                       cat.id === "climate" ? Cloud : 
+                                       cat.id === "green" ? Leaf : Code;
+                 return (
+                   <Button
+                     key={cat.id}
+                     variant={activeCategory === cat.id ? "default" : "outline"}
+                     size="sm"
+                     onClick={() => setActiveCategory(cat.id)}
+                     className="flex items-center gap-2"
+                     data-testid={`button-category-${cat.id}`}
+                   >
+                     <IconComponent className="h-4 w-4" />
+                     {cat.label}
+                     {activeCategory === cat.id && <ChevronRight className="h-3 w-3 ml-1" />}
+                   </Button>
+                 );
+               })}
              </div>
 
-             <div className="grid md:grid-cols-2 gap-6">
-                <DiscretizationDiagram />
-                <PreissmannSlotDiagram />
-             </div>
-             
-             <div className="grid md:grid-cols-2 gap-6">
-                <WavePropagationDiagram />
-                <DryNetworkDiagram />
-             </div>
-             
-             <div className="grid md:grid-cols-1 gap-6">
-                <ManholeVsNodeDiagram />
-             </div>
-             
-             <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
-                <NodeAreaDiagram />
-             </div>
+             {/* Solver Mechanics */}
+             {activeCategory === "solver" && (
+               <div className="space-y-6" data-testid="section-solver">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Solver Mechanics</h3>
+                   <p className="text-muted-foreground">Core discretization and fundamental solver architecture differences.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <DiscretizationDiagram />
+                    <PreissmannSlotDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <WavePropagationDiagram />
+                    <DryNetworkDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ManholeVsNodeDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
+                    <NodeAreaDiagram />
+                 </div>
+               </div>
+             )}
 
-             {/* Solver Options & Parameters Section */}
-             <div className="mt-12 pt-8 border-t border-border">
-               <div className="mb-6">
-                 <h3 className="text-2xl font-bold tracking-tight mb-2">Solver Options & Parameters</h3>
-                 <p className="text-muted-foreground">Interactive controls that engineers use to tune model behavior.</p>
+             {/* Solver Options */}
+             {activeCategory === "options" && (
+               <div className="space-y-6" data-testid="section-options">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Solver Options & Parameters</h3>
+                   <p className="text-muted-foreground">Interactive controls that engineers use to tune model behavior.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <CFLStabilityDiagram />
+                    <AdaptiveTimestepDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <SurchargeMethodDiagram />
+                    <ThetaParameterDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <RoutingMethodFlowchart />
+                    <Coupling1D2DDiagram />
+                 </div>
                </div>
+             )}
 
-               <div className="grid md:grid-cols-2 gap-6">
-                  <CFLStabilityDiagram />
-                  <AdaptiveTimestepDiagram />
+             {/* Advanced Analysis */}
+             {activeCategory === "advanced" && (
+               <div className="space-y-6" data-testid="section-advanced">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Advanced Solver Behavior & Diagnostics</h3>
+                   <p className="text-muted-foreground">Deep insights into solver convergence, stability, and practical engineering scenarios.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <ConvergenceSnapshotsDiagram />
+                    <MassBalanceErrorDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <OscillationChallengeDiagram />
+                    <WettingFrontDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <TimestepDashboardDiagram />
+                    <SolverDecisionTreeDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <TimestepComparisonDiagram />
+                 </div>
                </div>
-               
-               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <SurchargeMethodDiagram />
-                  <ThetaParameterDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <RoutingMethodFlowchart />
-                  <Coupling1D2DDiagram />
-               </div>
-             </div>
+             )}
 
-             {/* Advanced Solver Behavior & Diagnostics Section */}
-             <div className="mt-12 pt-8 border-t border-border">
-               <div className="mb-6">
-                 <h3 className="text-2xl font-bold tracking-tight mb-2">Advanced Solver Behavior & Diagnostics</h3>
-                 <p className="text-muted-foreground">Deep insights into solver convergence, stability, and practical engineering scenarios.</p>
+             {/* Hydrologic Processes */}
+             {activeCategory === "hydrologic" && (
+               <div className="space-y-6" data-testid="section-hydrologic">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">SWMM5 Hydrologic Processes</h3>
+                   <p className="text-muted-foreground">Rainfall-runoff transformation, RDII, and water quality modeling.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <HydrologicWorkflowDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <RunoffProcessDiagram />
+                    <RTKDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <BuildupWashoffDiagram />
+                 </div>
                </div>
+             )}
 
-               <div className="grid md:grid-cols-2 gap-6">
-                  <ConvergenceSnapshotsDiagram />
-                  <MassBalanceErrorDiagram />
+             {/* Climate & Infiltration */}
+             {activeCategory === "climate" && (
+               <div className="space-y-6" data-testid="section-climate">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Climate & Infiltration</h3>
+                   <p className="text-muted-foreground">Snowmelt algorithms and infiltration method comparisons.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <SnowmeltAlgorithmsDiagram />
+                    <InfiltrationShootoutDiagram />
+                 </div>
                </div>
-               
-               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <OscillationChallengeDiagram />
-                  <WettingFrontDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <TimestepDashboardDiagram />
-                  <SolverDecisionTreeDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-1 gap-6 mt-6">
-                  <TimestepComparisonDiagram />
-               </div>
-             </div>
+             )}
 
-             {/* SWMM5 Hydrologic Processes Section */}
-             <div className="mt-12 pt-8 border-t border-border">
-               <div className="mb-6">
-                 <h3 className="text-2xl font-bold tracking-tight mb-2">SWMM5 Hydrologic Processes</h3>
-                 <p className="text-muted-foreground">Rainfall-runoff transformation, RDII, and water quality modeling.</p>
+             {/* Green Infrastructure */}
+             {activeCategory === "green" && (
+               <div className="space-y-6" data-testid="section-green">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Green Infrastructure</h3>
+                   <p className="text-muted-foreground">LID/SUDS controls and ICM's dual-solver architecture.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <LIDvsSUDSDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <DualSolverArchitectureDiagram />
+                 </div>
                </div>
+             )}
 
-               <div className="grid md:grid-cols-1 gap-6">
-                  <HydrologicWorkflowDiagram />
+             {/* Code Architecture */}
+             {activeCategory === "architecture" && (
+               <div className="space-y-6" data-testid="section-architecture">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Code Architecture & Internals</h3>
+                   <p className="text-muted-foreground">Deep dive into SWMM5's internal operations, data structures, and processing pipeline.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <InputFileParserDiagram />
+                    <MatrixSolverDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <RTCRulesDiagram />
+                    <MassRoutingDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <SurchargeCodeDiagram />
+                    <GroundwaterExchangeDiagram />
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <MinorLossesDiagram />
+                    <ReportingSystemDiagram />
+                 </div>
                </div>
-
-               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <RunoffProcessDiagram />
-                  <RTKDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-1 gap-6 mt-6">
-                  <BuildupWashoffDiagram />
-               </div>
-             </div>
-
-             {/* Climate, Infiltration & Green Infrastructure Section */}
-             <div className="mt-12 pt-8 border-t border-border">
-               <div className="mb-6">
-                 <h3 className="text-2xl font-bold tracking-tight mb-2">Climate, Infiltration & Green Infrastructure</h3>
-                 <p className="text-muted-foreground">Snowmelt algorithms, infiltration methods, LID/SUDS controls, and ICM's dual-solver architecture.</p>
-               </div>
-
-               <div className="grid md:grid-cols-2 gap-6">
-                  <SnowmeltAlgorithmsDiagram />
-                  <InfiltrationShootoutDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-1 gap-6 mt-6">
-                  <LIDvsSUDSDiagram />
-               </div>
-               
-               <div className="grid md:grid-cols-1 gap-6 mt-6">
-                  <DualSolverArchitectureDiagram />
-               </div>
-             </div>
+             )}
            </div>
         )}
 
@@ -755,6 +768,26 @@ export default function Dashboard() {
                 <Separator />
 
                 <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-orange-600 dark:text-orange-400 uppercase tracking-wide">Code Architecture</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "ArchitecturalDiagrams.tsx", components: ["InputFileParserDiagram", "MatrixSolverDiagram", "RTCRulesDiagram", "MassRoutingDiagram", "SurchargeCodeDiagram", "GroundwaterExchangeDiagram", "MinorLossesDiagram", "ReportingSystemDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-arch-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-arch-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-arch-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
                   <h4 className="font-medium text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">Data & Configuration</h4>
                   <div className="grid md:grid-cols-2 gap-2">
                     {[
@@ -790,9 +823,10 @@ export default function Dashboard() {
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-4">client/src/components/visuals/HydrologicDiagrams.tsx</div>
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-5">client/src/components/visuals/ClimateInfiltrationDiagrams.tsx</div>
                     <div className="p-2 rounded bg-muted/30" data-testid="text-path-6">client/src/components/visuals/GreenInfraDiagrams.tsx</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/data/comparison-data.ts</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/public/comparison_tool.py</div>
-                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/src/pages/dashboard.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/components/visuals/ArchitecturalDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/src/data/comparison-data.ts</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/public/comparison_tool.py</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-10">client/src/pages/dashboard.tsx</div>
                   </div>
                 </ScrollArea>
               </div>
