@@ -46,6 +46,8 @@ import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, Ad
 import { ConvergenceSnapshotsDiagram, MassBalanceErrorDiagram, OscillationChallengeDiagram, WettingFrontDiagram, TimestepDashboardDiagram, SolverDecisionTreeDiagram } from "@/components/visuals/AdvancedDiagrams";
 import { RunoffProcessDiagram, RTKDiagram, BuildupWashoffDiagram, HydrologicWorkflowDiagram } from "@/components/visuals/HydrologicDiagrams";
 import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparisonDiagram";
+import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/components/visuals/ClimateInfiltrationDiagrams";
+import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -514,6 +516,27 @@ export default function Dashboard() {
                
                <div className="grid md:grid-cols-1 gap-6 mt-6">
                   <BuildupWashoffDiagram />
+               </div>
+             </div>
+
+             {/* Climate, Infiltration & Green Infrastructure Section */}
+             <div className="mt-12 pt-8 border-t border-border">
+               <div className="mb-6">
+                 <h3 className="text-2xl font-bold tracking-tight mb-2">Climate, Infiltration & Green Infrastructure</h3>
+                 <p className="text-muted-foreground">Snowmelt algorithms, infiltration methods, LID/SUDS controls, and ICM's dual-solver architecture.</p>
+               </div>
+
+               <div className="grid md:grid-cols-2 gap-6">
+                  <SnowmeltAlgorithmsDiagram />
+                  <InfiltrationShootoutDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-1 gap-6 mt-6">
+                  <LIDvsSUDSDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-1 gap-6 mt-6">
+                  <DualSolverArchitectureDiagram />
                </div>
              </div>
            </div>
