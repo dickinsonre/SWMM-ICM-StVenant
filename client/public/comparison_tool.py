@@ -81,6 +81,26 @@ KB: Dict[str, Dict] = {
                 "to prevent head update formulas from becoming unbounded as surface area vanishes.",
                 "Has multiple special-case adjustments for dry/critical conditions at conduit ends in dynamic wave analysis."
             ],
+            "snowmelt": [
+                "Uses a Degree-Day method: snowmelt = Cm × (T - Tb), where Cm is melt coefficient (mm/°C/day) and Tb is base temperature.",
+                "Simple, computationally efficient approach requiring minimal input parameters.",
+                "Best suited for applications where detailed energy balance data is unavailable."
+            ],
+            "infiltration": [
+                "Supports three infiltration methods: Horton (exponential decay), Green-Ampt (physics-based), and Curve Number (empirical).",
+                "Horton: f(t) = fc + (f0 - fc)e^(-kt), where f0 is initial rate, fc is minimum rate, k is decay constant.",
+                "Green-Ampt: based on Darcy's law with wetting front suction; Curve Number: uses SCS runoff curve number methodology."
+            ],
+            "lid_suds": [
+                "LID (Low Impact Development) controls modeled as vertical layer systems within subcatchments.",
+                "Layers include: surface, pavement, soil, storage, underdrain - each with specific parameters.",
+                "Types include: bio-retention, rain gardens, green roofs, permeable pavement, infiltration trenches, rain barrels."
+            ],
+            "dual_solver": [
+                "Uses a single dynamic wave solver based on the EXTRAN algorithm with successive relaxation iterations.",
+                "Does not provide alternative solver options - all dynamic wave routing uses the same implicit backward Euler scheme.",
+                "Stability managed through time step control and Froude-number-based inertia damping rather than solver switching."
+            ],
         },
         "sources": [
             {
@@ -147,6 +167,26 @@ KB: Dict[str, Dict] = {
                 "multiple flow states at low depths; base depth is 5% of conduit height (documentation provides example percentages).",
                 "Notes that base flow is introduced inside the network solver and removed within boundary conditions, preserving volume conservation."
             ],
+            "snowmelt": [
+                "Uses a full Energy Balance method accounting for: net radiation, sensible heat, latent heat, ground heat, and rain heat.",
+                "More accurate for variable weather conditions but requires comprehensive meteorological data.",
+                "Suitable for detailed analysis where climate data (radiation, wind, humidity) is available."
+            ],
+            "infiltration": [
+                "Primarily uses the Green-Ampt method for infiltration calculations in permeable surfaces.",
+                "Integrates infiltration with the broader hydrological cycle including evaporation and groundwater interactions.",
+                "Supports spatially varying infiltration parameters across the catchment."
+            ],
+            "lid_suds": [
+                "SUDS (Sustainable Urban Drainage Systems) modeled as dedicated network objects rather than subcatchment layers.",
+                "Each SUDS feature (pond, swale, tank) is a distinct network element with its own hydraulic properties.",
+                "Allows complex routing between SUDS features and integration with the pipe network."
+            ],
+            "dual_solver": [
+                "Provides dual-solver architecture: Saint-Venant (full dynamic wave) and TVD (Total Variation Diminishing) solvers.",
+                "TVD solver uses finite volume method for sharp-front tracking and supercritical/transcritical flow.",
+                "Users can assign different solvers to different parts of the network based on flow regime requirements."
+            ],
         },
         "sources": [
             {
@@ -167,6 +207,10 @@ TOPIC_ORDER: List[Tuple[str, str]] = [
     ("pressurisation_surcharge", "Pressurised flow and surcharge handling"),
     ("inertia_supercritical_handling", "Inertia/supercritical handling"),
     ("stability_devices", "Additional numerical stabilisation devices"),
+    ("snowmelt", "Snowmelt algorithms"),
+    ("infiltration", "Infiltration methods"),
+    ("lid_suds", "LID/SUDS green infrastructure"),
+    ("dual_solver", "Solver architecture"),
 ]
 
 

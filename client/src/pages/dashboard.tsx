@@ -51,7 +51,7 @@ import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/vi
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
-  const [activeView, setActiveView] = useState<"visuals" | "topic" | "table">("visuals");
+  const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
 
   const handleExport = (format: "json" | "md") => {
     let content = "";
@@ -197,19 +197,23 @@ export default function Dashboard() {
 
             <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
 
-            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[300px]">
-              <TabsList className="grid w-full grid-cols-3 h-9">
+            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="w-[400px]">
+              <TabsList className="grid w-full grid-cols-4 h-9">
                 <TabsTrigger value="visuals" className="text-xs">
-                  <BarChart2 className="h-3.5 w-3.5 mr-2" />
+                  <BarChart2 className="h-3.5 w-3.5 mr-1" />
                   Visuals
                 </TabsTrigger>
                 <TabsTrigger value="topic" className="text-xs">
-                  <LayoutGrid className="h-3.5 w-3.5 mr-2" />
+                  <LayoutGrid className="h-3.5 w-3.5 mr-1" />
                   Topic
                 </TabsTrigger>
                 <TabsTrigger value="table" className="text-xs">
-                  <TableIcon className="h-3.5 w-3.5 mr-2" />
+                  <TableIcon className="h-3.5 w-3.5 mr-1" />
                   Table
+                </TabsTrigger>
+                <TabsTrigger value="source" className="text-xs" data-testid="tab-source">
+                  <FileCode className="h-3.5 w-3.5 mr-1" />
+                  Source
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -650,6 +654,148 @@ export default function Dashboard() {
                   ))}
                 </div>
               </ScrollArea>
+            </Card>
+          </div>
+        )}
+
+        {activeView === "source" && (
+          <div className="space-y-6 animate-in fade-in duration-500" data-testid="source-view">
+            <div className="flex items-center gap-2 mb-4">
+              <FileCode className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold" data-testid="text-source-title">Source Code Files</h2>
+            </div>
+            
+            <Card className="border-border/60 shadow-md" data-testid="card-visualization-components">
+              <CardHeader className="pb-2 bg-muted/30">
+                <CardTitle className="text-base">Visualization Components</CardTitle>
+                <CardDescription>Interactive diagrams organized by category</CardDescription>
+              </CardHeader>
+              <div className="p-4 space-y-6">
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-blue-600 dark:text-blue-400 uppercase tracking-wide">Solver Mechanics</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "SolverDiagrams.tsx", components: ["DiscretizationDiagram", "PreissmannSlotDiagram", "WavePropagationDiagram", "DryNetworkDiagram", "NodeAreaDiagram", "ManholeVsNodeDiagram"] },
+                      { file: "SolverOptionsDiagrams.tsx", components: ["CFLStabilityDiagram", "SurchargeMethodDiagram", "RoutingMethodFlowchart", "AdaptiveTimestepDiagram", "ThetaParameterDiagram", "Coupling1D2DDiagram"] },
+                      { file: "AdvancedDiagrams.tsx", components: ["ConvergenceSnapshotsDiagram", "MassBalanceErrorDiagram", "OscillationChallengeDiagram", "WettingFrontDiagram", "TimestepDashboardDiagram", "SolverDecisionTreeDiagram"] },
+                      { file: "TimestepComparisonDiagram.tsx", components: ["TimestepComparisonDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-solver-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-solver-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-solver-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Hydrologic Processes</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "HydrologicDiagrams.tsx", components: ["RunoffProcessDiagram", "RTKDiagram", "BuildupWashoffDiagram", "HydrologicWorkflowDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-hydro-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-hydro-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-hydro-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-amber-600 dark:text-amber-400 uppercase tracking-wide">Climate & Infiltration</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "ClimateInfiltrationDiagrams.tsx", components: ["SnowmeltAlgorithmsDiagram", "InfiltrationShootoutDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-climate-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-climate-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-climate-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 uppercase tracking-wide">Green Infrastructure</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "GreenInfraDiagrams.tsx", components: ["LIDvsSUDSDiagram", "DualSolverArchitectureDiagram"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-green-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-green-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-green-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">Data & Configuration</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "comparison-data.ts", components: ["KB (Knowledge Base)", "TOPIC_ORDER"] },
+                      { file: "comparison_tool.py", components: ["CLI Tool (Python)"] },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/20 transition-colors" data-testid={`card-file-data-${i}`}>
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-data-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-data-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="border-border/60 shadow-md" data-testid="card-file-paths">
+              <CardHeader className="pb-2 bg-muted/30">
+                <CardTitle className="text-base">File Paths</CardTitle>
+                <CardDescription>Full paths for all source files</CardDescription>
+              </CardHeader>
+              <div className="p-4">
+                <ScrollArea className="h-64" data-testid="scroll-file-paths">
+                  <div className="space-y-1 font-mono text-xs">
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-0">client/src/components/visuals/SolverDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-1">client/src/components/visuals/SolverOptionsDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-2">client/src/components/visuals/AdvancedDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-3">client/src/components/visuals/TimestepComparisonDiagram.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-4">client/src/components/visuals/HydrologicDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-5">client/src/components/visuals/ClimateInfiltrationDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-6">client/src/components/visuals/GreenInfraDiagrams.tsx</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-7">client/src/data/comparison-data.ts</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-8">client/public/comparison_tool.py</div>
+                    <div className="p-2 rounded bg-muted/30" data-testid="text-path-9">client/src/pages/dashboard.tsx</div>
+                  </div>
+                </ScrollArea>
+              </div>
             </Card>
           </div>
         )}
