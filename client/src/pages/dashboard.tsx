@@ -44,6 +44,7 @@ import { KB, TOPIC_ORDER } from "@/data/comparison-data";
 import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram, ManholeVsNodeDiagram } from "@/components/visuals/SolverDiagrams";
 import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, AdaptiveTimestepDiagram, ThetaParameterDiagram, Coupling1D2DDiagram } from "@/components/visuals/SolverOptionsDiagrams";
 import { ConvergenceSnapshotsDiagram, MassBalanceErrorDiagram, OscillationChallengeDiagram, WettingFrontDiagram, TimestepDashboardDiagram, SolverDecisionTreeDiagram } from "@/components/visuals/AdvancedDiagrams";
+import { RunoffProcessDiagram, RTKDiagram, BuildupWashoffDiagram, HydrologicWorkflowDiagram } from "@/components/visuals/HydrologicDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -487,6 +488,27 @@ export default function Dashboard() {
                <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <TimestepDashboardDiagram />
                   <SolverDecisionTreeDiagram />
+               </div>
+             </div>
+
+             {/* SWMM5 Hydrologic Processes Section */}
+             <div className="mt-12 pt-8 border-t border-border">
+               <div className="mb-6">
+                 <h3 className="text-2xl font-bold tracking-tight mb-2">SWMM5 Hydrologic Processes</h3>
+                 <p className="text-muted-foreground">Rainfall-runoff transformation, RDII, and water quality modeling.</p>
+               </div>
+
+               <div className="grid md:grid-cols-1 gap-6">
+                  <HydrologicWorkflowDiagram />
+               </div>
+
+               <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <RunoffProcessDiagram />
+                  <RTKDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-1 gap-6 mt-6">
+                  <BuildupWashoffDiagram />
                </div>
              </div>
            </div>
