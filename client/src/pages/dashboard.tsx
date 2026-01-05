@@ -17,7 +17,8 @@ import {
   Leaf,
   Code,
   ChevronRight,
-  Gauge
+  Gauge,
+  Grid3X3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -59,6 +60,7 @@ import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/compon
 import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
 import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
 import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram, HeadlossJunctionDiagram, HeadlossSurchargeTransitionDiagram, HeadlossInferenceDiagram } from "@/components/visuals/ICMSimulationDiagrams";
+import { InletElementDiagram, HEC22InletCalculatorDiagram, FlowTransitionDiagram, InletEfficiencyCurvesDiagram } from "@/components/visuals/InletDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -84,6 +86,7 @@ const DIAGRAM_CATEGORIES = [
   { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
   { id: "icm", label: "ICM Simulation", icon: "gauge" },
+  { id: "inlets", label: "Surface-to-Sewer", icon: "grid" },
   { id: "green", label: "Green Infrastructure", icon: "leaf" },
   { id: "architecture", label: "Code Architecture", icon: "code" },
 ];
@@ -173,7 +176,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">43 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">47 Interactive Diagrams</Badge>
               </div>
             </div>
           </div>
@@ -417,7 +420,8 @@ export default function Dashboard() {
                                        cat.id === "hydrologic" ? Droplet : 
                                        cat.id === "climate" ? Cloud : 
                                        cat.id === "green" ? Leaf : 
-                                       cat.id === "icm" ? Gauge : Code;
+                                       cat.id === "icm" ? Gauge : 
+                                       cat.id === "inlets" ? Grid3X3 : Code;
                  return (
                    <Button
                      key={cat.id}
@@ -579,6 +583,22 @@ export default function Dashboard() {
                     <HeadlossJunctionDiagram />
                     <HeadlossSurchargeTransitionDiagram />
                     <HeadlossInferenceDiagram />
+                 </div>
+               </div>
+             )}
+
+             {/* Surface-to-Sewer Transitions (Inlets) */}
+             {activeCategory === "inlets" && (
+               <div className="space-y-6" data-testid="section-inlets">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Surface-to-Sewer Transitions</h3>
+                   <p className="text-muted-foreground">Inlet representation, HEC-22 equations, and flow transition scenarios between surface and sewer systems.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <InletElementDiagram />
+                    <HEC22InletCalculatorDiagram />
+                    <FlowTransitionDiagram />
+                    <InletEfficiencyCurvesDiagram />
                  </div>
                </div>
              )}
@@ -948,6 +968,31 @@ export default function Dashboard() {
                         <div className="mt-2 flex flex-wrap gap-1">
                           {item.components.map((c, j) => (
                             <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-icm-${i}-${j}`}>{c}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Surface-to-Sewer (Inlets)</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {[
+                      { file: "InletDiagrams.tsx", components: ["InletElementDiagram", "HEC22InletCalculatorDiagram", "FlowTransitionDiagram", "InletEfficiencyCurvesDiagram"] },
+                    ].map((item, i) => (
+                      <div 
+                        key={i} 
+                        className="p-3 rounded-lg border border-border/50 bg-card/50 hover:bg-muted/30 hover:border-primary/50 transition-colors cursor-pointer" 
+                        data-testid={`card-file-inlets-${i}`}
+                        onClick={() => setSelectedFile(item.file)}
+                      >
+                        <code className="text-xs font-mono text-primary" data-testid={`text-filename-inlets-${i}`}>{item.file}</code>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {item.components.map((c, j) => (
+                            <Badge key={j} variant="outline" className="text-[10px]" data-testid={`badge-component-inlets-${i}-${j}`}>{c}</Badge>
                           ))}
                         </div>
                       </div>

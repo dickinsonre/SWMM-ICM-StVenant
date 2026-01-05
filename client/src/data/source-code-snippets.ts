@@ -972,6 +972,122 @@ export const TOPIC_ORDER: { key: string; title: string }[] = [
   { key: "practical_implications", title: "Practical Implications" },
 ];`,
 
+  "InletDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Droplets, ArrowDown, ArrowUp, Gauge, Waves, Grid3X3 } from "lucide-react";
+
+export function InletElementDiagram() {
+  const [surfaceDepth, setSurfaceDepth] = useState([0.15]);
+  const [sewerHead, setSewerHead] = useState([0.5]);
+  const [inletCapacity, setInletCapacity] = useState([50]);
+  
+  // ICM conceptually splits a manhole into:
+  // - Above-ground (flooding) element
+  // - Below-ground (sewer) element
+  // Linked by an inlet with defined capacity
+  
+  const flowDirection = sewerHead[0] > surfaceDepth[0] * 3 ? "outflow" : "inflow";
+  
+  return (
+    <Card className="w-full" data-testid="inlet-element-diagram">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Grid3X3 className="w-5 h-5 text-blue-500" />
+          The Inlet Element: Surface-to-Sewer Connection
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* SVG visualization of manhole split into surface/sewer elements */}
+        {/* Animated water flow based on inflow/outflow mode */}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function HEC22InletCalculatorDiagram() {
+  const [inletType, setInletType] = useState<"curb" | "grate" | "combination">("grate");
+  const [gutterFlow, setGutterFlow] = useState([0.1]);
+  const [longitudinalSlope, setLongitudinalSlope] = useState([0.02]);
+  
+  // HEC-22 Efficiency Equations:
+  // Grate: E = Rf × Rs (frontal flow ratio × side flow ratio)
+  // Curb: E = 1 - (1 - L/Lt)^1.8 (length ratio)
+  // Combination: Weighted blend of both methods
+  
+  // Manning's equation for spread width:
+  // T = ((Q × n) / (0.376 × Sx^1.67 × S^0.5))^0.375
+  
+  return (
+    <Card className="w-full" data-testid="hec22-inlet-calculator">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Gauge className="w-5 h-5 text-emerald-500" />
+          HEC-22 Inlet Efficiency Calculator
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Interactive calculator with sliders for flow, slope, inlet length */}
+        {/* Real-time efficiency, captured flow, and bypass calculations */}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function FlowTransitionDiagram() {
+  const [scenario, setScenario] = useState<"inflow" | "outflow">("inflow");
+  
+  // Limit of Inflow: Street flooding occurs when rainfall exceeds 
+  //                  inlet capture capacity. Sewer has room.
+  
+  // Limit of Outflow: Sewer surcharge causes water to back up 
+  //                   through inlets to the surface.
+  
+  return (
+    <Card className="w-full" data-testid="flow-transition-diagram">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Waves className="w-5 h-5 text-cyan-500" />
+          Flow Transition Scenarios: Inflow vs Outflow
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Animated simulation of storm event */}
+        {/* Toggle between inflow-limited and outflow-limited scenarios */}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function InletEfficiencyCurvesDiagram() {
+  const [selectedType, setSelectedType] = useState<"curb" | "grate" | "sag">("grate");
+  
+  // Efficiency curves show:
+  // - Grate: Decreases with velocity (splash-over)
+  // - Curb: Less velocity-dependent, length-driven
+  // - Sag: Weir-to-orifice transition at ~12cm depth
+  
+  return (
+    <Card className="w-full" data-testid="inlet-efficiency-curves">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Droplets className="w-5 h-5 text-violet-500" />
+          Inlet Efficiency Curves
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* SVG chart showing efficiency vs velocity/depth */}
+        {/* Multiple curves for different inlet lengths */}
+      </CardContent>
+    </Card>
+  );
+}`,
+
   "comparison_tool.py": `#!/usr/bin/env python3
 """
 SWMM5 vs ICM Comparison Tool
@@ -1062,6 +1178,7 @@ export const FILE_PATHS: Record<string, string> = {
   "GreenInfraDiagrams.tsx": "client/src/components/visuals/GreenInfraDiagrams.tsx",
   "ArchitecturalDiagrams.tsx": "client/src/components/visuals/ArchitecturalDiagrams.tsx",
   "ICMSimulationDiagrams.tsx": "client/src/components/visuals/ICMSimulationDiagrams.tsx",
+  "InletDiagrams.tsx": "client/src/components/visuals/InletDiagrams.tsx",
   "comparison-data.ts": "client/src/data/comparison-data.ts",
   "comparison_tool.py": "client/public/comparison_tool.py",
 };
