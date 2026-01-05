@@ -862,22 +862,29 @@ export default function Dashboard() {
                       className={`grid grid-cols-[250px_1fr_1fr] border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors ${index % 2 === 0 ? 'bg-card' : 'bg-card/50'}`}
                     >
                       <div className="p-4 text-sm font-medium text-foreground/80 space-y-2">
-                        <span>{topic.label}</span>
+                        <div className="flex items-center gap-2">
+                          <span>{topic.label}</span>
+                          {TOPIC_DIAGRAM_MAP[topic.key] && (
+                            <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                              {TOPIC_DIAGRAM_MAP[topic.key].length} diagram{TOPIC_DIAGRAM_MAP[topic.key].length > 1 ? 's' : ''}
+                            </Badge>
+                          )}
+                        </div>
                         {TOPIC_DIAGRAM_MAP[topic.key] && (
-                          <div className="flex flex-wrap gap-1 mt-2">
+                          <div className="flex flex-wrap gap-1 pt-1">
                             {TOPIC_DIAGRAM_MAP[topic.key].map((diag, idx) => (
                               <Button 
                                 key={idx}
-                                variant="ghost" 
+                                variant="outline" 
                                 size="sm" 
-                                className="h-5 text-[10px] px-1.5 gap-0.5"
+                                className="h-6 text-[10px] px-2 gap-1 bg-primary/5 hover:bg-primary/10 border-primary/20"
                                 onClick={() => {
                                   setActiveView("visuals");
                                   setActiveCategory(diag.category);
                                 }}
                                 data-testid={`button-table-diagram-${topic.key}-${idx}`}
                               >
-                                <BarChart2 className="h-2.5 w-2.5" />
+                                <BarChart2 className="h-3 w-3 text-primary" />
                                 {diag.label}
                               </Button>
                             ))}
