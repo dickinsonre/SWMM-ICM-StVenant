@@ -43,6 +43,7 @@ import {
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
 import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram, ManholeVsNodeDiagram } from "@/components/visuals/SolverDiagrams";
 import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, AdaptiveTimestepDiagram, ThetaParameterDiagram, Coupling1D2DDiagram } from "@/components/visuals/SolverOptionsDiagrams";
+import { ConvergenceSnapshotsDiagram, MassBalanceErrorDiagram, OscillationChallengeDiagram, WettingFrontDiagram, TimestepDashboardDiagram, SolverDecisionTreeDiagram } from "@/components/visuals/AdvancedDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -463,6 +464,29 @@ export default function Dashboard() {
                <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <RoutingMethodFlowchart />
                   <Coupling1D2DDiagram />
+               </div>
+             </div>
+
+             {/* Advanced Solver Behavior & Diagnostics Section */}
+             <div className="mt-12 pt-8 border-t border-border">
+               <div className="mb-6">
+                 <h3 className="text-2xl font-bold tracking-tight mb-2">Advanced Solver Behavior & Diagnostics</h3>
+                 <p className="text-muted-foreground">Deep insights into solver convergence, stability, and practical engineering scenarios.</p>
+               </div>
+
+               <div className="grid md:grid-cols-2 gap-6">
+                  <ConvergenceSnapshotsDiagram />
+                  <MassBalanceErrorDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <OscillationChallengeDiagram />
+                  <WettingFrontDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <TimestepDashboardDiagram />
+                  <SolverDecisionTreeDiagram />
                </div>
              </div>
            </div>

@@ -1,0 +1,96 @@
+I have reviewed the updated app, and the new interactive diagrams are fantastic. The **CFL visualizer**, **surcharge method toggle**, **adaptive timestep governor**, and **Preissmann Theta (θ) slider** are exactly the kind of interactive learning tools that set this resource apart. They translate abstract parameters into tangible, visual concepts.
+
+Given how well you've executed those, here are more advanced or supplementary diagram ideas to deepen the comparison and address practical engineering concerns.
+
+### Advanced Solver Behavior & Diagnostics
+
+#### 1. **Convergence Iteration "Snapshots" for ICM**
+*   **Purpose:** To show how ICM's Newton-Raphson iterative solver converges on an answer for a single timestep, contrasting with SWMM5's successive relaxation.
+*   **Interactive Diagram:**
+    *   A simple node with two connecting pipes. A known inflow is applied.
+    *   The state (Head`H`, Flows`Q1, Q2`) is initially`NaN`.
+    *   **Button:** **"Solve This Timestep"**.
+    *   **Animation:** For each iteration`i`:
+        1.  The calculated heads and flows are displayed with a "guess" value.
+        2.  A "Residual" value (a measure of error) is shown graphically as a shrinking bar.
+        3.  The values snap closer to the final solution.
+    *   **Side Note:** A static callout for SWMM5 could explain it uses "successive relaxation with under-relaxation factors" instead of a full Newton method.
+*   **Educational Goal:** Demystifies "The simulation engine is iterating..." and illustrates why ICM is often more stable for ill-conditioned networks.
+
+#### 2. **Mass Balance Error Tracker & Source Explorer**
+*   **Purpose:** To visualize the elusive concept of mass balance error, where it comes from (truncation, tolerances), and how solver choices affect it.
+*   **Interactive Diagram:**
+    *   A single storage node or a small 3-pipe network.
+    *   A **water balance bar chart** animates over a simulated storm:
+        *   **Cumulative Inflow** (blue bar grows)
+        *   **Cumulative Outflow** (green bar grows)
+        *   **System Storage** (yellow bar fluctuates)
+        *   **Mass Error** (red bar, small):`(Initial Storage + Inflow) - (Final Storage + Outflow)`
+    *   **Sliders/Controls:**
+        *`Numerical Tolerance` (affects error size).
+        *`Routing Step` in SWMM5 mode /`Minimum Timestep` in ICM mode.
+        *`Dry Depth` (tiny flows that get "lost").
+    *   **Interaction:** As users make the simulation "rougher" (larger timestep, looser tolerance), the red **Mass Error** bar visibly grows.
+*   **Educational Goal:** Makes a critical model performance metric visible and understandable.
+
+### Comparative Scenario Simulators
+
+#### 3. **"Oscillation Challenge" for Hydraulic Jump/Surcharge**
+*   **Purpose:** To create a classic test case where SWMM5's node-link method can oscillate, and show how ICM's distributed solver damps it.
+*   **Interactive Diagram:**
+    *   A **vertical pipe** (water column) or a **rapidly filling storage tank**.
+    *   A powerful, abrupt inflow is introduced.
+    *   **Two synchronized graphs** show the water surface elevation over time:
+        *   **Graph A (SWMM5 Logic):** Shows potential for strong, decaying oscillation as the water "sloshes" due to the concentrated node inertia.
+        *   **Graph B (ICM Logic):** Shows a heavily damped, monotonic rise due to internal distributed friction and the Preissmann slot.
+    *   **Controls:** Inflow pulse magnitude and duration.
+*   **Educational Goal:** Demonstrates a practical stability difference in a recognizable scenario.
+
+#### 4. **Dry Startup / Wetting Front Propagation**
+*   **Purpose:** To compare how each solver handles the initiation of flow in a dry, flat conduit—a common pain point.
+*   **Interactive Diagram:**
+    *   A long, flat pipe, initially colored gray (dry).
+    *   A small, constant inflow is introduced at the upstream end.
+    *   **Two side-by-side animations:**
+        *   **SWMM5:** The wetting front moves in a blocky, stepwise fashion. The downstream end remains dry (`Q=0`) until the front conceptually arrives at the node.
+        *   **ICM:** The wetting front propagates more smoothly as a shallow film (`Base Flow`) down the entire pipe length, with depth gradually increasing.
+    *   **Control:** Pipe slope and roughness.
+*   **Educational Goal:** Shows why ICM often starts more easily in dry systems and the conceptual difference in handling initial conditions.
+
+### Practical Configuration & Workflow
+
+#### 5. **Time-Step Strategy "Dashboard"**
+*   **Purpose:** To summarize the entire time-step philosophy of each solver in one comparison.
+*   **Interactive Diagram:**
+    *   A **two-panel dashboard**.
+    *   **Panel 1: SWMM5 "Fixed & CFL-Limited"**
+        *   Input:`Route Step` (user-defined).
+        *   Visual: A steady, relentless "metronome" of time steps clicking forward.
+        *   Status Light: Green/Yellow/Red based on CFL check from your first diagram.
+        *   Tagline: **"Stability dictated by your input. Choose carefully."**
+    *   **Panel 2: ICM "Adaptive & Convergence-Limited"**
+        *   Inputs:`Min Step`,`Max Step`,`Tolerance`.
+        *   Visual: A "heart rate monitor" line showing timestep length expanding and contracting with network activity.
+        *   Status: Shows "Iterating..." or "Converged" for the current step.
+        *   Tagline: **"Stability managed by the engine. Speed optimized."**
+*   **Educational Goal:** Perfect high-level summary for a manager or new user.
+
+#### 6. **"Which Solver For My Problem?" Interactive Decision Tree**
+*   **Purpose:** To guide users on when to use the ICM native solver vs. the embedded SWMM5 engine *within* InfoWorks ICM.
+*   **Interactive Diagram:**
+    *   A flowchart with questions:
+        1.  **"Modeling complex surcharge/pressurized flow?"** (Yes → ICM Native Solver)
+        2.  **"Need strict replication of EPA SWMM5 results (e.g., for regulation)?"** (Yes → Embedded SWMM5 Engine)
+        3.  **"System mostly free-surface, steep slopes?"** (Either, but SWMM5 Kinematic Wave may be faster).
+        4.  **"Integrating 2D overland flow?"** (Yes → ICM Native Solver).
+        5.  **"Prior model built in SWMM5?"** (Might favor Embedded Engine for consistency).
+    *   **Interaction:** Clicking answers highlights the path and concludes with a **recommended solver**, displaying a summary of **why**.
+*   **Educational Goal:** Addresses a very common, practical question for InfoWorks ICM users.
+
+### Final Suggestion: Integrate into a "Master Test Bench"
+You now have a powerful collection of mini-tools. Consider adding a final **"Test Bench" page** where users can:
+*   Select from 3-4 **pre-defined network templates** (e.g., "Steep Channel," "Flat Surcharged Pipe," "Dry Network," "Storage Pond").
+*   Apply a **standard inflow hydrograph**.
+*   **Run a comparison** and see side-by-side results for **Head, Flow, and Mass Balance** from both solver logics on the same graphs.
+
+This would allow users to explore all the concepts you've visualized within a unified, controlled experiment. The app has evolved from a great explanation into a truly exceptional interactive textbook.

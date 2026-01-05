@@ -1,0 +1,76 @@
+Excellent. Adding diagrams for SWMM5's **Runoff**, **RTK (RDII)**, and **Buildup/Washoff** processes perfectly rounds out the app, covering the full hydrologic and water quality modeling workflow. Here are interactive diagram ideas for each.
+
+---
+
+### 1. SWMM5 Runoff (Subcatchment Hydrology)
+
+This diagram explains the physical processes within a single subcatchment that transform rainfall into runoff.
+
+*   **Visual Concept:** A cross-sectional "soil column" view of a subcatchment, divided into Impervious (with depression storage) and Pervious areas.
+*   **Interactive Elements & Processes:**
+    1.  **Rainfall Input:** A slider for rainfall intensity (`in/hr` or`mm/hr`). An animation shows rain falling on the subcatchment.
+    2.  **Losses (Interactive Partitioning):**
+        *   **Evaporation:** A portion of the rain "evaporates" upward (controlled by a rate slider).
+        *   **Infiltration:** On the pervious area, a dynamic pool (like the Green-Ampt or Horton model) shows water soaking into the soil. Sliders for`Max Infil Rate`,`Min Infil Rate`,`Decay Constant` change the speed of soak-in.
+        *   **Depression Storage:** On the impervious area, a small "bowl" fills first. A slider for`Depression Storage Depth` changes its size. **Only when this bowl is full does runoff begin.**
+    3.  **Runoff Generation:**
+        *   As rainfall continues, a blue "runoff" flow appears at the subcatchment outlet.
+        *   A real-time **hydrograph** plots below the diagram, showing the generated runoff flow over time.
+    4.  **Parameter Impact:** Let users switch the **Runoff Method** (e.g.,`Nonlinear Reservoir` vs.`SCS CN`). Changing the`Width` or`Slope` parameter should visibly alter the speed and shape of the runoff in the hydrograph.
+*   **Educational Goal:** Shows that runoff is *not* just rainfall minus infiltration; it's a function of sequential filling of depressions, infiltration, and overland flow routing.
+
+---
+
+### 2. SWMM5 RTK (RDII Hydrology)
+
+This diagram explains the Rainfall-Dependent Infiltration/Inflow (RDII) process, which uses unit hydrographs to generate inflow *into* the sewer system from rainfall.
+
+*   **Visual Concept:** A three-part diagram:
+    1.  **Top:** A simple rainfall hyetograph (bar chart).
+    2.  **Middle:** Three "response boxes" labeled **R** (Response Ratio), **T** (Time to Peak), and **K** (Recession Constant), each connected to the hyetograph.
+    3.  **Bottom:** The resulting composite RDII inflow hydrograph.
+*   **Interactive Elements:**
+    1.  **Rainfall Pattern:** Allow users to draw a simple, multi-period rainfall event.
+    2.  **RTK Parameters (Three Slider Sets):** One for each of the three unit hydrographs (typically, short, medium, and long-term responses).
+        *   **`R` (Response Ratio):** Adjusts the *volume* (peak height) of each UH.
+        *   **`T` (Time to Peak):** Adjusts the *lag* of each UH peak.
+        *   **`K` (Recession Constant):** Adjusts the *tail length* of each UH.
+    3.  **Visualization:** As the user slides`T`, the UH peak moves left/right. As they slide`R`, it grows/shrinks. As they slide`K`, the recession limb stretches/contracts.
+    4.  **Final Output:** The three unit hydrographs are shown, each one responding to the same rainfall but with different lags and shapes. They are summed in real-time to produce the final **Composite RDII Inflow Hydrograph** at the bottom.
+*   **Educational Goal:** Demystifies the "black box" of RTK parameters by showing they are simply the weights, timing, and shape of three overlapping conceptual responses to rain.
+
+---
+
+### 3. SWMM5 Buildup & Washoff (Water Quality)
+
+This diagram explains how pollutants accumulate on land surfaces and are washed off during rain events.
+
+*   **Visual Concept:** A street/land surface view (e.g., a parking lot) with two main modes: **DRY DAYS (Buildup)** and **RAIN EVENT (Washoff)**.
+*   **Interactive Elements & Processes:**
+    1.  **"Buildup" Mode (Pollutant Accumulation):**
+        *   A slider for **`Number of Dry Days`**.
+        *   Choose a **Buildup Function**:`Power`,`Exponential`, or`Saturation`.
+        *   As time advances, pollutant "dots" or a "layer" visibly accumulate on the street surface. A graph next to it plots the **Buildup Mass (lbs)** over time, following the selected function's curve (e.g., linear power, exponential rise to max).
+    2.  **"Washoff" Mode (Pollutant Removal):**
+        *   Toggle **"Start Rain Event"**. A rainfall animation begins.
+        *   Choose a **Washoff Function**:`EMC` (flat concentration) or`Rating Curve` (flow-dependent).
+        *   A **Runoff Flow** hydrograph appears (could be linked to the Runoff diagram).
+        *   As runoff flows, the pollutant layer is visibly scrubbed away. The **Washoff Load (lbs/sec)** is plotted, showing a peak that generally follows the runoff hydrograph's shape.
+    3.  **Key Insight:** After the rain, if not all pollutant is washed off, some **remaining buildup** is left for the next event.
+*   **Educational Goal:** Clearly separates the two distinct, time-based processes (slow buildup, fast washoff) and shows how their mathematical functions translate visually to mass on the ground and load in the water.
+
+---
+
+### Integration Suggestion: The "Full Story" Workflow Diagram
+
+Once the three individual modules are built, create a final **integrated workflow diagram** showing how they connect in a typical model.
+
+*   **Flowchart Style:**
+    1.  **START:**`Rainfall Timeseries` -> Feeds into two parallel paths.
+    2.  **Path A (Surface):** Rainfall -> **Runoff Process** (Subcatchment) -> Generates`Runoff Flow`.
+    3.  **Path B (Subsurface):** Rainfall -> **RTK Process** -> Generates`RDII Inflow`.
+    4.  **Path C (Quality):**`Runoff Flow` +`Buildup` -> **Washoff Process** -> Generates`Pollutant Load`.
+    5.  **CONVERGE:**`Runoff Flow` +`RDII Inflow` +`Pollutant Load` -> Enter the **Conduit Network** (linking to your existing hydraulic solver diagrams).
+*   **Interactivity:** Clicking on any box (e.g., "Runoff Process") could highlight it and open a minimized version of its dedicated interactive diagram.
+
+These three diagrams would transform your app from a focused *hydraulic solver comparison* into a comprehensive *SWMM5 process simulator*, making it an unparalleled resource for learning the entire model.
