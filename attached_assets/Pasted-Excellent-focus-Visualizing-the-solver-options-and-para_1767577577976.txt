@@ -1,0 +1,100 @@
+Excellent focus. Visualizing the solver *options* and *parameters* is the perfect next layer, as it bridges the abstract theory (how the solver works) with practical engineering (how you control it). Here are tailored diagram suggestions for each platform's key settings.
+
+### SWMM5 Solution Options & Controls
+
+These diagrams would explain the knobs you turn in the`[OPTIONS]` section of an SWMM5 INP file or its GUI dialog.
+
+#### 1. **Routing Step & Stability "CFL Condition" Visualizer**
+*   **Purpose:** To illustrate the critical relationship between time step (`Route Step`), flow wave speed, and model stability.
+*   **Interactive Diagram:**
+    *   A simple pipe is shown with a flow wave moving through it.
+    *   **Sliders for:**
+        *`Route Step` (e.g., 1 to 60 seconds)
+        *   Pipe Length (`L`)
+        *   Wave Speed (`c`, influenced by depth/diameter)
+    *   **Visual Output:** The diagram calculates and displays the **Courant Number** (`Cr = c * Δt / L`).
+    *   **Interaction:** As the user adjusts sliders, a gauge or color code indicates:
+        *   **Green (Stable):**`Cr <= 1`
+        *   **Yellow (Risky):**`1 < Cr < 1.5`
+        *   **Red (Unstable - Model Crashes):**`Cr >> 1`
+    *   **Educational Goal:** Teaches why SWMM5 often requires short, fixed time steps and what "CFL condition violation" means.
+
+#### 2. **Surcharge Method Selector & Impact**
+*   **Purpose:** To compare the **"Preissmann Slot"** option vs. the traditional **"Surcharge Algorithm"**.
+*   **Interactive Diagram:**
+    *   A single manhole (node) and a connecting conduit.
+    *   A toggle switch: **"Use Preissmann Slot"** (Yes/No).
+    *   A slider controls the water level rising above the pipe crown (surcharge).
+    *   **When "NO" (Traditional):**
+        *   Show water level hitting the node's "surcharge depth." A note appears: "Continuity solved using dQ/dH derivative. No physical slot."
+        *   The head in the node rises rapidly, but the pipe cross-section visual does not change.
+    *   **When "YES" (Preissmann Slot):**
+        *   Show the virtual slot appearing as water passes the crown.
+        *   The head rises more smoothly, with a note: "Pressurized wave speed`c = sqrt(g*A/T)` maintained for stability."
+    *   **Educational Goal:** Clarifies a major advanced option and its effect on numerical behavior during pressurization.
+
+#### 3. **Routing Method Selection Flowchart**
+*   **Purpose:** To guide users on when to choose **Dynamic Wave**, **Kinematic Wave**, or **Steady Flow**.
+*   **Interactive Diagram:**
+    *   A decision-tree flowchart with questions:
+        1.  **"Does backwater, flow reversal, or pressure flow matter?"** (Yes → Dynamic Wave)
+        2.  **"Are slopes steep (>0.1%) and system primarily gutter/overland?"** (Yes → Kinematic Wave)
+        3.  **"Is it a simple, steady-state calculation?"** (Yes → Steady Flow)
+    *   **Interaction:** Clicking answers highlights the path and reveals a **typical use-case image** (e.g., for Dynamic Wave, show a surcharged pipe system; for Kinematic, show overland sheet flow).
+    *   **Educational Goal:** Transforms a menu option into an engineering decision aid.
+
+---
+
+### InfoWorks ICM Simulation Parameters
+
+These diagrams would explain the parameters found in the ICM UI under`Model Parameters | Simulation Parameters` or the 2D parameters dialog.
+
+#### 1. **Adaptive Timestep "Governor" Diagram**
+*   **Purpose:** To demystify how ICM's adaptive time-stepping works.
+*   **Interactive Diagram:**
+    *   A timeline of a simulation with a hydrograph showing a sharp peak.
+    *   **Key Parameters as Sliders:**`Minimum Timestep`,`Maximum Timestep`,`Convergence Tolerance`.
+    *   **Visualization:** The timeline shows the **actual timestep length** as a bar height above it.
+        *   During dry/steady flow: The bar is tall (timestep at`Maximum`).
+        *   As the wave enters: Bars shrink rapidly to`Minimum`.
+        *   As convergence is achieved: Bars grow again.
+    *   **Interaction:** Adjusting`Convergence Tolerance` tighter makes the bars shrink sooner and for longer. Increasing`Max Timestep` allows longer steps in quiet periods.
+    *   **Educational Goal:** Shows how ICM balances speed and accuracy dynamically, contrasting with SWMM5's fixed step.
+
+#### 2. **The "Theta (θ)" Parameter in the Preissmann Scheme**
+*   **Purpose:** To show the effect of the implicit/explicit weighting factor on numerical damping and stability.
+*   **Interactive Diagram:**
+    *   A simple wave (a sharp peak) moves along a 1D channel.
+    *   **Slider:**`Theta (θ)` from 0.5 (Crank-Nicolson, less damping) to 1.0 (Fully Implicit, more damping).
+    *   **Two lines animate over the wave:** One shows the "true" theoretical wave, the other shows the numerically simulated wave.
+        *   At`θ = 0.6` (ICM's typical ~0.65): The simulated wave slightly lags and smooths the peak.
+        *   At`θ = 0.5`: Less smoothing, but the wave may show small oscillations (numerical dispersion).
+        *   At`θ = 1.0`: The wave is heavily damped, significantly reducing the peak.
+    *   **Educational Goal:** Explains a core numerical parameter most users never touch but governs solution "sharpness."
+
+#### 3. **1D-2D Coupling & Exchange Visualization**
+*   **Purpose:** To illustrate how parameters control the interaction between the pipe network and the surface model.
+*   **Interactive Diagram:**
+    *   A side-view cross-section of a manhole with a ground surface above.
+    *   **Key Parameters as Inputs:**`Exchange Time Step`,`Weir Coefficient`,`Orifice Coefficient`.
+    *   **Animation:** Water rises in the manhole above the crown.
+        *   Flow begins to exit to the 2D surface mesh as an orifice flow (visualized as jets).
+        *   As the surface floods, water can flow back into the manhole as weir flow (visualized as over-the-rim flow).
+    *   **Interaction:** Adjusting the`Exchange Time Step` makes the data transfer between 1D and 2D models happen in faster/slower "chunks." Changing coefficients alters the flow rate arrows.
+    *   **Educational Goal:** Makes the complex coupling process concrete, showing where key parameters apply.
+
+### Summary & Implementation Priority
+
+For maximum impact, I recommend building these in the following order:
+
+1.  **High Priority (Core Understanding):**
+    *   SWMM5 **"Routing Step & Stability CFL"** diagram. This explains the most common runtime issue.
+    *   ICM **"Adaptive Timestep Governor"** diagram. This explains a fundamental difference in solver philosophy.
+2.  **Medium Priority (Key Features):**
+    *   SWMM5 **"Surcharge Method Selector"**. Critical for pressurized systems.
+    *   SWMM5 **"Routing Method Flowchart"**. Essential for beginners.
+3.  **Advanced (Nuanced Control):**
+    *   ICM **"Theta (θ) Parameter"** diagram.
+    *   ICM **"1D-2D Coupling"** diagram.
+
+These diagrams would transform your app from explaining *what the solvers are* to explaining *how to effectively use and control them*, which is invaluable for practicing engineers.

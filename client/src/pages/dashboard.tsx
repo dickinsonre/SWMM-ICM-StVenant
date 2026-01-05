@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
 import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram, ManholeVsNodeDiagram } from "@/components/visuals/SolverDiagrams";
+import { CFLStabilityDiagram, SurchargeMethodDiagram, RoutingMethodFlowchart, AdaptiveTimestepDiagram, ThetaParameterDiagram, Coupling1D2DDiagram } from "@/components/visuals/SolverOptionsDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -440,6 +441,29 @@ export default function Dashboard() {
              
              <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
                 <NodeAreaDiagram />
+             </div>
+
+             {/* Solver Options & Parameters Section */}
+             <div className="mt-12 pt-8 border-t border-border">
+               <div className="mb-6">
+                 <h3 className="text-2xl font-bold tracking-tight mb-2">Solver Options & Parameters</h3>
+                 <p className="text-muted-foreground">Interactive controls that engineers use to tune model behavior.</p>
+               </div>
+
+               <div className="grid md:grid-cols-2 gap-6">
+                  <CFLStabilityDiagram />
+                  <AdaptiveTimestepDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <SurchargeMethodDiagram />
+                  <ThetaParameterDiagram />
+               </div>
+               
+               <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <RoutingMethodFlowchart />
+                  <Coupling1D2DDiagram />
+               </div>
              </div>
            </div>
         )}
