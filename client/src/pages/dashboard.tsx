@@ -41,7 +41,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
-import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram } from "@/components/visuals/SolverDiagrams";
+import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram, ManholeVsNodeDiagram } from "@/components/visuals/SolverDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -355,11 +355,72 @@ export default function Dashboard() {
 
         {activeView === "visuals" && (
            <div className="space-y-6 animate-in fade-in duration-500">
-             <div className="relative h-48 w-full rounded-xl overflow-hidden mb-8 border border-border shadow-md">
-                <img src={heroImage} alt="Fluid Dynamics Visualization" className="w-full h-full object-cover opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-transparent flex flex-col justify-center px-8">
+             <div className="relative h-56 w-full rounded-xl overflow-hidden mb-8 border border-border shadow-md">
+                {/* Network Pattern Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                  <svg className="absolute inset-0 w-full h-full opacity-30" aria-hidden="true">
+                    <defs>
+                      <pattern id="network-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <circle cx="30" cy="30" r="3" className="fill-blue-400" />
+                        <circle cx="0" cy="0" r="2" className="fill-emerald-400" />
+                        <circle cx="60" cy="0" r="2" className="fill-emerald-400" />
+                        <circle cx="0" cy="60" r="2" className="fill-emerald-400" />
+                        <circle cx="60" cy="60" r="2" className="fill-emerald-400" />
+                        <line x1="0" y1="0" x2="30" y2="30" className="stroke-blue-400/50" strokeWidth="1" />
+                        <line x1="60" y1="0" x2="30" y2="30" className="stroke-emerald-400/50" strokeWidth="1" />
+                        <line x1="0" y1="60" x2="30" y2="30" className="stroke-blue-400/50" strokeWidth="1" />
+                        <line x1="60" y1="60" x2="30" y2="30" className="stroke-emerald-400/50" strokeWidth="1" />
+                        <line x1="30" y1="0" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
+                        <line x1="30" y1="60" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
+                        <line x1="0" y1="30" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
+                        <line x1="60" y1="30" x2="30" y2="30" className="stroke-slate-500/30" strokeWidth="1" />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#network-grid)" />
+                  </svg>
+                  {/* Animated flow lines */}
+                  <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="transparent" />
+                        <stop offset="50%" stopColor="rgba(59, 130, 246, 0.6)" />
+                        <stop offset="100%" stopColor="transparent" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="80" x2="100%" y2="80" stroke="url(#flow-gradient)" strokeWidth="3" strokeLinecap="round">
+                      <animate attributeName="x1" values="-200;100%" dur="4s" repeatCount="indefinite" />
+                      <animate attributeName="x2" values="0;200%" dur="4s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="0" y1="140" x2="100%" y2="140" stroke="url(#flow-gradient)" strokeWidth="2" strokeLinecap="round">
+                      <animate attributeName="x1" values="-300;100%" dur="6s" repeatCount="indefinite" />
+                      <animate attributeName="x2" values="0;200%" dur="6s" repeatCount="indefinite" />
+                    </line>
+                  </svg>
+                  {/* Pipe-like decorative elements */}
+                  <div className="absolute bottom-4 right-8 flex items-center gap-2 opacity-40">
+                    <div className="h-4 w-24 bg-slate-600 rounded-full" />
+                    <div className="h-8 w-8 rounded-full border-2 border-slate-500 bg-slate-700" />
+                    <div className="h-4 w-16 bg-slate-600 rounded-full" />
+                  </div>
+                  <div className="absolute top-4 right-16 flex items-center gap-1 opacity-30">
+                    <div className="h-3 w-12 bg-emerald-600/50 rounded-full" />
+                    <div className="h-5 w-5 rounded-full border border-emerald-500/50" />
+                    <div className="h-3 w-20 bg-emerald-600/50 rounded-full" />
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent flex flex-col justify-center px-8">
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Visual Analysis</h2>
                   <p className="text-muted-foreground max-w-md">Key architectural differences between the solvers visualized.</p>
+                  <div className="flex items-center gap-4 mt-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="h-2 w-2 rounded-full bg-blue-500" />
+                      <span>SWMM5</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                      <span>ICM</span>
+                    </div>
+                  </div>
                 </div>
              </div>
 
@@ -371,6 +432,10 @@ export default function Dashboard() {
              <div className="grid md:grid-cols-2 gap-6">
                 <WavePropagationDiagram />
                 <DryNetworkDiagram />
+             </div>
+             
+             <div className="grid md:grid-cols-1 gap-6">
+                <ManholeVsNodeDiagram />
              </div>
              
              <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
