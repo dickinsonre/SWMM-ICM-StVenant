@@ -211,17 +211,23 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
-import { Droplets, Grid3X3, Gauge, Timer, TrendingUp, Play, Pause, RotateCcw } from "lucide-react";
+import { Droplets, Grid3X3, Gauge, Timer, TrendingUp, Play, Pause, RotateCcw, CheckCircle2 } from "lucide-react";
+
+// 10 Interactive Diagrams for ICM Simulation Parameters:
+// 1. BaseFlowStabilityDiagram - Virtual thin film for numerical stability
+// 2. SpatialDiscretizationDiagram - Conduit node distribution
+// 3. ICMPreissmannSlotDiagram - Slot width and celerity
+// 4. AdaptiveTimeSteppingDiagram - Newton-Raphson with timestep halving
+// 5. HeadlossTransitionDiagram - Free surface to pressurized transitions
+// 6. ColdStartInitializationDiagram - Warm-up period handling
+// 7. HeadlossJunctionDiagram - Energy loss at junctions
+// 8. HeadlossSurchargeTransitionDiagram - Transition zone physics
+// 9. HeadlossInferenceDiagram - Ku calculation from pipe geometry
+// 10. InfoSewerSteadyStateEmulationDiagram - Emulating steady state in ICM
 
 export function BaseFlowStabilityDiagram() {
   const [baseFlowFactor, setBaseFlowFactor] = useState([0.001]);
-  const [minBaseFlowDepth, setMinBaseFlowDepth] = useState([0.001]);
-  const [slope, setSlope] = useState([0.01]);
-  const [sedimentDepth, setSedimentDepth] = useState([0.05]);
-  
   // y_base = y_sed + MAX(DLMIN, DLFAC × (y_full - y_sed))
-  const calculatedBaseFlow = sedimentDepth[0] + Math.max(minBaseFlowDepth[0], baseFlowFactor[0] * (1.0 - sedimentDepth[0]));
-  
   return (
     <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-blue-100/80">
       {/* Base flow visualization with SVG pipe cross-section */}
@@ -230,114 +236,47 @@ export function BaseFlowStabilityDiagram() {
 }
 
 export function SpatialDiscretizationDiagram() {
-  const [conduitLength, setConduitLength] = useState([100]);
-  const [conduitWidth, setConduitWidth] = useState([1.2]);
-  const [conduitHeight, setConduitHeight] = useState([1.5]);
-  
   // ICM divides conduit into computational nodes
   // numNodes = max(3, round(L / (4 * sqrt(W * H))))
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-cyan-100/80 to-teal-100/80">
-      {/* Node distribution along conduit visualization */}
-    </Card>
-  );
 }
 
 export function ICMPreissmannSlotDiagram() {
-  const [celerityRatio, setCelerityRatio] = useState([0.1]);
-  const [waterLevel, setWaterLevel] = useState([0.8]);
-  
-  // Slot width calculated from target celerity
-  // w_slot = g * A / c²
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-indigo-100/80">
-      {/* Preissmann slot cross-section with pressurization */}
-    </Card>
-  );
+  // Slot width calculated from target celerity: w_slot = g * A / c²
 }
 
 export function AdaptiveTimeSteppingDiagram() {
-  const [theta, setTheta] = useState([0.7]);
-  const [maxIterations, setMaxIterations] = useState([16]);
-  
   // Newton-Raphson iteration with timestep halving on failure
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-cyan-100/80">
-      {/* Convergence visualization with iteration tracking */}
-    </Card>
-  );
 }
 
 export function HeadlossTransitionDiagram() {
-  const [depth, setDepth] = useState([0.5]);
-  
-  // Non-linear headloss factor phases in with depth
-  // Prevents high friction at very low depths
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-sky-100/80">
-      {/* Headloss coefficient vs depth graph */}
-    </Card>
-  );
+  // Free surface to pressurized flow transition physics
 }
 
 export function ColdStartInitializationDiagram() {
-  const [isRunning, setIsRunning] = useState(false);
-  
-  // Phase 1: Ramping (θ=1.0, max damping)
-  // Phase 2: Steady state search
-  // Phase 3: Ready for main simulation
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-indigo-100/80 to-blue-100/80">
-      {/* Initialization progress visualization */}
-    </Card>
-  );
+  // How ICM handles warm-up periods
 }
 
 export function HeadlossJunctionDiagram() {
-  const [pipeAngle, setPipeAngle] = useState([90]);
-  const [headlossType, setHeadlossType] = useState("normal");
-  const [flowRate, setFlowRate] = useState([0.5]);
-  
-  // Δh = ku × ks × kv × (v²/2g)
-  // ku from angle table, ks from surcharge ratio, kv from velocity
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-cyan-100/80 to-sky-100/80">
-      {/* Junction headloss calculator with angle visualization */}
-    </Card>
-  );
+  // Energy loss calculations at junctions
 }
 
 export function HeadlossSurchargeTransitionDiagram() {
-  const [headlossType, setHeadlossType] = useState("normal");
-  
-  // ks coefficient changes with surcharge ratio
-  // Normal: peaks near SR=1.0, Fixed: constant at 1.0
-  
-  return (
-    <Card className="p-6 bg-gradient-to-br from-sky-100/80 to-blue-100/80">
-      {/* Time-series animation of ks during storm event */}
-    </Card>
-  );
+  // Physics of the transition zone
 }
 
 export function HeadlossInferenceDiagram() {
-  const [pipes, setPipes] = useState([
-    { id: 1, angle: 90, diameter: 0.6, isMajor: true },
-    { id: 2, angle: 45, diameter: 0.3, isMajor: false },
-  ]);
-  
-  // ku = ku_major + Σ(proportion × ku_minor)
-  // Inference selects widest pipe as major
-  
+  // Ku calculation from pipe geometry and angles
+}
+
+export function InfoSewerSteadyStateEmulationDiagram() {
+  // Side-by-side workflow: InfoSewer native vs ICM emulation
+  // Peaking formula selector (Federov/Babbitt/Harman)
+  // Short EPS run duration slider
+  // Load type toggle (Base Flow vs Coverage Flow)
+  // Comparison results panel
   return (
-    <Card className="p-6 bg-gradient-to-br from-blue-100/80 to-cyan-100/80">
-      {/* Multi-pipe junction with ku calculation */}
+    <Card className="p-6 bg-gradient-to-br from-amber-100/80 to-orange-100/80">
+      {/* InfoSewer vs ICM workflow comparison */}
     </Card>
   );
 }`,
