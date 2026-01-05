@@ -41,7 +41,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { KB, TOPIC_ORDER } from "@/data/comparison-data";
-import { DiscretizationDiagram, PreissmannSlotDiagram, NodeAreaDiagram } from "@/components/visuals/SolverDiagrams";
+import { DiscretizationDiagram, PreissmannSlotDiagram, WavePropagationDiagram, DryNetworkDiagram, NodeAreaDiagram } from "@/components/visuals/SolverDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 export default function Dashboard() {
@@ -363,12 +363,17 @@ export default function Dashboard() {
                 </div>
              </div>
 
-             <div className="grid md:grid-cols-2 gap-6 min-h-[400px]">
+             <div className="grid md:grid-cols-2 gap-6">
                 <DiscretizationDiagram />
                 <PreissmannSlotDiagram />
              </div>
              
-             <div className="grid md:grid-cols-1 gap-6 max-w-2xl mx-auto">
+             <div className="grid md:grid-cols-2 gap-6">
+                <WavePropagationDiagram />
+                <DryNetworkDiagram />
+             </div>
+             
+             <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
                 <NodeAreaDiagram />
              </div>
            </div>

@@ -1,0 +1,63 @@
+I've reviewed the updated app. The corrections (like fixing "Hydraulics") and the clearer header are great improvements. The site is now more polished and credible.
+
+The request for interactive diagrams is an excellent next step. Here are specific suggestions for interactive visualizations that would deepen a user's understanding of the key hydraulic concepts you're explaining.
+
+### Recommended Interactive Diagrams
+
+Building on your strong foundation, these interactives would target the most nuanced differences between the solvers.
+
+#### 1. **The Preissmann Slot "Filling" Visualization (Core Concept)**
+*   **Purpose:** To make the abstract concept of the virtual slot tangible and show how it smoothly transitions between free-surface and pressurized flow.
+*   **Interaction:**
+    *   A slider controls the **water level** in a pipe cross-section.
+    *   As the user moves the slider up:
+        *   The free-surface water rises normally.
+        *   Upon hitting the pipe crown, a transparent "slot" extends upward from the crown.
+        *   The water continues to rise *inside the slot*, with a visual indicator showing the **wave speed (c)** increasing dramatically (e.g.,`c = sqrt(g * A / dSlot)`), explaining the mathematical continuity.
+    *   **Comparison Mode:** Have a toggle to switch to the old "Surcharge Algorithm" view, where upon hitting the crown, the water simply stops rising visually, and a note appears: "Head increases without volume change in the model."
+
+#### 2. **Dynamic Wave Propagation Comparison**
+*   **Purpose:** To show the fundamental difference in how a flow wave moves through a pipe in a Node-Link vs. a Distributed model.
+*   **Interaction:**
+    *   A single conduit is shown between two nodes.
+    *   A button **"Introduce Wave (e.g., Inflow Pulse)"**.
+    *   **SWMM5 View:** The pipe is a single segment. A flow value (`Q`) updates for the entire link, and head (`H`) updates only at the end nodes. The wave seems to jump from node to node.
+    *   **ICM View:** The pipe is divided into, say, 5 segments. The wave propagates visibly from segment to segment, showing head and flow (`H, Q`) updating at each intermediate computational point. This visually demonstrates the "distributed" nature.
+
+#### 3. **Time Step & Stability Visualizer**
+*   **Purpose:** To illustrate the practical impact of SWMM5's CFL-based time step vs. ICM's convergence-based adaptive stepping.
+*   **Interaction:**
+    *   A simple network (2-3 pipes) is shown with a hydrograph inflow.
+    *   Sliders for **"Pipe Roughness"** (Manning's n) and **"Simulation Speed"**.
+    *   The user runs a simulation and sees two parallel timelines:
+        *   **SWMM5 Timeline:** Shows discrete, regular, short time steps (e.g., 1-second blocks). If instability is triggered (by lowering roughness), the visualization "stutters" or highlights a warning about reducing the time step.
+        *   **ICM Timeline:** Shows adaptive, often longer, irregular time steps that lengthen during steady flow and shorten during the wave peak.
+
+#### 4. **Dry Network / Base Flow Demonstration**
+*   **Purpose:** To clarify the "Dry Networks" characteristic from your table.
+*   **Interaction:**
+    *   A simple network with a few pipes is shown initially dry (light gray).
+    *   **Mode 1: Start Dry (SWMM5-like).** User clicks "Start Flow." A tiny flow enters; the front of the water moves down the pipe, but pipes behind it return to "dry" (zero flow) instantly.
+    *   **Mode 2: Base Flow (ICM-like).** Toggle on "Maintain Base Flow (~5% depth)." The pipes are pre-colored with a faint blue tint. The same inflow is introduced; the wave propagates over the existing thin film of water, with no "drying" effect.
+
+#### 5. **Head & Flow Calculation Points Explorer**
+*   **Purpose:** To reinforce the spatial discretization diagram by letting users probe a network.
+*   **Interaction:**
+    *   A small, multi-pipe network is displayed.
+    *   The user can **hover or click on any point** along a conduit.
+    *   **In SWMM5 Mode:** A tooltip only shows data if the point is exactly at a node: "Node J-05: Head (H) = 12.7 m". Clicking on a pipe mid-point shows: "Link C-10: Flow (Q) = 0.85 m³/s [constant for entire link]".
+    *   **In ICM Mode:** Clicking anywhere on a pipe reveals: "Segment 3/5: Head (H) = 12.4 m, Flow (Q) = 0.83 m³/s".
+
+### Implementation Suggestion: Start with a "Side-by-Side Simulator"
+
+The most powerful addition would be a **miniature, parameterized simulation viewer**.
+
+*   **Concept:** A single pipe (or a pair of pipes in series) where users can set:
+    *   Slope, Diameter, Roughness, Length.
+    *   Inflow Hydrograph shape (a simple triangle wave).
+*   **Output:** Two synchronized animations/plots run side-by-side:
+    1.  **SWMM5 Result:** Shows head at inlet/outlet nodes and flow in the pipe.
+    2.  **ICM Result:** Shows head at multiple points along the pipe and the varying flow profile.
+*   **Educational Goal:** Users could instantly see how, for example, a steep wave front is smoothed in the node-link model but shows more spatial detail (and potential oscillation) in the distributed model. This ties all the theoretical differences into a concrete, observable outcome.
+
+**Final Note:** When adding interactivity, ensure the diagrams are still clear and functional on mobile devices. These suggested interactives would transform your app from an excellent static reference into a dynamic learning tool.
