@@ -1828,3 +1828,289 @@ export function HeadlossInferenceDiagram() {
     </Card>
   );
 }
+
+export function InfoSewerSteadyStateEmulationDiagram() {
+  const [peakingFormula, setPeakingFormula] = useState<"federov" | "babbitt" | "harman">("federov");
+  const [runDuration, setRunDuration] = useState([30]);
+  const [loadType, setLoadType] = useState<"base" | "coverage">("base");
+  const [showComparison, setShowComparison] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  const formulas = {
+    federov: { name: "Federov", formula: "PF = K / Q^r", params: "K=2.4, r=0.89", factor: 2.8 },
+    babbitt: { name: "Babbitt", formula: "PF = 5 / P^0.2", params: "P = Population (1000s)", factor: 2.5 },
+    harman: { name: "Harman", formula: "PF = (18 + √P) / (4 + √P)", params: "P = Population (1000s)", factor: 3.2 },
+  };
+  
+  const sampleResults = [
+    { link: "P-101", infosewer: 45.2, icm: 44.8, diff: -0.9 },
+    { link: "P-102", infosewer: 32.1, icm: 31.9, diff: -0.6 },
+    { link: "P-103", infosewer: 78.5, icm: 77.8, diff: -0.9 },
+    { link: "P-104", infosewer: 56.3, icm: 55.9, diff: -0.7 },
+  ];
+  
+  return (
+    <Card className="p-6 bg-gradient-to-br from-amber-100/80 to-orange-100/80 dark:from-amber-900/30 dark:to-orange-900/30 border-amber-300/50 dark:border-amber-700/30" data-testid="diagram-infosewer-steady-state">
+      <div className="flex items-center gap-2 mb-4">
+        <Gauge className="h-5 w-5 text-amber-500" />
+        <h3 className="font-semibold text-lg text-amber-800 dark:text-amber-100">Emulating InfoSewer Steady State in ICM</h3>
+        <Badge variant="outline" className="ml-auto text-amber-600 dark:text-amber-400 border-amber-400/50">Model Translation</Badge>
+      </div>
+      
+      <p className="text-sm text-muted-foreground mb-4">
+        ICM has no native steady-state solver. To match InfoSewer's peak-load snapshot, pre-peak the loads externally and run a very short EPS with constant inflows.
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-6 mb-6">
+        {/* InfoSewer Workflow */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Badge className="bg-blue-600">InfoSewer Native</Badge>
+          </div>
+          
+          <div className="space-y-2">
+            <motion.div 
+              className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/40 border-2 border-blue-300 dark:border-blue-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0 }}
+            >
+              <div className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">1. Inputs</div>
+              <div className="text-xs text-blue-600 dark:text-blue-400">DWF loads at manholes</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/40 border-2 border-blue-300 dark:border-blue-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">2. Peaking Engine</div>
+              <div className="text-xs text-blue-600 dark:text-blue-400">Applies {formulas[peakingFormula].name} formula</div>
+              <div className="text-[10px] font-mono text-blue-500 mt-1">{formulas[peakingFormula].formula}</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/40 border-2 border-blue-300 dark:border-blue-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">3. Steady-State Solver</div>
+              <div className="text-xs text-blue-600 dark:text-blue-400">Single equilibrium snapshot</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-green-100 dark:bg-green-900/40 border-2 border-green-300 dark:border-green-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="text-xs font-semibold text-green-700 dark:text-green-300">Output</div>
+              <div className="text-xs text-green-600 dark:text-green-400">Peak flows, velocities, depths</div>
+            </motion.div>
+          </div>
+        </div>
+        
+        {/* ICM Emulation Workflow */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Badge className="bg-teal-600">ICM Emulation</Badge>
+          </div>
+          
+          <div className="space-y-2">
+            <motion.div 
+              className="p-3 rounded-lg bg-teal-100 dark:bg-teal-900/40 border-2 border-teal-300 dark:border-teal-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0 }}
+            >
+              <div className="text-xs font-semibold text-teal-700 dark:text-teal-300 mb-1">A. Input Translation</div>
+              <div className="text-xs text-teal-600 dark:text-teal-400">Export peaked loads from InfoSewer</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-teal-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-teal-100 dark:bg-teal-900/40 border-2 border-teal-300 dark:border-teal-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="text-xs font-semibold text-teal-700 dark:text-teal-300 mb-1">B. Load Assignment</div>
+              <div className="text-xs text-teal-600 dark:text-teal-400">DWF <span className="font-bold">without pattern</span> (constant)</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-teal-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-teal-100 dark:bg-teal-900/40 border-2 border-teal-300 dark:border-teal-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="text-xs font-semibold text-teal-700 dark:text-teal-300 mb-1">C. Short EPS Run</div>
+              <div className="text-xs text-teal-600 dark:text-teal-400">Duration: {runDuration[0]}s with initialization</div>
+            </motion.div>
+            
+            <div className="flex justify-center">
+              <TrendingUp className="w-4 h-4 text-teal-400" />
+            </div>
+            
+            <motion.div 
+              className="p-3 rounded-lg bg-green-100 dark:bg-green-900/40 border-2 border-green-300 dark:border-green-700"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="text-xs font-semibold text-green-700 dark:text-green-300">Output</div>
+              <div className="text-xs text-green-600 dark:text-green-400">Final timestep ≈ Steady-State</div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Controls */}
+      <div className="grid md:grid-cols-3 gap-4 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-lg mb-4">
+        <div className="space-y-2">
+          <Label className="text-xs font-medium">Peaking Formula</Label>
+          <div className="flex gap-1">
+            {(["federov", "babbitt", "harman"] as const).map(f => (
+              <Button
+                key={f}
+                size="sm"
+                variant={peakingFormula === f ? "default" : "outline"}
+                onClick={() => setPeakingFormula(f)}
+                className="text-xs flex-1"
+                data-testid={`btn-formula-${f}`}
+              >
+                {formulas[f].name}
+              </Button>
+            ))}
+          </div>
+          <div className="text-[10px] font-mono text-muted-foreground">
+            {formulas[peakingFormula].params}
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-xs font-medium">Short-Run Duration: {runDuration[0]}s</Label>
+          <Slider
+            value={runDuration}
+            onValueChange={setRunDuration}
+            min={1}
+            max={300}
+            step={1}
+            data-testid="slider-run-duration"
+          />
+          <div className="text-[10px] text-muted-foreground">
+            {runDuration[0] < 30 ? "Very quick stabilization" : runDuration[0] < 120 ? "Balanced run time" : "Extended stabilization"}
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-xs font-medium">Load Type</Label>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={loadType === "base" ? "default" : "outline"}
+              onClick={() => setLoadType("base")}
+              className="text-xs flex-1"
+              data-testid="btn-load-base"
+            >
+              Peakable Base Flow
+            </Button>
+            <Button
+              size="sm"
+              variant={loadType === "coverage" ? "default" : "outline"}
+              onClick={() => setLoadType("coverage")}
+              className="text-xs flex-1"
+              data-testid="btn-load-coverage"
+            >
+              Coverage Flow
+            </Button>
+          </div>
+          <div className="text-[10px] text-muted-foreground">
+            {loadType === "base" ? "Flow-based peaking" : "Population-based peaking"}
+          </div>
+        </div>
+      </div>
+      
+      {/* Comparison */}
+      <Button 
+        onClick={() => setShowComparison(!showComparison)} 
+        variant="outline" 
+        size="sm"
+        className="mb-4"
+        data-testid="btn-run-comparison"
+      >
+        {showComparison ? "Hide" : "Run"} Comparison
+      </Button>
+      
+      <AnimatePresence>
+        {showComparison && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
+              <div className="text-sm font-medium mb-3">Sample Network Results Comparison</div>
+              <div className="grid grid-cols-4 gap-2 text-xs font-medium mb-2">
+                <div>Link</div>
+                <div>InfoSewer (L/s)</div>
+                <div>ICM (L/s)</div>
+                <div>Diff (%)</div>
+              </div>
+              {sampleResults.map((r, i) => (
+                <motion.div
+                  key={r.link}
+                  className="grid grid-cols-4 gap-2 text-xs py-1 border-t border-slate-200 dark:border-slate-700"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <div className="font-mono">{r.link}</div>
+                  <div>{r.infosewer.toFixed(1)}</div>
+                  <div>{r.icm.toFixed(1)}</div>
+                  <div className={r.diff < 0 ? "text-amber-600" : "text-green-600"}>{r.diff.toFixed(1)}%</div>
+                </motion.div>
+              ))}
+              <div className="mt-3 p-2 bg-green-100 dark:bg-green-900/30 rounded text-xs text-green-700 dark:text-green-300 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4" />
+                Results within 1% tolerance - emulation successful
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      <div className="mt-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg border border-amber-300 dark:border-amber-700/50">
+        <div className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-1">Key Insights</div>
+        <ul className="text-xs text-amber-600 dark:text-amber-400 space-y-1 list-disc list-inside">
+          <li>ICM's initialization phase is effectively a steady-state solution</li>
+          <li>Peaking must be pre-computed externally (ICM doesn't apply peaking formulas)</li>
+          <li>DWF without pattern keeps inflows constant throughout the short run</li>
+          <li>Always validate key results between models to ensure emulation accuracy</li>
+        </ul>
+      </div>
+    </Card>
+  );
+}

@@ -62,7 +62,7 @@ import { TimestepComparisonDiagram } from "@/components/visuals/TimestepComparis
 import { SnowmeltAlgorithmsDiagram, InfiltrationShootoutDiagram } from "@/components/visuals/ClimateInfiltrationDiagrams";
 import { LIDvsSUDSDiagram, DualSolverArchitectureDiagram } from "@/components/visuals/GreenInfraDiagrams";
 import { InputFileParserDiagram, MatrixSolverDiagram, RTCRulesDiagram, MassRoutingDiagram, SurchargeCodeDiagram, GroundwaterExchangeDiagram, MinorLossesDiagram, ReportingSystemDiagram } from "@/components/visuals/ArchitecturalDiagrams";
-import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram, HeadlossJunctionDiagram, HeadlossSurchargeTransitionDiagram, HeadlossInferenceDiagram } from "@/components/visuals/ICMSimulationDiagrams";
+import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSlotDiagram, AdaptiveTimeSteppingDiagram, HeadlossTransitionDiagram, ColdStartInitializationDiagram, HeadlossJunctionDiagram, HeadlossSurchargeTransitionDiagram, HeadlossInferenceDiagram, InfoSewerSteadyStateEmulationDiagram } from "@/components/visuals/ICMSimulationDiagrams";
 import { InletElementDiagram, HEC22InletCalculatorDiagram, FlowTransitionDiagram, InletEfficiencyCurvesDiagram } from "@/components/visuals/InletDiagrams";
 import { InertialTermsDiagram, NormalFlowCriterionDiagram, SurchargeMethodDeepDiveDiagram, VariableTimestepDiagram, ConduitLengtheningDiagram, MinNodalSurfaceAreaDiagram, ConvergenceTolerancesDiagram, ParallelThreadsDiagram } from "@/components/visuals/DynamicWaveOptionsDiagrams";
 import { WaveTravelVsTimestepDiagram, AdaptiveTimestepSimulatorDiagram, ConduitLengtheningCheatCodeDiagram, DryStartVsBaseFlowDiagram } from "@/components/visuals/TemporalDynamicsDiagrams";
@@ -185,7 +185,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">62 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">63 Interactive Diagrams</Badge>
               </div>
             </div>
           </div>
@@ -595,6 +595,13 @@ export default function Dashboard() {
                     <HeadlossJunctionDiagram />
                     <HeadlossSurchargeTransitionDiagram />
                     <HeadlossInferenceDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Model Translation & Workflows</h4>
+                   <p className="text-muted-foreground text-sm">Bridging workflows between InfoSewer and ICM.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <InfoSewerSteadyStateEmulationDiagram />
                  </div>
                </div>
              )}
