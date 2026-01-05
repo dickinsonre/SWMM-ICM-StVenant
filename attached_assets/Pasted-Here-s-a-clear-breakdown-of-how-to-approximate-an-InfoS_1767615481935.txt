@@ -1,0 +1,59 @@
+Here’s a clear breakdown of how to approximate an **InfoSewer Steady State** simulation in **InfoWorks ICM**, since ICM does not have a native steady‑state solver but can emulate it through a short EPS run with pre‑peaked loads.
+
+### **Why This is Necessary**
+In **InfoSewer**, you can run a true **Steady‑State** analysis that applies **peaking factors** (like the Federov, Babbitt, or Harman formulas) to dry‑weather flows to generate a single, peak‑load snapshot. ICM, however, only performs **Extended Period Simulation (EPS)**. To get a comparable “steady‑state” snapshot, you must:
+1.  **Pre‑peak the loads** outside ICM (using the same peaking formulas InfoSewer would use).
+2.  Run a **very short EPS simulation** with those pre‑peaked loads held **constant**.
+3.  Use the **ending state** of that short run as your “steady‑state” solution.
+
+---
+
+### **Step‑by‑Step Workflow to Emulate InfoSewer Steady State in ICM**
+
+| | Step | Action in InfoSewer | Equivalent Action in ICM | |
+| :--- | :--- | :--- |
+| | **1. Export Peaked Loads** | In InfoSewer, configure your **Steady‑State** run with the desired peaking method (Base Flow or Coverage Flow). Run the model and **export the resultant peaked loads** at each manhole. | (Not applicable – this is a preparatory step outside ICM.) | |
+| | **2. Import & Assign Loads** | – | Create a new ICM network. Import the **peaked loads** as **Dry Weather Flow (DWF)** entries in the **DWF database**. Assign them to the corresponding nodes. **Crucially, do not attach a DWF pattern** – this keeps the inflow constant. | |
+| | **3. Configure Simulation** | Set simulation type to **Steady State**. | Create a new simulation. Set the **run duration to a very short period** (e.g., 10–30 seconds). Ensure all other inflows (rainfall, RDII) are **zero**. Use the **initialization routine** to establish a stable starting point (ICM’s initialization is essentially a steady‑state solution). | |
+| | **4. Run & Extract Results** | Run the model. Results represent the system under the peaked, steady loads. | Run the EPS. Because the simulation is so short and inflows are constant, the system will reach a near‑steady condition by the end. The **final timestep’s results** (pipe flows, node depths) are your approximated “steady‑state” solution. | |
+| | **5. Validate** | – | Compare key results (e.g., peak flows at critical links) between the InfoSewer steady‑state run and the ICM short‑EPS results. Adjust the ICM simulation length or initialization if necessary. | |
+
+---
+
+### **Interactive Diagram Concept: “Emulating InfoSewer Steady State in ICM”**
+
+This diagram would visually guide users through the translation process.
+
+#### **Visual Layout: A Two‑Column Flowchart**
+*   **Left Column:** **InfoSewer Native Workflow**
+    *   **Box 1:** *Inputs* – Dry Weather Flow (DWF) loads at manholes.
+    *   **Box 2:** *Peaking Engine* – Applies Federov/Babbitt/Harman formula based on “Peakable” or “Coverage” flow type.
+    *   **Box 3:** *Solver* – **Steady‑State** solver calculates a single equilibrium snapshot.
+    *   **Output:** Peak flows, velocities, depths (one set of values per element).
+
+*   **Right Column:** **ICM Emulation Workflow**
+    *   **Box A:** *Input Translation* – Take the **peaked loads** from InfoSewer’s output.
+    *   **Box B:** *Load Assignment in ICM* – Enter as **DWF without a pattern** (constant inflow).
+    *   **Box C:** *Simulation Setup* – Run a **very short EPS** (e.g., 30 seconds). Use **initialization** to establish baseline.
+    *   **Output:** Results from the **final timestep** of the short EPS ≈ Steady‑State.
+
+#### **Interactive Elements**
+1.  **“Peaking Formula” Selector:**
+    A dropdown to choose **Federov**, **Babbitt**, or **Harman**. The diagram updates the formula display and shows the default parameters (e.g., K=2.4, r=0.89 for Federov).
+
+2.  **“Short‑Run Duration” Slider:**
+    A slider from **1 second** to **5 minutes**. Moving it updates a caption: *“A longer run allows more time for stabilization but is still short enough to avoid diurnal variation.”*
+
+3.  **“Load Type” Toggle:**
+    Toggle between **“Peakable Base Flow”** and **“Coverage Flow.”** The diagram highlights how Coverage Flow uses population‑based peaking.
+
+4.  **“Run Comparison” Button:**
+    When clicked, the diagram runs a simple side‑by‑side comparison of **pipe‑flow results** for a sample network, showing that the ICM short‑EPS results closely match the InfoSewer steady‑state results.
+
+#### **Key Educational Insights**
+*   **Why no direct steady state in ICM?** ICM’s engine is designed for dynamic, time‑varying simulations. The “short EPS with constant loads” trick forces it to a steady solution.
+*   **The role of initialization:** ICM’s initialization phase solves for initial flows and depths – this is effectively a steady‑state solution for the given starting conditions.
+*   **Peaking is outside ICM:** Unlike InfoSewer, ICM does not apply peaking formulas on‑the‑fly during a run. You must **pre‑compute and input the peaked loads**.
+*   **Verification step:** Always compare a few key results between the two models to ensure the emulation is valid.
+
+This diagram would fit well in a new section of your app called **“Model Translation & Workflows,”** helping users bridge the conceptual gap between InfoSewer’s design‑oriented steady‑state approach and ICM’s dynamic simulation environment.

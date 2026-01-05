@@ -1,0 +1,93 @@
+Excellent idea. Adding "Operational Controls" is a natural next step for your app, moving from *hydraulic simulation* to *system operation*. The approach to control logic is fundamentally different between the two platforms, offering a rich area for comparison.
+
+Here is a synthesized explanation of the differences, followed by interactive diagram concepts.
+
+### **RTC in InfoWorks ICM vs. Controls in SWMM5: A Conceptual Synthesis**
+
+The core difference is one of **architecture vs. scripting**.
+
+*   **InfoWorks ICM RTC is a Component-Based Architecture.** Think of it as a visual programming language for control logic. You build a hierarchy of objects:
+    1.  **Regulator:** The physical device being controlled (e.g., Pump P1, Sluice Gate SG-01).
+    2.  **Range:** A condition monitor (e.g., "Tank Level > 5.0 m" or "Time > 08:00").
+    3.  **Rule:** The action command (e.g., "THEN Pump Setting = 0.8").
+    4.  **Controller (Optional):** Advanced logic like a **PID** or **Incremental (INC)** controller to modulate a setting based on error from a setpoint.
+    5.  **Logic Operators:** Combine multiple Ranges with AND/OR/NOT.
+    6.  **Tables & Variables:** For defining complex relationships or storing values.
+
+    The engine, at each timestep, *evaluates the entire state of this system*: it checks all Ranges, combines their TRUE/FALSE states through the Logic, processes Controllers, and then applies the resulting Rule actions. This allows for highly complex, interdependent control schemes (e.g., *"If Tank A is >80% full AND the downstream flow is < 5 m³/s, THEN ramp Pump B's speed using a PID controller to maintain level in Tank C."*).
+
+*   **SWMM5 Controls are Procedural Scripts.** Think of it as a simple list of`IF-THEN-ELSE` statements evaluated in order. Each rule is independent.
+    1.  **Rule:** A line of text:`RULE R1 IF NODE TANK1 DEPTH > 2.0 THEN PUMP P1 STATUS = ON`
+    2.  **Evaluation:** The solver runs through the list of rules sequentially at each control step. When a rule's`IF` condition is`TRUE`, its`THEN` action is executed. A`PRIORITY` keyword can resolve conflicts.
+    3.  **Capability:** It supports basic logic (`AND`,`OR`), time-based rules (`SIMULATION TIME > 3600`), and can use PID controllers within a`SETTING` clause. However, it lacks ICM's structured objects (Ranges, Variables) and complex logical chaining is more cumbersome.
+
+**Analogy:** ICM RTC is like building a control panel with dedicated gauges (Ranges), dials (Controllers), and switches (Rules) wired together. SWMM5 Controls are like writing a short computer program in a text editor.
+
+---
+
+### **Interactive Diagram Concepts for Your App**
+
+#### **Diagram 1: The Control Logic Builder (Side-by-Side)**
+*   **Purpose:** Visually contrast the **architectural** (ICM) vs. **script-based** (SWMM5) paradigms for building the same control logic.
+*   **Scenario:** *"Maintain the water level in Tank 1 between 4.5m and 5.5m by modulating Pump 1."*
+*   **Interaction:**
+    *   **Left Panel (ICM RTC):**
+        1.  User drags a **Regulator** ("Pump P1") onto the canvas.
+        2.  User adds two **Ranges**: "Range_Hi" (Tank1 Level > 5.5m) and "Range_Lo" (Tank1 Level < 4.5m).
+        3.  User adds a **PID Controller**, linking it to Tank1 Level with a **Setpoint** of 5.0m.
+        4.  User creates a **Rule** linked to the controller: "THEN Pump P1 SETTING = PID_Output".
+        5.  The UI visually wires these components into a hierarchical tree.
+    *   **Right Panel (SWMM5 Controls):**
+        1.  A text editor opens with the equivalent code:
+```
+            RULE R1
+              IF NODE TANK1 DEPTH > 5.5
+              THEN PUMP P1 SETTING = 0.0
+            RULE R2
+              IF NODE TANK1 DEPTH < 4.5
+              THEN PUMP P1 SETTING = 1.0
+            RULE R3
+              IF NODE TANK1 DEPTH >= 4.5
+              AND NODE TANK1 DEPTH <= 5.5
+              THEN PUMP P1 SETTING = PID 5.0 0.1 0.0
+            PRIORITY 2
+            ```
+    *   **Educational Insight:** Highlights ICM's modular, object-oriented design versus SWMM5's linear, code-based approach. The same functional outcome is achieved through very different user interactions.
+
+#### **Diagram 2: The Execution Timeline at a Single Time Step**
+*   **Purpose:** Show how each solver **evaluates and applies** control logic during a simulation.
+*   **Visual:** A timeline bar representing one major simulation timestep (e.g., t = 1000s). Below it, two parallel flows.
+*   **Interaction:**
+    *   **ICM Execution Flow:**
+        1.  **Sense:** All **Ranges** are evaluated simultaneously (Tank Level? Time? Flow?). Their states (TRUE/FALSE) are updated.
+        2.  **Process:** **Logic Operators** combine Range states. **Controllers** (PID/INC) calculate new outputs. **Variables** are recalculated.
+        3.  **Act:** Final **Rule** actions are determined and applied to all **Regulators** at once.
+        *   *Visual Cue:* A parallel processing animation, with all steps happening in a defined sequence but as a "system snapshot."
+    *   **SWMM5 Execution Flow:**
+        1.  **Rule 1:** Check condition -> If TRUE, execute action. Move to next rule.
+        2.  **Rule 2:** Check condition -> If TRUE, execute action (potentially overriding Rule 1). Move on.
+        3.  **Rule N:** Continue until the list is exhausted.
+        *   *Visual Cue:* A single-threaded, step-by-step animation down a list.`PRIORITY` flags can be shown re-ordering the list.
+    *   **Educational Insight:** Demonstrates ICM's *state-based evaluation* (the entire control system's status is resolved) versus SWMM5's *sequential rule firing*.
+
+#### **Diagram 3: Controller Types: On/Off vs. Modulated**
+*   **Purpose:** Illustrate the difference between simple binary control and advanced, continuous modulation.
+*   **Visual:** A graph of "Tank Level" vs. "Time" with a setpoint line. Below it, a graph of "Pump Setting" vs. "Time".
+*   **Interaction:**
+    *   **Mode 1: Simple Rule (Both Platforms).**
+        *   Rule:`IF Level > 5.5 THEN Pump = OFF. IF Level < 4.5 THEN Pump = ON.`
+        *   **Result:** The "Pump Setting" graph shows a jagged on/off pattern. The "Tank Level" graph oscillates widely around the setpoint.
+    *   **Mode 2: PID Controller (ICM RTC / SWMM5).**
+        *   The user can adjust **P, I, D** sliders.
+        *   **Result:** The "Pump Setting" graph shows a smooth, modulating curve. The "Tank Level" graph smoothly tracks and dampens towards the setpoint.
+    *   **Mode 3: Incremental (INC) Controller (ICM RTC Specific).**
+        *   The user sets an **Increment** (e.g., 0.1) and **Interval** (e.g., 60s).
+        *   **Result:** The "Pump Setting" graph changes in discrete steps at fixed intervals. The "Tank Level" shows a stepped response.
+    *   **Educational Insight:** Connects abstract controller types (PID, INC) to their tangible impact on system stability and equipment operation.
+
+**How to Integrate:** A new section in your app called **"Operational Control & Logic"** would be perfect. These three diagrams would build upon each other:
+1.  **Builder:** *How* you define the logic.
+2.  **Timeline:** *When and in what order* the logic runs.
+3.  **Controller:** *The sophistication* of the control action itself.
+
+This would give users a profound understanding of a critical, high-level difference between the platforms: ICM is built for **engineering complex, real-world control systems**, while SWMM5 provides **essential, scriptable controls for research and simpler applications**.

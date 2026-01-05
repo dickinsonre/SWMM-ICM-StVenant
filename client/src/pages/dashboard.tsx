@@ -20,7 +20,8 @@ import {
   Gauge,
   Grid3X3,
   Zap,
-  Clock
+  Clock,
+  Workflow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -65,6 +66,7 @@ import { BaseFlowStabilityDiagram, SpatialDiscretizationDiagram, ICMPreissmannSl
 import { InletElementDiagram, HEC22InletCalculatorDiagram, FlowTransitionDiagram, InletEfficiencyCurvesDiagram } from "@/components/visuals/InletDiagrams";
 import { InertialTermsDiagram, NormalFlowCriterionDiagram, SurchargeMethodDeepDiveDiagram, VariableTimestepDiagram, ConduitLengtheningDiagram, MinNodalSurfaceAreaDiagram, ConvergenceTolerancesDiagram, ParallelThreadsDiagram } from "@/components/visuals/DynamicWaveOptionsDiagrams";
 import { WaveTravelVsTimestepDiagram, AdaptiveTimestepSimulatorDiagram, ConduitLengtheningCheatCodeDiagram, DryStartVsBaseFlowDiagram } from "@/components/visuals/TemporalDynamicsDiagrams";
+import { ControlLogicBuilderDiagram, ExecutionTimelineDiagram, ControllerTypesDiagram } from "@/components/visuals/OperationalControlsDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -88,6 +90,7 @@ const DIAGRAM_CATEGORIES = [
   { id: "options", label: "Solver Options", icon: "settings" },
   { id: "dynwave", label: "Dynamic Wave Options", icon: "zap" },
   { id: "temporal", label: "Temporal Dynamics", icon: "clock" },
+  { id: "controls", label: "Operational Controls", icon: "workflow" },
   { id: "advanced", label: "Advanced Analysis", icon: "chart" },
   { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
@@ -182,7 +185,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">59 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">62 Interactive Diagrams</Badge>
               </div>
             </div>
           </div>
@@ -424,6 +427,7 @@ export default function Dashboard() {
                                        cat.id === "options" ? Settings : 
                                        cat.id === "dynwave" ? Zap : 
                                        cat.id === "temporal" ? Clock : 
+                                       cat.id === "controls" ? Workflow : 
                                        cat.id === "advanced" ? BarChart2 : 
                                        cat.id === "hydrologic" ? Droplet : 
                                        cat.id === "climate" ? Cloud : 
@@ -653,6 +657,31 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-1 gap-6">
                     <ConduitLengtheningCheatCodeDiagram />
                     <DryStartVsBaseFlowDiagram />
+                 </div>
+               </div>
+             )}
+
+             {/* Operational Controls */}
+             {activeCategory === "controls" && (
+               <div className="space-y-6" data-testid="section-controls">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Operational Control & Logic</h3>
+                   <p className="text-muted-foreground">How ICM's component-based RTC architecture compares to SWMM5's procedural control scripts—from building logic to execution.</p>
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Control Logic Definition</h4>
+                   <p className="text-muted-foreground text-sm">Architecture vs scripting approaches to defining control rules.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ControlLogicBuilderDiagram />
+                    <ExecutionTimelineDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Controller Sophistication</h4>
+                   <p className="text-muted-foreground text-sm">From simple on/off to advanced PID and incremental control.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ControllerTypesDiagram />
                  </div>
                </div>
              )}

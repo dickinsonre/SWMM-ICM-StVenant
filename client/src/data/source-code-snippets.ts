@@ -1013,6 +1013,43 @@ export function DryStartVsBaseFlowDiagram() {
   // Flow response graph shows the difference
 }`,
 
+  "OperationalControlsDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Settings2, Workflow, Timer, ToggleLeft, Activity, Play, Pause, RotateCcw, Zap, ArrowRight, Check, X } from "lucide-react";
+
+// 3 Interactive Diagrams for Operational Controls:
+// 1. ControlLogicBuilderDiagram - ICM component-based vs SWMM5 script
+// 2. ExecutionTimelineDiagram - Single timestep execution
+// 3. ControllerTypesDiagram - On/Off vs PID vs Incremental
+
+export function ControlLogicBuilderDiagram() {
+  // Side-by-side: ICM RTC component architecture vs SWMM5 text rules
+  // Shows draggable components (Regulator, Range, PID, Rule) on left
+  // Shows equivalent IF-THEN script on right
+  // Highlights architectural vs procedural paradigm
+}
+
+export function ExecutionTimelineDiagram() {
+  // Timeline showing one major timestep t=1000s
+  // ICM: Parallel evaluation (Sense all ranges -> Process logic/PID -> Act on all)
+  // SWMM5: Sequential rule firing (R1 -> R2 -> R3... with PRIORITY)
+  // Animated step-by-step execution
+}
+
+export function ControllerTypesDiagram() {
+  // Three modes: Simple On/Off, PID Controller, Incremental (ICM only)
+  // Tank level vs time graph with setpoint line
+  // Pump setting vs time graph showing control response
+  // Adjustable P, I, D gains for PID mode
+  // Shows oscillation (on/off) vs smooth tracking (PID) vs stepped (INC)
+}`,
+
   "DynamicWaveOptionsDiagrams.tsx": `import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1283,6 +1320,7 @@ export const FILE_PATHS: Record<string, string> = {
   "SolverOptionsDiagrams.tsx": "client/src/components/visuals/SolverOptionsDiagrams.tsx",
   "DynamicWaveOptionsDiagrams.tsx": "client/src/components/visuals/DynamicWaveOptionsDiagrams.tsx",
   "TemporalDynamicsDiagrams.tsx": "client/src/components/visuals/TemporalDynamicsDiagrams.tsx",
+  "OperationalControlsDiagrams.tsx": "client/src/components/visuals/OperationalControlsDiagrams.tsx",
   "AdvancedDiagrams.tsx": "client/src/components/visuals/AdvancedDiagrams.tsx",
   "TimestepComparisonDiagram.tsx": "client/src/components/visuals/TimestepComparisonDiagram.tsx",
   "HydrologicDiagrams.tsx": "client/src/components/visuals/HydrologicDiagrams.tsx",
