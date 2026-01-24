@@ -68,6 +68,16 @@ import { InertialTermsDiagram, NormalFlowCriterionDiagram, SurchargeMethodDeepDi
 import { WaveTravelVsTimestepDiagram, AdaptiveTimestepSimulatorDiagram, ConduitLengtheningCheatCodeDiagram, DryStartVsBaseFlowDiagram } from "@/components/visuals/TemporalDynamicsDiagrams";
 import { ControlLogicBuilderDiagram, ExecutionTimelineDiagram, ControllerTypesDiagram } from "@/components/visuals/OperationalControlsDiagrams";
 import { DecisionEngineDiagram } from "@/components/visuals/DecisionEngineDiagram";
+import { 
+  CFLStabilityCalculator, 
+  PreissmannSlotCalculator, 
+  ManningsFlowCalculator, 
+  TimeStepEfficiencyEstimator,
+  FroudeNumberDiagram as FroudeNumberCalculator,
+  ComputationalPointsDiagram,
+  InertialTermsDiagram as InertialTermsCalculator,
+  SurchargeAlgorithmDiagram
+} from "@/components/visuals/CalculatorDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -87,18 +97,18 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 };
 
 const DIAGRAM_CATEGORIES = [
-  { id: "solver", label: "Solver Mechanics", icon: "cpu" },
-  { id: "options", label: "Solver Options", icon: "settings" },
-  { id: "dynwave", label: "Dynamic Wave Options", icon: "zap" },
-  { id: "temporal", label: "Temporal Dynamics", icon: "clock" },
-  { id: "controls", label: "Operational Controls", icon: "workflow" },
-  { id: "advanced", label: "Advanced Analysis", icon: "chart" },
-  { id: "hydrologic", label: "Hydrologic", icon: "droplet" },
-  { id: "climate", label: "Climate & Infiltration", icon: "cloud" },
-  { id: "icm", label: "ICM Simulation", icon: "gauge" },
-  { id: "inlets", label: "Surface-to-Sewer", icon: "grid" },
-  { id: "green", label: "Green Infrastructure", icon: "leaf" },
-  { id: "architecture", label: "Code Architecture", icon: "code" },
+  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 10 },
+  { id: "options", label: "Solver Options", icon: "settings", count: 6 },
+  { id: "dynwave", label: "Dynamic Wave Options", icon: "zap", count: 10 },
+  { id: "temporal", label: "Temporal Dynamics", icon: "clock", count: 6 },
+  { id: "controls", label: "Operational Controls", icon: "workflow", count: 3 },
+  { id: "advanced", label: "Advanced Analysis", icon: "chart", count: 8 },
+  { id: "hydrologic", label: "Hydrologic", icon: "droplet", count: 4 },
+  { id: "climate", label: "Climate & Infiltration", icon: "cloud", count: 2 },
+  { id: "icm", label: "ICM Simulation", icon: "gauge", count: 10 },
+  { id: "inlets", label: "Surface-to-Sewer", icon: "grid", count: 4 },
+  { id: "green", label: "Green Infrastructure", icon: "leaf", count: 2 },
+  { id: "architecture", label: "Code Architecture", icon: "code", count: 5 },
 ];
 
 export default function Dashboard() {
@@ -186,7 +196,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">63 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">71 Interactive Diagrams</Badge>
               </div>
             </div>
             
@@ -487,6 +497,16 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
                     <NodeAreaDiagram />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
+                   <p className="text-muted-foreground text-sm">Hands-on tools to explore solver differences and build intuition.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <PreissmannSlotCalculator />
+                    <ManningsFlowCalculator />
+                    <ComputationalPointsDiagram />
+                    <SurchargeAlgorithmDiagram />
+                 </div>
                </div>
              )}
 
@@ -654,6 +674,14 @@ export default function Dashboard() {
                     <ConvergenceTolerancesDiagram />
                     <ParallelThreadsDiagram />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
+                   <p className="text-muted-foreground text-sm">Explore flow regime behavior and momentum equation effects.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <FroudeNumberCalculator />
+                    <InertialTermsCalculator />
+                 </div>
                </div>
              )}
 
@@ -679,6 +707,14 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-1 gap-6">
                     <ConduitLengtheningCheatCodeDiagram />
                     <DryStartVsBaseFlowDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
+                   <p className="text-muted-foreground text-sm">Calculate CFL numbers and estimate simulation efficiency.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <CFLStabilityCalculator />
+                    <TimeStepEfficiencyEstimator />
                  </div>
                </div>
              )}

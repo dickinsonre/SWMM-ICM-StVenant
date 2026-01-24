@@ -1,0 +1,439 @@
+Excellent. Let me dive deep into the existing app structure and propose **specific, high-value additions** that would complement what's already there.
+
+---
+
+## 🔬 **Analysis of Current Content**
+
+Based on my review, the app currently covers these tabs:
+
+| | Tab | Content | |
+|-----|---------|
+| | **Solver Mechanics** | Spatial discretization, Preissmann Slot, wave propagation, dry networks, manhole vs node | |
+| | **Solver Options** | (Assumed: routing options, numerical parameters) | |
+| | **Dynamic Wave Options** | (Assumed: inertial terms, force main handling) | |
+| | **Temporal Dynamics** | (Assumed: time stepping, CFL conditions) | |
+| | **Operational Controls** | (Assumed: RTC rules, pumps, gates) | |
+| | **Advanced Analysis** | (Assumed: calibration, sensitivity) | |
+| | **Hydrologic** | (Assumed: runoff methods) | |
+| | **Climate & Infiltration** | (Assumed: rainfall, Green-Ampt, Horton) | |
+| | **ICM Simulation** | (Assumed: ICM-specific features) | |
+| | **Surface-to-Sewer** | (Assumed: inlet capture, 1D/2D coupling) | |
+| | **Green Infrastructure** | (Assumed: LID/SUDS comparison) | |
+| | **Code Architecture** | (Assumed: open-source vs commercial) | |
+
+---
+
+## 🧮 **Proposed New Calculators**
+
+### **1. CFL Stability Calculator**
+*Where it belongs:* **Temporal Dynamics** tab
+
+**Purpose:** Let users understand why their model might be unstable.
+
+**Interface:**
+```
+┌─────────────────────────────────────────────┐
+│  CFL STABILITY CALCULATOR                   │
+├─────────────────────────────────────────────┤
+│  Conduit Length:    [____500____] ft        │
+│  Flow Velocity:     [____8______] ft/s      │
+│  Wave Celerity:     [____12_____] ft/s      │
+│  Time Step:         [____30_____] sec       │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  Courant Number: 1.2  ⚠️ UNSTABLE   │    │
+│  │  Max Safe Δt:    25 sec             │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  SWMM5: Auto-adjusts to ~25s               │
+│  ICM:   Convergence-based, likely stable    │
+└─────────────────────────────────────────────┘
+```
+
+**Formula displayed:**
+```
+Cr = (V + c) × Δt / Δx
+```
+
+**Value:** Directly answers "Why is my SWMM5 model crashing?" — one of the most common user questions.
+
+---
+
+### **2. Preissmann Slot Sizing Calculator**
+*Where it belongs:* **Solver Mechanics** tab (next to existing Slot diagram)
+
+**Purpose:** Help users understand slot width impact on wave speed.
+
+**Interface:**
+```
+┌─────────────────────────────────────────────┐
+│  PREISSMANN SLOT CALCULATOR                 │
+├─────────────────────────────────────────────┤
+│  Pipe Diameter:     [____48_____] inches    │
+│  Slot Width Factor: [____0.01___] (%)       │
+│                                             │
+│  Slot Width:        0.48 inches             │
+│  Pressurized Wave Speed: 328 ft/s           │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │ [Interactive: Drag to see how       │    │
+│  │  slot width affects wave speed]     │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  SWMM5: User-configurable (v5.1.013+)      │
+│  ICM:   Auto-calculated, ~1% default        │
+└─────────────────────────────────────────────┘
+```
+
+**Value:** Demystifies surcharge behavior and helps users tune models for pressurized flow stability.
+
+---
+
+### **3. Manning's Flow Comparison Calculator**
+*Where it belongs:* **Solver Mechanics** or new **Hydraulic Fundamentals** tab
+
+**Purpose:** Show how both solvers use Manning's equation but with different geometric treatments.
+
+**Interface:**
+```
+┌─────────────────────────────────────────────┐
+│  MANNING'S EQUATION COMPARISON              │
+├─────────────────────────────────────────────┤
+│  Pipe Diameter:  [___24___] in              │
+│  Slope:          [__0.005_] ft/ft           │
+│  Roughness (n):  [__0.013_]                 │
+│  Depth/Diameter: [===●====] 75%             │
+│                                             │
+│  ┌──────────────┬──────────────┐            │
+│  │   SWMM5      │     ICM      │            │
+│  ├──────────────┼──────────────┤            │
+│  │ Area: 2.89   │ Area: 2.91   │ ft²        │
+│  │ R_h:  0.52   │ R_h:  0.52   │ ft         │
+│  │ Q:    12.4   │ Q:    12.5   │ cfs        │
+│  └──────────────┴──────────────┘            │
+│                                             │
+│  Note: Minor differences arise from         │
+│  geometric approximation methods.           │
+└─────────────────────────────────────────────┘
+```
+
+**Value:** Explains why results differ slightly even for identical inputs — a common source of confusion.
+
+---
+
+### **4. Time Step Efficiency Estimator**
+*Where it belongs:* **Temporal Dynamics** tab
+
+**Purpose:** Help users estimate simulation runtime differences.
+
+**Interface:**
+```
+┌─────────────────────────────────────────────┐
+│  SIMULATION EFFICIENCY ESTIMATOR            │
+├─────────────────────────────────────────────┤
+│  Network Size:      [___500____] conduits   │
+│  Simulation Period: [___24_____] hours      │
+│  Avg Conduit Length:[___300____] ft         │
+│  Storm Intensity:   [Medium ▼]              │
+│                                             │
+│  ┌──────────────┬──────────────┐            │
+│  │   SWMM5      │     ICM      │            │
+│  ├──────────────┼──────────────┤            │
+│  │ Est. Δt: 15s │ Est. Δt: 60s │            │
+│  │ Steps: 5,760 │ Steps: 1,440 │            │
+│  │ Time: ~8 min │ Time: ~3 min │            │
+│  └──────────────┴──────────────┘            │
+│                                             │
+│  ⚠️ SWMM5 may reduce Δt during peak flows   │
+└─────────────────────────────────────────────┘
+```
+
+**Value:** Directly addresses "Which is faster?" — a key practical question.
+
+---
+
+### **5. Froude Number Behavior Diagram**
+*Where it belongs:* **Dynamic Wave Options** tab
+
+**Purpose:** Visualize how each solver handles supercritical flow transitions.
+
+**Interactive Diagram:**
+```
+┌─────────────────────────────────────────────┐
+│  FROUDE NUMBER HANDLING                     │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Drag the slope to change flow regime:      │
+│                                             │
+│  [Gentle]═══════●═══════[Steep]             │
+│                                             │
+│  Current Froude: 1.3 (Supercritical)        │
+│                                             │
+│  ┌──────────────┬──────────────┐            │
+│  │   SWMM5      │     ICM      │            │
+│  ├──────────────┼──────────────┤            │
+│  │ Caps Fr at   │ Full St-     │            │
+│  │ user limit   │ Venant with  │            │
+│  │ (default 0.5)│ shock capture│            │
+│  │              │              │            │
+│  │ [Animation]  │ [Animation]  │            │
+│  └──────────────┴──────────────┘            │
+│                                             │
+│  Why it matters: Steep sewers, drop         │
+│  structures, and spillways.                 │
+└─────────────────────────────────────────────┘
+```
+
+**Value:** Critical for users modeling mountainous terrain or drop structures.
+
+---
+
+## 📊 **Proposed New Comparison Diagrams**
+
+### **6. Computational Points Density Comparison**
+*Where it belongs:* **Solver Mechanics** tab
+
+**Concept:** Animated side-by-side showing how a 1000-ft conduit is discretized.
+
+```
+SWMM5                          ICM
+┌────────────────────┐    ┌────────────────────┐
+│ ●────────────────● │    │ ●──●──●──●──●──●──● │
+│ 2 points (nodes)   │    │ 7 points (N=6 segs)│
+│                    │    │                    │
+│ Q constant along   │    │ Q varies along     │
+│ entire length      │    │ length             │
+└────────────────────┘    └────────────────────┘
+
+[Slider: Conduit Length]
+[See how ICM adds more points for longer pipes]
+```
+
+---
+
+### **7. Inertial Terms Comparison**
+*Where it belongs:* **Dynamic Wave Options** tab
+
+**Concept:** Show what happens when inertial terms are included vs. simplified.
+
+```
+┌─────────────────────────────────────────────┐
+│  MOMENTUM EQUATION TERMS                    │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Full Dynamic Wave (both solvers):          │
+│                                             │
+│  ∂Q/∂t + ∂(Q²/A)/∂x + gA(∂H/∂x) + gASf = 0 │
+│  ──────   ──────────   ────────   ─────     │
+│  Local    Convective   Pressure   Friction  │
+│  Inertia  Inertia      Gradient             │
+│                                             │
+│  [Toggle each term ON/OFF to see effect]    │
+│                                             │
+│  SWMM5: Can disable inertia (Kin Wave)      │
+│  ICM:   Always full dynamic                 │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### **8. Surcharge Algorithm Comparison**
+*Where it belongs:* **Solver Mechanics** (expand existing) or **Dynamic Wave Options**
+
+**Concept:** Animate the difference between SWMM5's original surcharge algorithm vs. Preissmann Slot.
+
+```
+┌──────────────────────┬──────────────────────┐
+│  SWMM5 SURCHARGE     │  PREISSMANN SLOT     │
+│  (Original Method)   │  (SWMM5 & ICM)       │
+├──────────────────────┼──────────────────────┤
+│                      │         ║            │
+│  ┌────────────┐      │  ┌──────╨──────┐     │
+│  │░░░░░░░░░░░░│ HGL  │  │░░░░░░║░░░░░░│     │
+│  │████████████│ →    │  │██████║██████│     │
+│  │████████████│      │  │██████║██████│     │
+│  └────────────┘      │  └──────╨──────┘     │
+│                      │                      │
+│  • Switches to       │  • Continuous        │
+│    orifice equation  │    free-surface eqn  │
+│  • Discontinuity     │  • Smooth transition │
+│    at crown          │    through crown     │
+└──────────────────────┴──────────────────────┘
+
+[Animate: Watch water rise through crown]
+```
+
+---
+
+### **9. Rainfall-Runoff Method Matrix**
+*Where it belongs:* **Hydrologic** tab
+
+**Concept:** Side-by-side capability matrix with visual indicators.
+
+```
+┌─────────────────────────────────────────────┐
+│  HYDROLOGY METHOD COMPARISON                │
+├─────────────────────┬───────────┬───────────┤
+│  Method             │  SWMM5    │    ICM    │
+├─────────────────────┼───────────┼───────────┤
+│  Rational Method    │    ✗      │    ✓      │
+│  Unit Hydrograph    │    ✓      │    ✓      │
+│  SWMM Runoff        │    ✓      │    ✓*     │
+│  Horton Infiltr.    │    ✓      │    ✓      │
+│  Green-Ampt         │    ✓      │    ✓      │
+│  Curve Number       │    ✓      │    ✓      │
+│  Fixed Flow-Time    │    ✗      │    ✓      │
+│  Wallingford        │    ✗      │    ✓      │
+│  NewUK              │    ✗      │    ✓      │
+├─────────────────────┴───────────┴───────────┤
+│  *ICM uses embedded SWMM5 engine            │
+│                                             │
+│  [Click any method for detailed comparison] │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### **10. LID/SUDS Performance Comparison**
+*Where it belongs:* **Green Infrastructure** tab
+
+**Concept:** Interactive diagram showing how each solver models a bioretention cell.
+
+```
+┌─────────────────────────────────────────────┐
+│  BIORETENTION CELL MODELING                 │
+├─────────────────────────────────────────────┤
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  ☔ Rain: [____2.0____] in/hr       │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  SWMM5 LID                ICM SUDS          │
+│  ┌───────────┐           ┌───────────┐      │
+│  │ Surface   │→ Overflow │ Surface   │      │
+│  │ Storage   │           │ Storage   │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Soil      │           │ Soil      │      │
+│  │ Layer     │           │ Layer     │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Storage   │           │ Storage   │      │
+│  │ Layer     │           │ Layer     │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Underdrain│→ Outflow  │ Underdrain│      │
+│  └───────────┘           └───────────┘      │
+│                                             │
+│  [Animate water movement through layers]    │
+│                                             │
+│  Key Difference: Parameter naming and       │
+│  layer connectivity options vary.           │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### **11. 1D/2D Coupling Comparison**
+*Where it belongs:* **Surface-to-Sewer** tab
+
+**Concept:** Show the fundamental architectural difference in surface flooding.
+
+```
+┌──────────────────────┬──────────────────────┐
+│       SWMM5          │         ICM          │
+│  (Ponded Area)       │  (Full 2D Mesh)      │
+├──────────────────────┼──────────────────────┤
+│                      │   ┌─┬─┬─┬─┬─┐        │
+│     ~~~●~~~          │   ├─┼─┼─●─┼─┤        │
+│    /       \         │   ├─┼─┼─┼─┼─┤        │
+│   Ponded Area        │   ├─┼─┼─┼─┼─┤        │
+│   (lumped storage)   │   └─┴─┴─┴─┴─┘        │
+│                      │   2D mesh with       │
+│   • Simple           │   manhole coupling   │
+│   • Fast             │                      │
+│   • No flow paths    │   • Complex          │
+│                      │   • Slower           │
+│                      │   • True flow paths  │
+└──────────────────────┴──────────────────────┘
+
+[Click to animate flooding scenario]
+```
+
+---
+
+### **12. Decision Support Wizard**
+*Where it belongs:* **New dedicated tab** or prominent homepage feature
+
+**Concept:** Interactive questionnaire that recommends a solver.
+
+```
+┌─────────────────────────────────────────────┐
+│  🎯 SOLVER SELECTION WIZARD                 │
+├─────────────────────────────────────────────┤
+│                                             │
+│  1. Network Size:                           │
+│     ○ Small (<100 conduits)                 │
+│     ○ Medium (100-1000)                     │
+│     ● Large (>1000)                         │
+│                                             │
+│  2. Primary Analysis Need:                  │
+│     ○ Water Quality / Pollutants            │
+│     ● Flooding / Surcharge                  │
+│     ○ Green Infrastructure Design           │
+│     ○ Real-Time Control                     │
+│                                             │
+│  3. Surface Flooding Detail:                │
+│     ○ Not needed                            │
+│     ○ Simple ponding                        │
+│     ● Full 2D overland flow                 │
+│                                             │
+│  4. Budget:                                 │
+│     ● Free / Public Domain                  │
+│     ○ Commercial license available          │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  RECOMMENDATION: SWMM5              │    │
+│  │                                     │    │
+│  │  Reasoning:                         │    │
+│  │  • Free license fits budget         │    │
+│  │  • Adequate for most flooding       │    │
+│  │  • Consider ICM if 2D is critical   │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  [Recalculate]  [See Detailed Comparison]   │
+└─────────────────────────────────────────────┘
+```
+
+**Value:** This is the **#1 most impactful addition**. It converts passive learning into active decision-making — the ultimate goal of any comparison tool.
+
+---
+
+## 📋 **Summary: Priority Implementation List**
+
+| | Priority | Calculator/Diagram | Tab Location | Effort | Impact | |
+|----------|-------------------|--------------|--------|--------|
+| | **1** | Decision Support Wizard | New/Home | Medium | 🔥🔥🔥 | |
+| | **2** | CFL Stability Calculator | Temporal Dynamics | Low | 🔥🔥🔥 | |
+| | **3** | Surcharge Algorithm Animation | Solver Mechanics | Medium | 🔥🔥🔥 | |
+| | **4** | Froude Number Behavior | Dynamic Wave | Medium | 🔥🔥 | |
+| | **5** | 1D/2D Coupling Comparison | Surface-to-Sewer | Medium | 🔥🔥 | |
+| | **6** | Time Step Efficiency Estimator | Temporal Dynamics | Low | 🔥🔥 | |
+| | **7** | Preissmann Slot Calculator | Solver Mechanics | Low | 🔥 | |
+| | **8** | Manning's Flow Comparison | Solver Mechanics | Low | 🔥 | |
+| | **9** | Rainfall-Runoff Matrix | Hydrologic | Low | 🔥 | |
+| | **10** | LID/SUDS Performance | Green Infrastructure | High | 🔥🔥 | |
+| | **11** | Computational Density Diagram | Solver Mechanics | Low | 🔥 | |
+| | **12** | Inertial Terms Toggle | Dynamic Wave | Medium | 🔥 | |
+
+---
+
+## 🎯 **Final Recommendation**
+
+**Start with #1 (Decision Wizard) and #2 (CFL Calculator).**
+
+These two additions will:
+- Transform passive readers into active users
+- Answer the two most common practical questions ("Which should I use?" and "Why is my model unstable?")
+- Differentiate this tool from any static comparison document
+
+The remaining items build depth and demonstrate mastery. Implement them progressively to keep users returning for new content.
+
+**This app already earns an A. These additions would make it the undisputed industry-standard reference — an A+ with no competition.**

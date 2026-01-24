@@ -1,0 +1,448 @@
+
+
+
+
+9. Rainfall-Runoff Method Matrix
+
+Where it belongs: Hydrologic tab
+
+Concept: Side-by-side capability matrix with visual indicators.
+
+┌─────────────────────────────────────────────┐
+│  HYDROLOGY METHOD COMPARISON                │
+├─────────────────────┬───────────┬───────────┤
+│  Method             │  SWMM5    │    ICM    │
+├─────────────────────┼───────────┼───────────┤
+│  Rational Method    │    ✗      │    ✓      │
+│  Unit Hydrograph    │    ✓      │    ✓      │
+│  SWMM Runoff        │    ✓      │    ✓*     │
+│  Horton Infiltr.    │    ✓      │    ✓      │
+│  Green-Ampt         │    ✓      │    ✓      │
+│  Curve Number       │    ✓      │    ✓      │
+│  Fixed Flow-Time    │    ✗      │    ✓      │
+│  Wallingford        │    ✗      │    ✓      │
+│  NewUK              │    ✗      │    ✓      │
+├─────────────────────┴───────────┴───────────┤
+│  *ICM uses embedded SWMM5 engine            │
+│                                             │
+│  [Click any method for detailed comparison] │
+└─────────────────────────────────────────────┘
+
+
+
+10. LID/SUDS Performance Comparison
+
+Where it belongs: Green Infrastructure tab
+
+Concept: Interactive diagram showing how each solver models a bioretention cell.
+
+┌─────────────────────────────────────────────┐
+│  BIORETENTION CELL MODELING                 │
+├─────────────────────────────────────────────┤
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  ☔ Rain: [____2.0____] in/hr       │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  SWMM5 LID                ICM SUDS          │
+│  ┌───────────┐           ┌───────────┐      │
+│  │ Surface   │→ Overflow │ Surface   │      │
+│  │ Storage   │           │ Storage   │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Soil      │           │ Soil      │      │
+│  │ Layer     │           │ Layer     │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Storage   │           │ Storage   │      │
+│  │ Layer     │           │ Layer     │      │
+│  ├───────────┤           ├───────────┤      │
+│  │ Underdrain│→ Outflow  │ Underdrain│      │
+│  └───────────┘           └───────────┘      │
+│                                             │
+│  [Animate water movement through layers]    │
+│                                             │
+│  Key Difference: Parameter naming and       │
+│  layer connectivity options vary.           │
+└─────────────────────────────────────────────┘
+
+
+
+11. 1D/2D Coupling Comparison
+
+Where it belongs: Surface-to-Sewer tab
+
+Concept: Show the fundamental architectural difference in surface flooding.
+
+┌──────────────────────┬──────────────────────┐
+│       SWMM5          │         ICM          │
+│  (Ponded Area)       │  (Full 2D Mesh)      │
+├──────────────────────┼──────────────────────┤
+│                      │   ┌─┬─┬─┬─┬─┐        │
+│     ~~~●~~~          │   ├─┼─┼─●─┼─┤        │
+│    /       \         │   ├─┼─┼─┼─┼─┤        │
+│   Ponded Area        │   ├─┼─┼─┼─┼─┤        │
+│   (lumped storage)   │   └─┴─┴─┴─┴─┘        │
+│                      │   2D mesh with       │
+│   • Simple           │   manhole coupling   │
+│   • Fast             │                      │
+│   • No flow paths    │   • Complex          │
+│                      │   • Slower           │
+│                      │   • True flow paths  │
+└──────────────────────┴──────────────────────┘
+
+[Click to animate flooding scenario]
+
+
+
+12. Decision Support Wizard
+
+Where it belongs: New dedicated tab or prominent homepage feature
+
+Concept: Interactive questionnaire that recommends a solver.
+
+┌─────────────────────────────────────────────┐
+│  🎯 SOLVER SELECTION WIZARD                 │
+├─────────────────────────────────────────────┤
+│                                             │
+│  1. Network Size:                           │
+│     ○ Small (<100 conduits)                 │
+│     ○ Medium (100-1000)                     │
+│     ● Large (>1000)                         │
+│                                             │
+│  2. Primary Analysis Need:                  │
+│     ○ Water Quality / Pollutants            │
+│     ● Flooding / Surcharge                  │
+│     ○ Green Infrastructure Design           │
+│     ○ Real-Time Control                     │
+│                                             │
+│  3. Surface Flooding Detail:                │
+│     ○ Not needed                            │
+│     ○ Simple ponding                        │
+│     ● Full 2D overland flow                 │
+│                                             │
+│  4. Budget:                                 │
+│     ● Free / Public Domain                  │
+│     ○ Commercial license available          │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  RECOMMENDATION: SWMM5              │    │
+│  │                                     │    │
+│  │  Reasoning:                         │    │
+│  │  • Free license fits budget         │    │
+│  │  • Adequate for most flooding       │    │
+│  │  • Consider ICM if 2D is critical   │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  [Recalculate]  [See Detailed Comparison]   │
+└─────────────────────────────────────────────┘
+
+Value: This is the #1 most impactful addition. It converts passive learning into active decision-making — the ultimate goal of any comparison tool.
+
+
+
+📋 Summary: Priority Implementation List
+
+
+
+
+
+
+
+Priority
+
+
+
+Calculator/Diagram
+
+
+
+Tab Location
+
+
+
+Effort
+
+
+
+Impact
+
+
+
+
+
+1
+
+
+
+Decision Support Wizard
+
+
+
+New/Home
+
+
+
+Medium
+
+
+
+🔥🔥🔥
+
+
+
+
+
+2
+
+
+
+CFL Stability Calculator
+
+
+
+Temporal Dynamics
+
+
+
+Low
+
+
+
+🔥🔥🔥
+
+
+
+
+
+3
+
+
+
+Surcharge Algorithm Animation
+
+
+
+Solver Mechanics
+
+
+
+Medium
+
+
+
+🔥🔥🔥
+
+
+
+
+
+4
+
+
+
+Froude Number Behavior
+
+
+
+Dynamic Wave
+
+
+
+Medium
+
+
+
+🔥🔥
+
+
+
+
+
+5
+
+
+
+1D/2D Coupling Comparison
+
+
+
+Surface-to-Sewer
+
+
+
+Medium
+
+
+
+🔥🔥
+
+
+
+
+
+6
+
+
+
+Time Step Efficiency Estimator
+
+
+
+Temporal Dynamics
+
+
+
+Low
+
+
+
+🔥🔥
+
+
+
+
+
+7
+
+
+
+Preissmann Slot Calculator
+
+
+
+Solver Mechanics
+
+
+
+Low
+
+
+
+🔥
+
+
+
+
+
+8
+
+
+
+Manning's Flow Comparison
+
+
+
+Solver Mechanics
+
+
+
+Low
+
+
+
+🔥
+
+
+
+
+
+9
+
+
+
+Rainfall-Runoff Matrix
+
+
+
+Hydrologic
+
+
+
+Low
+
+
+
+🔥
+
+
+
+
+
+10
+
+
+
+LID/SUDS Performance
+
+
+
+Green Infrastructure
+
+
+
+High
+
+
+
+🔥🔥
+
+
+
+
+
+11
+
+
+
+Computational Density Diagram
+
+
+
+Solver Mechanics
+
+
+
+Low
+
+
+
+🔥
+
+
+
+
+
+12
+
+
+
+Inertial Terms Toggle
+
+
+
+Dynamic Wave
+
+
+
+Medium
+
+
+
+🔥
+
+
+
+🎯 Final Recommendation
+
+Start with #1 (Decision Wizard) and #2 (CFL Calculator).
+
+These two additions will:
+
+
+
+
+
+Transform passive readers into active users
+
+
+
+Answer the two most common practical questions ("Which should I use?" an
