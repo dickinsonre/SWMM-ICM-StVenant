@@ -104,6 +104,7 @@ The database schema currently includes a users table, though the primary applica
 
 ## Recent Changes
 
+- Added interactive **Decision Engine** tool to help users choose between SWMM5 and ICM based on 9 weighted factors (network size, 2D flooding, budget, dry weather, RTC complexity, stability, timesteps, green infrastructure, EPA regulatory)
 - Added Operational Controls category (3 diagrams): Control Logic Builder, Execution Timeline, Controller Types
 - Added InfoSewer Steady State Emulation diagram to ICM Simulation category
 - Total diagram count increased to 63 across 12 categories

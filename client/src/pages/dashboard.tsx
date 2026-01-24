@@ -67,6 +67,7 @@ import { InletElementDiagram, HEC22InletCalculatorDiagram, FlowTransitionDiagram
 import { InertialTermsDiagram, NormalFlowCriterionDiagram, SurchargeMethodDeepDiveDiagram, VariableTimestepDiagram, ConduitLengtheningDiagram, MinNodalSurfaceAreaDiagram, ConvergenceTolerancesDiagram, ParallelThreadsDiagram } from "@/components/visuals/DynamicWaveOptionsDiagrams";
 import { WaveTravelVsTimestepDiagram, AdaptiveTimestepSimulatorDiagram, ConduitLengtheningCheatCodeDiagram, DryStartVsBaseFlowDiagram } from "@/components/visuals/TemporalDynamicsDiagrams";
 import { ControlLogicBuilderDiagram, ExecutionTimelineDiagram, ControllerTypesDiagram } from "@/components/visuals/OperationalControlsDiagrams";
+import { DecisionEngineDiagram } from "@/components/visuals/DecisionEngineDiagram";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -425,6 +426,11 @@ export default function Dashboard() {
               Download Script
             </a>
           </Button>
+        </div>
+
+        {/* Decision Engine - Prominent Placement */}
+        <div className="mb-8">
+          <DecisionEngineDiagram />
         </div>
 
         {activeView === "visuals" && (
