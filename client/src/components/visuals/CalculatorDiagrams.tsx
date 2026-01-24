@@ -17,7 +17,9 @@ import {
   Waves,
   ArrowRight,
   Calculator,
-  Activity
+  Activity,
+  Droplets,
+  Play
 } from "lucide-react";
 
 export function CFLStabilityCalculator() {
@@ -1024,6 +1026,185 @@ export function SurchargeAlgorithmDiagram() {
                 <li>Width ~ 1% of diameter</li>
               </ul>
             </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function SurfaceFloodingDiagram() {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [floodLevel, setFloodLevel] = useState(0);
+
+  const startAnimation = () => {
+    setIsAnimating(true);
+    setFloodLevel(0);
+    let level = 0;
+    const interval = setInterval(() => {
+      level += 5;
+      setFloodLevel(level);
+      if (level >= 100) {
+        clearInterval(interval);
+        setTimeout(() => setIsAnimating(false), 1500);
+      }
+    }, 100);
+  };
+
+  return (
+    <Card className="w-full" data-testid="surface-flooding-diagram">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Droplets className="w-5 h-5 text-primary" />
+          Surface Flooding Comparison
+        </CardTitle>
+        <CardDescription>
+          Compare SWMM5's ponded area vs ICM's full 2D mesh for surface flooding
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="border rounded-lg p-4 bg-blue-50/50">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline" className="bg-blue-100">SWMM5</Badge>
+              <span className="text-sm font-medium">Ponded Area</span>
+            </div>
+            <svg viewBox="0 0 200 150" className="w-full h-40" data-testid="svg-swmm5-ponded">
+              <rect x="40" y="80" width="120" height="60" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" rx="5" />
+              <text x="100" y="115" textAnchor="middle" className="text-[10px] fill-gray-600">Ponded Area</text>
+              <text x="100" y="130" textAnchor="middle" className="text-[8px] fill-gray-500">(lumped storage)</text>
+              
+              <circle cx="100" cy="50" r="12" fill="#3b82f6" stroke="#1d4ed8" strokeWidth="2" />
+              <text x="100" y="54" textAnchor="middle" className="text-[8px] fill-white font-bold">MH</text>
+              
+              <motion.ellipse 
+                cx="100" 
+                cy="70" 
+                rx={isAnimating ? 30 + floodLevel * 0.4 : 30}
+                ry={isAnimating ? 10 + floodLevel * 0.1 : 10}
+                fill="rgba(59, 130, 246, 0.4)"
+                animate={{ 
+                  rx: isAnimating ? 30 + floodLevel * 0.4 : 30,
+                  ry: isAnimating ? 10 + floodLevel * 0.1 : 10,
+                  opacity: floodLevel > 0 ? 0.6 : 0.3
+                }}
+              />
+              
+              {isAnimating && (
+                <motion.text 
+                  x="100" y="25" 
+                  textAnchor="middle" 
+                  className="text-[9px] fill-blue-600 font-medium"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  Vol: {(floodLevel * 15).toFixed(0)} ft³
+                </motion.text>
+              )}
+            </svg>
+            <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Simple & fast</div>
+              <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Low computational cost</div>
+              <div className="flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-amber-500" /> No flow paths on surface</div>
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-4 bg-emerald-50/50">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline" className="bg-emerald-100">ICM</Badge>
+              <span className="text-sm font-medium">Full 2D Mesh</span>
+            </div>
+            <svg viewBox="0 0 200 150" className="w-full h-40" data-testid="svg-icm-mesh">
+              {[0, 1, 2, 3, 4].map(row => (
+                [0, 1, 2, 3, 4].map(col => (
+                  <motion.rect 
+                    key={`${row}-${col}`}
+                    x={50 + col * 22} 
+                    y={40 + row * 22} 
+                    width="20" 
+                    height="20" 
+                    fill={isAnimating && floodLevel > (row + col) * 8 ? "rgba(16, 185, 129, 0.4)" : "#f3f4f6"}
+                    stroke="#9ca3af" 
+                    strokeWidth="1"
+                    animate={{
+                      fill: isAnimating && floodLevel > (row + col) * 8 ? "rgba(16, 185, 129, 0.5)" : "#f3f4f6"
+                    }}
+                    transition={{ duration: 0.2 }}
+                  />
+                ))
+              ))}
+              
+              <circle cx="94" cy="84" r="8" fill="#10b981" stroke="#059669" strokeWidth="2" />
+              <text x="94" y="87" textAnchor="middle" className="text-[6px] fill-white font-bold">MH</text>
+              
+              {isAnimating && floodLevel > 20 && (
+                <>
+                  <motion.path 
+                    d="M 94 84 L 72 106" 
+                    stroke="#10b981" 
+                    strokeWidth="2"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 0.8 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                  <motion.path 
+                    d="M 94 84 L 116 106" 
+                    stroke="#10b981" 
+                    strokeWidth="2"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 0.8 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  />
+                </>
+              )}
+              
+              {isAnimating && (
+                <motion.text 
+                  x="100" y="25" 
+                  textAnchor="middle" 
+                  className="text-[9px] fill-emerald-600 font-medium"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  Vol: {(floodLevel * 15).toFixed(0)} ft³
+                </motion.text>
+              )}
+            </svg>
+            <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> True flow paths</div>
+              <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Accurate flood extents</div>
+              <div className="flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-amber-500" /> Higher computational cost</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <Button 
+            onClick={startAnimation} 
+            disabled={isAnimating}
+            className="gap-2"
+            data-testid="button-animate-flooding"
+            aria-label="Animate flooding scenario"
+          >
+            <Play className="w-4 h-4" />
+            {isAnimating ? "Simulating..." : "Animate Flooding Scenario"}
+          </Button>
+        </div>
+
+        <Separator />
+
+        <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <span className="font-medium text-blue-700">SWMM5 Approach:</span>
+            <p className="text-muted-foreground mt-1">
+              Surface flooding stored as ponded volume at node. No 2D flow routing - water returns to system when capacity available.
+            </p>
+          </div>
+          <div className="p-3 bg-emerald-50 rounded-lg">
+            <span className="font-medium text-emerald-700">ICM Approach:</span>
+            <p className="text-muted-foreground mt-1">
+              Full 2D shallow water equations on triangular mesh. Water flows across terrain following topography.
+            </p>
           </div>
         </div>
       </CardContent>

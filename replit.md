@@ -4,7 +4,7 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **71 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **72 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
@@ -20,7 +20,7 @@ Preferred communication style: Simple, everyday language.
 6. **Advanced Analysis** (8 diagrams) - Convergence, mass balance, oscillation challenges
 7. **Hydrologic** (4 diagrams) - Unit hydrographs, rainfall distribution
 8. **Climate & Infiltration** (2 diagrams) - Snowmelt, infiltration methods
-9. **ICM Simulation** (10 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation
+9. **ICM Simulation** (11 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison
 10. **Surface-to-Sewer** (4 diagrams) - Inlet elements, HEC-22 calculator
 11. **Green Infrastructure** (2 diagrams) - LID/SUDS, dual-solver architecture
 12. **Code Architecture** (5 diagrams) - Input parsing, matrix solver, RTC rules
