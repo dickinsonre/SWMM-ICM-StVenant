@@ -79,6 +79,15 @@ import {
   SurchargeAlgorithmDiagram,
   SurfaceFloodingDiagram
 } from "@/components/visuals/CalculatorDiagrams";
+import { 
+  ICMSWMMEngineComparison, 
+  LiveNetworkComparison, 
+  ForceMainComparison, 
+  ConduitLengthSensitivity, 
+  CommonPitfalls,
+  CompanionToolsFooter,
+  VersionTracker
+} from "@/components/visuals/ReviewDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -98,15 +107,15 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 };
 
 const DIAGRAM_CATEGORIES = [
-  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 10 },
+  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 12 },
   { id: "options", label: "Solver Options", icon: "settings", count: 6 },
   { id: "dynwave", label: "Dynamic Wave Options", icon: "zap", count: 10 },
   { id: "temporal", label: "Temporal Dynamics", icon: "clock", count: 6 },
   { id: "controls", label: "Operational Controls", icon: "workflow", count: 3 },
-  { id: "advanced", label: "Advanced Analysis", icon: "chart", count: 8 },
+  { id: "advanced", label: "Advanced Analysis", icon: "chart", count: 10 },
   { id: "hydrologic", label: "Hydrologic", icon: "droplet", count: 4 },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud", count: 2 },
-  { id: "icm", label: "ICM Simulation", icon: "gauge", count: 11 },
+  { id: "icm", label: "ICM Simulation", icon: "gauge", count: 13 },
   { id: "inlets", label: "Surface-to-Sewer", icon: "grid", count: 4 },
   { id: "green", label: "Green Infrastructure", icon: "leaf", count: 2 },
   { id: "architecture", label: "Code Architecture", icon: "code", count: 5 },
@@ -197,7 +206,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">72 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">77 Interactive Diagrams</Badge>
               </div>
             </div>
             
@@ -508,6 +517,14 @@ export default function Dashboard() {
                     <ComputationalPointsDiagram />
                     <SurchargeAlgorithmDiagram />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Network-Level Simulation</h4>
+                   <p className="text-muted-foreground text-sm">Watch how the same network behaves under each solver and explore force main differences.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <LiveNetworkComparison />
+                    <ForceMainComparison />
+                 </div>
                </div>
              )}
 
@@ -554,6 +571,20 @@ export default function Dashboard() {
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
                     <TimestepComparisonDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Conduit Discretization Impact</h4>
+                   <p className="text-muted-foreground text-sm">How conduit length and element count affect accuracy.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ConduitLengthSensitivity />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Migration Pitfalls</h4>
+                   <p className="text-muted-foreground text-sm">Common mistakes when comparing or converting between solvers.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <CommonPitfalls />
                  </div>
                </div>
              )}
@@ -645,6 +676,13 @@ export default function Dashboard() {
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
                     <SurfaceFloodingDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Three-Engine Comparison</h4>
+                   <p className="text-muted-foreground text-sm">EPA SWMM5 vs ICM SWMM (embedded) vs ICM InfoWorks (native) — which engine to use when.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ICMSWMMEngineComparison />
                  </div>
                </div>
              )}
@@ -1288,6 +1326,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        <CompanionToolsFooter />
+        <VersionTracker />
       </main>
     </div>
   );

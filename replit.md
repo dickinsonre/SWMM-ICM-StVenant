@@ -4,23 +4,23 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **72 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **77 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## Diagram Categories (71 Total)
+## Diagram Categories (77 Total)
 
-1. **Solver Mechanics** (10 diagrams) - Core solver algorithms, discretization, wave propagation, plus Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm
+1. **Solver Mechanics** (12 diagrams) - Core solver algorithms, discretization, wave propagation, plus Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm, Live Network Comparison, Force Main Comparison
 2. **Solver Options** (6 diagrams) - Routing methods, adaptive timesteps, CFL stability
 3. **Dynamic Wave Options** (10 diagrams) - Inertial terms, surcharge methods, convergence, plus Froude Number Calculator, Inertial Terms Calculator
 4. **Temporal Dynamics** (6 diagrams) - CFL conditions, adaptive stepping, startup behavior, plus CFL Stability Calculator, Time Step Efficiency Estimator
 5. **Operational Controls** (3 diagrams) - RTC logic, PID controllers, execution timeline
-6. **Advanced Analysis** (8 diagrams) - Convergence, mass balance, oscillation challenges
+6. **Advanced Analysis** (10 diagrams) - Convergence, mass balance, oscillation challenges, Conduit Length Sensitivity, Common Migration Pitfalls
 7. **Hydrologic** (4 diagrams) - Unit hydrographs, rainfall distribution
 8. **Climate & Infiltration** (2 diagrams) - Snowmelt, infiltration methods
-9. **ICM Simulation** (11 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison
+9. **ICM Simulation** (13 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison, Three-Engine Comparison (EPA vs ICM SWMM vs ICM InfoWorks)
 10. **Surface-to-Sewer** (4 diagrams) - Inlet elements, HEC-22 calculator
 11. **Green Infrastructure** (2 diagrams) - LID/SUDS, dual-solver architecture
 12. **Code Architecture** (5 diagrams) - Input parsing, matrix solver, RTC rules
@@ -104,8 +104,14 @@ The database schema currently includes a users table, though the primary applica
 
 ## Recent Changes
 
-- Added 8 new **interactive calculators**: CFL Stability Calculator, Preissmann Slot Calculator, Manning's Flow Calculator, Time Step Efficiency Estimator, Froude Number Calculator, Computational Points Diagram, Inertial Terms Calculator, Surcharge Algorithm Diagram
-- Added interactive **Decision Engine** tool to help users choose between SWMM5 and ICM based on 9 weighted factors (network size, 2D flooding, budget, dry weather, RTC complexity, stability, timesteps, green infrastructure, EPA regulatory)
-- Added Operational Controls category (3 diagrams): Control Logic Builder, Execution Timeline, Controller Types
-- Added InfoSewer Steady State Emulation diagram to ICM Simulation category
-- Total diagram count increased to 71 across 12 categories
+- Added **Three-Engine Comparison** (EPA SWMM5 vs ICM SWMM vs ICM InfoWorks) to ICM Simulation
+- Added **Live Network Comparison** - animated 5-node network simulated through both solvers
+- Added **Force Main Comparison** - Hazen-Williams vs pressurized flow equations
+- Added **Conduit Length Sensitivity** demo with wave propagation animation
+- Added **Common Migration Pitfalls** section with 7 expandable gotchas and fixes
+- Added **Companion Tools** footer links (sjswmm5manualsearch.com, swmmdocs.com)
+- Added **Version Tracker** (SWMM5 v5.2.4, ICM v2025.1)
+- Added **Surface Flooding Comparison** diagram with animation
+- Added 8 interactive calculators: CFL, Preissmann Slot, Manning's, TimeStep, Froude, Computational Points, Inertial Terms, Surcharge
+- Added Decision Engine, Operational Controls (3 diagrams), InfoSewer Emulation
+- Total diagram count: 77 across 12 categories
