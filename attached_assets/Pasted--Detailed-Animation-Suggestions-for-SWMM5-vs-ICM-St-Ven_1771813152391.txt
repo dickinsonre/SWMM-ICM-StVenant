@@ -1,0 +1,1233 @@
+# Detailed Animation Suggestions for SWMM5 vs ICM St. Venant Comparison App
+
+## Current Animations Assessment: A (93/100)
+
+Your existing animations are excellent — the Preissmann Slot slider, the wave propagation comparison, and the live 5-node network simulation are genuinely effective teaching tools. What follows are **25 detailed animation concepts** that would make this the definitive interactive resource for understanding SWMM5 and ICM solver differences.
+
+---
+
+## Category 1: Node & Chamber Animations
+
+### 🎬 Animation 1: ICM Node Chamber Detail — The Full Shaft
+
+You specifically asked about this. Here is the complete design:
+
+```
+ICM NODE CHAMBER ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        Ground Level
+    ═══════╤═══════════
+           │ Cover     
+    ───────┤───────────  Shaft (circular/rectangular)
+           │           
+           │  ←── Water level rises/falls
+           │      with interactive slider
+           │           
+    ───────┤───────────  Benching
+      ─────┘ └─────
+     Inlet ←       → Outlet
+      Pipe          Pipe
+      
+    ═══════════════════  Chamber Floor (Invert)
+
+INTERACTIVE CONTROLS:
+┌──────────────────────────────────────────┐
+│ Inflow Rate:     [━━━━━●━━━━━] 50 L/s  │
+│                                          │
+│ REAL-TIME DISPLAY:                       │
+│ Water Level:     102.34 m AOD            │
+│ Chamber Depth:   1.82 m                  │
+│ Headloss (entry): 0.023 m               │
+│ Headloss (exit):  0.031 m               │
+│ Flood Volume:     0.0 m³                 │
+│                                          │
+│ SHAFT GEOMETRY:                          │
+│ ○ Circular (1050mm)                      │
+│ ● Rectangular (900×600mm)               │
+│ ○ Custom                                │
+│                                          │
+│ SHOW:                                    │
+│ ☑ Velocity vectors in chamber           │
+│ ☑ Head loss arrows at entry/exit        │
+│ ☑ Energy grade line                     │
+│ ☑ Hydraulic grade line                  │
+└──────────────────────────────────────────┘
+```
+
+**The animation behavior:**
+
+**Phase 1 — Free Flow (depth < 50%):**
+- Water flows through the chamber with visible velocity vectors
+- Entry and exit head loss arrows pulse proportional to magnitude
+- The water surface is slightly lower at the outlet than the inlet (showing head loss)
+- Benching channels are visible guiding the flow
+
+**Phase 2 — Rising (depth 50-100%):**
+- Water level rises in the shaft
+- Entry/exit head losses increase visibly
+- Velocity vectors slow as cross-section area increases in the shaft
+- The energy grade line and hydraulic grade line diverge
+
+**Phase 3 — Surcharge (depth > 100%):**
+- Water fills the shaft completely
+- A "pressurized" indicator appears
+- The Preissmann slot activates (for ICM) with a visual narrow extension above the cover
+- Pressure head is shown above the shaft cover
+
+**Phase 4 — Flooding (depth > shaft height):**
+- Water overflows the shaft
+- A surface flood pool appears at ground level
+- Flood volume counter starts incrementing
+- The ponded area geometry activates (if defined)
+
+**Side-by-side with SWMM5:**
+
+```
+SWMM5 MANHOLE          │     ICM NODE CHAMBER
+                        │
+   ┌─Cover──┐           │        ┌─Cover──┐
+   │        │           │        │        │
+   │  H=5.2 │ ← simple │        │  H=5.2 │ ← distributed
+   │  ████  │   depth   │        │  ████  │   computation
+   │  ████  │           │        │  ████  │
+   │  ████  │           │        │  ████  │
+   └────────┘           │        └────────┘
+  ──→  Q  ──→           │       ──→ Q₁ Q₂ Q₃ ──→
+  Constant Q            │       Q varies along pipe
+                        │
+ One H value per node   │    Multiple H,Q points
+ One Q value per link   │    per conduit
+```
+
+---
+
+### 🎬 Animation 2: Manhole Storage Volume Comparison
+
+```
+SWMM5 MANHOLE STORAGE
+━━━━━━━━━━━━━━━━━━━━━━
+SWMM5 computes storage from:
+- Shaft diameter/geometry explicitly
+- Ponded area (when flooded)
+- Surcharge depth above ground
+
+    ┌──────────┐
+    │          │ ← Ponded area
+    │  ░░░░░░  │    (user-defined A_ponded)
+    ╞══════════╡ ← Ground level
+    │  ████████│ ← Surcharge storage
+    │  ████████│    (shaft cross-section × depth)
+    │  ████████│
+    │  ████████│ ← Normal storage
+    │  ████████│    (shaft cross-section × depth)
+    └──────────┘
+
+ICM NODE STORAGE
+━━━━━━━━━━━━━━━━
+ICM computes storage from:
+- Shaft data table (depth vs. plan area)
+- Can vary with depth (tapered shafts)
+- Flood type: Stored / Lost / 2D
+
+    ┌──────────────┐
+    │   ░░░░░░░░   │ ← 2D mesh (if coupled)
+    │  ░░░░░░░░░░  │    OR stored OR lost
+    ╞══════════════╡
+    │  ████████████│ ← Storage from
+    │  ██████████  │    depth-area table
+    │  ████████    │    (can be non-linear)
+    │  ██████      │    (tapered shaft)
+    └──────────────┘
+
+INTERACTIVE:
+[Slider: Water Depth]
+SWMM5 Volume: 2.34 m³  │  ICM Volume: 2.41 m³
+Difference: 3.0% (from shaft geometry representation)
+```
+
+---
+
+### 🎬 Animation 3: Flood Type Comparison
+
+```
+FLOODING BEHAVIOR ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 OPTIONS:                ICM OPTIONS:
+┌──────────────────┐          ┌──────────────────┐
+│ ALLOW_PONDING=NO │          │ Flood Type: LOST │
+│                  │          │                  │
+│  Water lost from │          │  Water lost from │
+│  system when     │          │  system when     │
+│  depth > MaxDepth│          │  depth > ground  │
+│                  │          │                  │
+│  ⚠ Mass balance  │          │  ⚠ Mass balance  │
+│  error possible  │          │  error possible  │
+└──────────────────┘          └──────────────────┘
+
+┌──────────────────┐          ┌──────────────────┐
+│ ALLOW_PONDING=YES│          │ Flood Type:STORED│
+│                  │          │                  │
+│  ┌──────────┐   │          │  ┌──────────┐   │
+│  │ ░░░░░░░░ │   │          │  │ ░░░░░░░░ │   │
+│  │ ░░pond░░ │   │          │  │ ░░stored░ │   │
+│  │ ░░░░░░░░ │   │          │  │ ░░░░░░░░ │   │
+│  └──────────┘   │          │  └──────────┘   │
+│  Aponded (ft²)  │          │  Ponded Area    │
+│  from INP file   │          │  from node data  │
+└──────────────────┘          └──────────────────┘
+
+                              ┌──────────────────┐
+  NO SWMM5 EQUIVALENT ←─────│ Flood Type: 2D   │
+                              │                  │
+                              │ ┌──────────────┐ │
+                              │ │ 2D mesh      │ │
+                              │ │ surface ═══  │ │
+                              │ │ flooding ███ │ │
+                              │ │ simulation   │ │
+                              │ └──────────────┘ │
+                              │ Water exchanges  │
+                              │ with 2D surface  │
+                              │ mesh via manhole │
+                              └──────────────────┘
+```
+
+**Animation behavior:** Show water rising in a manhole, reaching the ground surface, and then three different outcomes animating simultaneously: Lost (water disappears with a warning icon), Stored (water pools above ground in a defined area), 2D (water spreads across a surface mesh with depth contours).
+
+---
+
+## Category 2: Pipe Flow Animations
+
+### 🎬 Animation 4: Distributed Computation Points — ICM vs SWMM5
+
+```
+CONDUIT DISCRETIZATION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5: 1 ELEMENT PER CONDUIT
+Node A ═══════════════════════════ Node B
+  H_A          Q (one value)          H_B
+
+  Q is constant along entire length
+  No internal variation captured
+  Average properties used
+
+ICM: N SEGMENTS PER CONDUIT
+Node A ──●──●──●──●──●──●── Node B
+        s1  s2  s3  s4  s5  s6
+
+  Q₁  Q₂  Q₃  Q₄  Q₅  Q₆  Q₇
+  H₁  H₂  H₃  H₄  H₅  H₆  H₇
+
+  Q and H vary along length
+  Internal flow variations captured
+  Each segment has local properties
+
+ANIMATION:
+[Introduce a flow pulse at Node A]
+
+SWMM5: The entire pipe changes Q simultaneously
+        ████████████████████████████
+        Q jumps from 0 to Q_peak instantly
+        along entire length
+
+ICM:    The pulse propagates segment by segment
+        ████░░░░░░░░░░░░░░░░░░░░░░  t=1
+        ████████░░░░░░░░░░░░░░░░░░  t=2
+        ████████████░░░░░░░░░░░░░░  t=3
+        ████████████████░░░░░░░░░░  t=4
+        ████████████████████░░░░░░  t=5
+        ████████████████████████░░  t=6
+        ██████████████████████████  t=7
+
+SLIDER: Number of ICM segments [1───●───10]
+        At N=1, ICM behaves like SWMM5
+        At N=10, wave propagation is smooth
+```
+
+**Why this animation matters:** This is the single most important solver difference. SWMM5 treats each conduit as one computational element. ICM treats it as N elements. The animation shows viscerally *why* ICM can capture flow variations within a pipe that SWMM5 cannot.
+
+---
+
+### 🎬 Animation 5: Partial Flow Cross-Section Calculator
+
+```
+PARTIAL FLOW CROSS-SECTION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+         ╭──────────╮
+        ╱            ╲
+       │              │
+       │    ██████    │ ← d/D slider
+       │   ████████   │
+       │  ██████████  │
+       ╰──────────────╯
+
+  d/D: [━━━━━━━●━━━] 75%
+
+  ┌────────────────────────────────────┐
+  │ Property      SWMM5    ICM   Diff │
+  │ ──────────────────────────────────│
+  │ Flow Area    2.53ft²  2.55   0.8% │
+  │ Wet Perim    4.19ft   4.19   0.0% │
+  │ Hyd Radius   0.603ft  0.608  0.8% │
+  │ Top Width    1.32ft   1.33   0.8% │
+  │ Sect Factor  1.82     1.84   1.1% │
+  │ ──────────────────────────────────│
+  │ Manning's Q  14.63cfs 14.70  0.5% │
+  └────────────────────────────────────┘
+
+  At d/D > 82%: SWMM5 uses lookup table
+                ICM uses analytical solution
+                Differences can reach 2-3%
+                
+  At d/D > 100%: Both use Preissmann Slot
+                 (different implementations)
+```
+
+**Animation behavior:** As the user drags the depth slider, the water level in the pipe cross-section rises, the shaded area changes, and ALL computed values update simultaneously. At d/D > 82%, highlight the region where SWMM5 switches to a lookup table and ICM continues with analytical computation, showing where differences emerge.
+
+---
+
+### 🎬 Animation 6: Froude Number Handling
+
+```
+FROUDE NUMBER TRANSITION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Froude Number: [━━━━━━━●━━━━━━━] 1.2
+
+  Fr < 1.0 (SUBCRITICAL)
+  ──────────────────────────
+  ~~~~ ──→  Gentle flow  ──→ ~~~~
+  
+  Both solvers handle well
+  Normal backwater computation
+
+  Fr = 1.0 (CRITICAL)
+  ──────────────────────────
+  ═════╗
+       ║ Hydraulic jump possible
+  ═════╝
+  
+  SWMM5: Caps Fr at user-specified limit
+  ICM:   Gradual transition with damping
+
+  Fr > 1.0 (SUPERCRITICAL)
+  ──────────────────────────
+  ≋≋≋≋ ══→  Fast flow  ══→ ≋≋≋≋
+  
+  SWMM5: Uses inertial damping
+         Damps convective acceleration terms
+         as Fr approaches user limit
+         
+  ICM:   Different Froude handling
+         Maintains momentum equation
+         but applies stability controls
+
+SWMM5 INERTIAL DAMPING OPTIONS:
+┌──────────────────────────────────────┐
+│ ○ NONE     — No damping applied     │
+│ ● PARTIAL  — Damping when Fr > 1.0  │
+│ ○ FULL     — Always damp inertial   │
+│                                      │
+│ Damping Factor: σ = 1 - (Fr-0.5)²  │
+│ When σ=0: Full St. Venant           │
+│ When σ=1: Diffusion wave only       │
+└──────────────────────────────────────┘
+
+ICM FROUDE HANDLING:
+┌──────────────────────────────────────┐
+│ Automatic transition management     │
+│ No user selection required          │
+│ Internal stability algorithms       │
+│ Maintains distributed H,Q solution  │
+└──────────────────────────────────────┘
+```
+
+**Animation behavior:** Show a pipe with flow. As the user increases the Froude number slider, the flow transitions from gentle subcritical to fast supercritical. Show side-by-side how SWMM5 applies inertial damping (momentum terms visually diminishing) while ICM handles the transition differently. At Fr > 1.0, show SWMM5's convective acceleration term fading out proportional to the damping factor.
+
+---
+
+### 🎬 Animation 7: Force Main Pressure Flow
+
+```
+FORCE MAIN ANIMATION
+━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 FORCE MAIN:
+┌──────────────────────────────────────────┐
+│ Pump ═══════════╗                        │
+│    ↑            ║  HGL above pipe crown  │
+│  On/Off     ════╬════════════════════    │
+│    ↓        ════║════════════════════    │
+│             ════╚════════════════════    │
+│                     Pressurized pipe     │
+│                                          │
+│ FRICTION OPTIONS (toggleable):           │
+│                                          │
+│ ● Manning:      Q = (1.49/n)AR^⅔S^½    │
+│   ──────── ────────── ──────────        │
+│   Q = 14.63 cfs                         │
+│                                          │
+│ ○ Hazen-Williams: Q = 0.849CA^1R^0.63S^0.54│
+│   ──────── ────────── ──────────        │
+│   Q = 16.21 cfs  (+10.8%)               │
+│                                          │
+│ ○ Darcy-Weisbach: Q = A√(2gDhf/fL)     │
+│   ──────── ────────── ──────────        │
+│   Q = 13.89 cfs  (-5.1%)                │
+└──────────────────────────────────────────┘
+
+ICM FORCE MAIN:
+┌──────────────────────────────────────────┐
+│ Pump ═══════════╗                        │
+│                 ║  Preissmann slot extends│
+│             ════╬═══ slot ═══════════    │
+│             ════║════════════════════    │
+│             ════╚════════════════════    │
+│                                          │
+│ Uses dedicated force main object type    │
+│ Pressurized flow equations built-in      │
+│ Smooth open↔pressurized transition       │
+│ via Preissmann slot above crown          │
+│                                          │
+│ Q = 15.42 cfs                           │
+└──────────────────────────────────────────┘
+
+ANIMATION:
+[Pump turns ON]
+1. Water level rises in upstream manhole
+2. Flow enters force main
+3. Pipe fills from upstream to downstream
+4. HGL extends above pipe crown
+5. Compare friction equation results
+```
+
+**Animation behavior:** The pump activates. Water fills the pipe from left to right. The HGL (hydraulic grade line) appears above the pipe crown. In SWMM5, the user can toggle between Manning, Hazen-Williams, and Darcy-Weisbach and watch the flow rate and HGL slope change. In ICM, the Preissmann slot extends smoothly above the crown showing the pressure transition.
+
+---
+
+### 🎬 Animation 8: Backwater Effect Propagation
+
+```
+BACKWATER PROPAGATION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Scenario: Downstream water level rises (tidal outfall)
+
+SWMM5:
+Node1    Node2    Node3    Node4    Outfall
+  ○────────○────────○────────○────────○
+  
+  Backwater affects HEAD at nodes only
+  Each LINK sees only its two end nodes
+  
+  t=0: ────────────────────────────═══ ↑ Tide rises
+  t=1: ──────────────────────════════ ↑
+  t=2: ────────────────═══════════════ ↑
+  t=3: ──────────════════════════════ ↑
+
+ICM:
+Node1    Node2    Node3    Node4    Outfall
+  ○──●──●──○──●──●──○──●──●──○──●──●──○
+  
+  Backwater propagates through EVERY segment
+  Smooth water surface profile develops
+  
+  t=0: ────────────────────────────═══ ↑
+  t=1: ──────────────────────══╱═════ ↑
+  t=2: ────────────────══╱══╱════════ ↑  
+  t=3: ──────────══╱══╱══╱═══════════ ↑
+
+  ICM captures the smooth M1 backwater curve
+  SWMM5 approximates it with step changes at nodes
+```
+
+**Animation behavior:** Show a downstream tidal boundary rising. In SWMM5, the backwater propagates upstream as discrete head changes at each node — a staircase pattern. In ICM, the backwater propagates through every computational segment, creating a smooth M1 curve. The difference is most visible in long conduits between nodes.
+
+---
+
+## Category 3: Time Step & Stability Animations
+
+### 🎬 Animation 9: CFL Condition Visualizer
+
+```
+CFL (COURANT-FRIEDRICHS-LEWY) ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The CFL condition: Δt ≤ Δx / (v + c)
+
+Where:
+  Δt = time step
+  Δx = spatial step (conduit length in SWMM5)
+  v  = flow velocity
+  c  = wave celerity (√(gA/T))
+
+SWMM5 CFL VISUALIZATION:
+┌──────────────────────────────────────────┐
+│                                          │
+│  ←────── Δx = 400 ft ──────→            │
+│  ═══════════════════════════             │
+│                                          │
+│  v = 5 ft/s    c = 15 ft/s              │
+│  Δt ≤ 400/(5+15) = 20 seconds           │
+│                                          │
+│  Current Δt: [━━━━━━━●━━━] 15 sec  ✅   │
+│                                          │
+│  ⚠ If Δt > 20 sec: INSTABILITY          │
+│  ─── ╱╲╱╲╱╲╱╲ ── oscillations ──       │
+│                                          │
+│  CONDUIT LENGTH:  [━━●━━━━━━━] 400 ft   │
+│  FLOW VELOCITY:   [━━━━●━━━━━] 5 ft/s   │
+│  WAVE SPEED:      [━━━━━━━●━━] 15 ft/s  │
+│                                          │
+│  Max Stable Δt:   20.0 seconds           │
+│  SWMM5 Auto Δt:   15.0 seconds ✅       │
+└──────────────────────────────────────────┘
+
+ICM CFL VISUALIZATION:
+┌──────────────────────────────────────────┐
+│                                          │
+│  ←── Δx₁ ──→←── Δx₂ ──→←── Δx₃ ──→    │
+│  ═══════════════════════════════════     │
+│  80 ft      80 ft      80 ft            │
+│                                          │
+│  Δt ≤ 80/(5+15) = 4 seconds             │
+│  BUT: Preissmann scheme is implicit      │
+│  CFL does NOT strictly apply             │
+│  ICM can use MUCH larger Δt             │
+│                                          │
+│  ICM Actual Δt: 30 seconds  ✅          │
+│  (convergence-based, not CFL-based)      │
+│                                          │
+│  This is why ICM can be FASTER for      │
+│  large networks despite more points     │
+└──────────────────────────────────────────┘
+```
+
+**Animation behavior:** Show a wave traveling through a pipe. In SWMM5, show the time step constrained by CFL — if the user increases Δt beyond the CFL limit, the wave oscillates and produces instability (sawtooth pattern). In ICM, show that the implicit scheme allows larger time steps without instability, but convergence iterations increase.
+
+---
+
+### 🎬 Animation 10: Time Step Adaptation Comparison
+
+```
+ADAPTIVE TIME STEPPING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+During a storm event, both solvers adjust time steps:
+
+SWMM5 (CFL-based):
+Time ──────────────────────────────────→
+Δt:  ████  ██ █ █ ██  ████  ████████
+     30s   15 5 5 15  30s   30s
+     Dry   ↑Rising↑   Falling  Dry
+          Storm peak
+          (short Δt needed for stability)
+
+ICM (Convergence-based):
+Time ──────────────────────────────────→
+Δt:  ██████████ ████ ██ ████ ██████████
+     60s        30s  15 30s  60s
+     Dry        Rising ↑ Falling  Dry
+                      Peak
+                (convergence needs more iterations)
+
+STORM HYDROGRAPH:
+        ╱╲
+       ╱  ╲
+      ╱    ╲
+     ╱      ╲
+────╱        ╲────────────
+
+TOTAL TIMESTEPS FOR SAME SIMULATION:
+SWMM5: 2,847 steps (smaller steps at peak)
+ICM:   1,203 steps (larger steps possible)
+```
+
+---
+
+## Category 4: Hydraulic Structure Animations
+
+### 🎬 Animation 11: Weir Flow Comparison
+
+```
+WEIR ANIMATION
+━━━━━━━━━━━━━━
+
+                    SWMM5                          ICM
+              
+            ┌─────────┐                    ┌─────────┐
+   ████████ │         │                    │         │ ████████
+   ████████ │  Weir   │                    │  Weir   │ ████████
+   ████████ │  Crest  │ ████               │  Crest  │ ████
+   ████████ │═════════│ ████               │═════════│ ████
+   ████████ │         │ ████               │         │ ████
+   ████████ └─────────┘ ████               └─────────┘ ████
+
+   Q = Cd × L × H^1.5          Q = (2/3)Cd × L × √(2g) × H^1.5
+   
+   SWMM5 Cd includes √(2g)     ICM Cd does NOT include √(2g)
+   
+   SWMM5 Cd = 3.33             ICM Cd = 0.62
+   (Both produce same Q)        (Cd_ICM = Cd_SWMM / √(2g × 3/2))
+
+HEAD ABOVE CREST: [━━━━━━━●━━━━━] 1.5 ft
+
+   SWMM5 Q: 6.12 cfs
+   ICM Q:   6.12 cfs ✅ (same result, different Cd convention)
+   
+   ⚠ COMMON MISTAKE: Using SWMM5 Cd value in ICM
+      If you enter 3.33 in ICM: Q = 32.8 cfs ← WRONG (5.4x too high!)
+```
+
+**Animation behavior:** Water flows over a weir. The head rises with the slider. Both solvers produce the same flow, but the Cd VALUES are different because of different equation conventions. The animation highlights this with a flashing warning when the user attempts to use one solver's Cd in the other.
+
+---
+
+### 🎬 Animation 12: Orifice Discharge Coefficient Conversion
+
+```
+ORIFICE ANIMATION
+━━━━━━━━━━━━━━━━━
+
+   SWMM5:                    ICM:
+   Q = Cd × A × √(2gH)      Q = Cd_ICM × A × √(2gH)
+   
+   Cd_SWMM = 0.65            Cd_ICM = Cd_SWMM × √2
+                              Cd_ICM = 0.65 × 1.414
+                              Cd_ICM = 0.919
+   
+   ┌──────────┐               ┌──────────┐
+   │ ████████ │               │ ████████ │
+   │ ████████ │               │ ████████ │
+   │ ████○███ │ ← orifice     │ ████○███ │
+   │ ████ ███ │   opening     │ ████ ███ │
+   │ ████████ │               │ ████████ │
+   └──────────┘               └──────────┘
+       ↓↓↓                        ↓↓↓
+   Q = 4.23 cfs              Q = 4.23 cfs  ✅
+
+   HEAD: [━━━━━━━●━━━━━━━] 3.0 ft
+   
+   ⚠ IMPORT WARNING:
+   When importing SWMM5 to ICM, the orifice Cd
+   must be multiplied by √2 or flows will be
+   29% too low!
+```
+
+---
+
+### 🎬 Animation 13: Pump Operations Comparison
+
+```
+PUMP TYPE ANIMATION
+━━━━━━━━━━━━━━━━━━━
+
+SWMM5 PUMP TYPES:           ICM PUMP TYPES:
+
+Type 1: Volume vs. Flow     Fixpmp (Fixed discharge)
+   ┌────╱───┐                ┌──────────┐
+   │  ╱     │                │ ████████ │ On/Off at
+   │╱       │                │          │ set levels
+   └────────┘                └──────────┘
+   
+Type 2: Depth vs. Flow      Scrpmp (Screw/Archimedes)
+   ┌───╱────┐                ┌──╱───────┐
+   │  ╱     │                │╱         │
+   │╱       │                └──────────┘
+   └────────┘
+   
+Type 3: Head vs. Flow       Rotpmp (Rotodynamic)
+   ┌────────┐                ┌────────┐
+   │╲       │                │╲       │
+   │  ╲     │                │  ╲     │
+   │    ╲   │                │    ╲   │
+   └────────┘                └────────┘
+   
+Type 4: Depth vs. Flow      VSPump (Variable speed)
+   (variable speed)          
+   ┌───╱────┐                
+   │  ╱ ╱   │ ← multiple    
+   │╱  ╱    │    speeds      
+   └────────┘                
+
+SWITCH LEVEL CONVERSION:
+SWMM5: Startup/Shutoff = depth ABOVE node invert
+ICM:   Switch On/Off = ABSOLUTE elevation
+
+  SWMM5 Startup = 3.0 ft (above invert)
+  Node Invert = 100.0 ft
+  ICM Switch On = 103.0 ft (100 + 3)
+  
+  ⚠ Forgetting this conversion = pump never turns on
+```
+
+**Animation behavior:** Show a wet well with rising water level. The pump turns on at the switch-on level and off at the switch-off level. Animate the water level oscillating as the pump cycles. Show the same behavior in both SWMM5 and ICM, highlighting the different level conventions (depth vs. elevation).
+
+---
+
+## Category 5: Boundary Condition Animations
+
+### 🎬 Animation 14: Outfall Types Side by Side
+
+```
+OUTFALL TYPE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━
+
+FREE OUTFALL:
+   ═══════════╗
+              ║ ← Critical depth
+              ╚══→ Free discharge
+   
+   Both solvers: Q at critical depth
+
+NORMAL OUTFALL:
+   ═══════════════════════→
+   Slope determines depth
+   Manning's normal depth
+   
+   Both solvers: Q at normal depth for slope
+
+FIXED STAGE:
+   ═══════════╗
+              ║ ← Fixed water level
+   ═══════════╩═══════════
+                Stage = 95.0 ft
+   
+   Both: Fixed boundary head
+
+TIDAL OUTFALL:
+   ═══════════╗
+              ║    ╱╲  Tide curve
+   ═══════════╩══╱══╲═══════════
+              ╱      ╲
+   
+   SWMM5: [CURVES] section, TIDAL type
+   ICM:   Tidal Curve object
+   
+   ⚠ Reverse flow possible if tide > pipe head
+
+TIME SERIES OUTFALL:
+   ═══════════╗
+              ║   ╱╲ ╱╲  Measured levels
+   ═══════════╩═╱══╲╱══╲════════
+   
+   SWMM5: [TIMESERIES] reference
+   ICM:   Level Event data
+```
+
+**Animation behavior:** For each outfall type, animate the flow behavior — especially the tidal outfall where flow can reverse when tide rises above the pipe head. Show a flap gate animation that prevents reverse flow when the GATED option is selected.
+
+---
+
+### 🎬 Animation 15: Tidal Outfall with Flap Gate
+
+```
+FLAP GATE ANIMATION
+━━━━━━━━━━━━━━━━━━━
+
+TIDE BELOW PIPE HEAD (Forward Flow):
+   ════════════╗  ╱── Gate OPEN
+               ║ ╱
+   ════════════╬╱
+               ║ ←── Flow exits
+   ════════════╩═══════ ← Tide level low
+   
+   Q = normal pipe flow
+
+TIDE ABOVE PIPE HEAD (Gate Closes):
+                  ╱── Gate CLOSED
+   ════════════╗ │
+   ████████████║ │
+   ████████████╬─┤ ← Gate blocks
+   ████████████║ │    reverse flow
+   ════████████╩═╧══════ ← Tide high
+   
+   Q = 0 (no reverse flow)
+   Head builds behind gate
+
+TIDE FALLING (Gate Re-opens):
+   ════════════╗  ╱── Gate opens
+   ██████████  ║ ╱    gradually
+   ██████████  ╬╱
+   ██████████  ║ ←── Stored water
+   ════████████╩═══════    discharges
+   
+   Q = increased (stored head drives flow)
+
+SWMM5: Gated = YES in [OUTFALLS]
+ICM:   Flap Valve object downstream of outfall
+       (separate physical object)
+```
+
+---
+
+## Category 6: Infiltration & Hydrology Animations
+
+### 🎬 Animation 16: Infiltration Method Comparison
+
+```
+INFILTRATION SIDE-BY-SIDE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Rain: ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+
+HORTON:                    GREEN-AMPT:
+Rate                       Rate
+│\                         │
+│ \                        │  ┌──── Ponding begins
+│  \                       │  │
+│   \______ fc             │  ↓ ╲
+│                          │      ╲_____ 
+└──────── Time             └──────────── Time
+f(t) = fc+(f0-fc)e^(-kt)  f = Ks(1+ψΔθ/F)
+
+CURVE NUMBER:              
+Runoff                     
+│        ╱                 
+│      ╱                   
+│    ╱                     
+│  ╱                       
+│╱____ Ia (initial         
+└──────── Rainfall         
+Q = (P-Ia)²/(P-Ia+S)      
+
+SWMM5 INP:                ICM:
+[INFILTRATION]             Runoff Surface >
+Sub1 3.0 0.5 4.14         Infiltration Surface
+     ↑   ↑   ↑             Max Rate: 3.0
+     f0  fc  k              Min Rate: 0.5
+                            Decay: 4.14
+
+SLIDER: Rainfall Intensity [━━━━━●━━━━━] 2.0 in/hr
+        All three methods update simultaneously
+        Showing different runoff volumes for same rain
+```
+
+---
+
+### 🎬 Animation 17: Subcatchment Nonlinear Reservoir
+
+```
+SUBCATCHMENT RUNOFF ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 NONLINEAR RESERVOIR:
+
+Rain ▼▼▼▼▼▼
+     │
+     ↓
+┌────────────────────────────┐
+│  ░░░░░░░░░░░░░░░░ Surface │ ← Width
+│  ░░░ depth ░░░░░░░░░░░░░░ │
+│  ░░░░░░░░░░░░░░░░░░░░░░░ │
+│  ▓▓▓ depression storage ▓ │ ← ds
+│  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ │
+│  █████████████████████████ │ ← Slope
+└────────────────────────────┘
+          │
+          ↓ Runoff (when depth > ds)
+     Q = W/n × (d-ds)^5/3 × S^1/2
+
+ICM RUNOFF SURFACE:
+Same equation but parameters organized
+differently in the interface
+
+┌────────────────────────────┐
+│ Runoff Surface Type:       │
+│ ○ Fixed    ● SWMM          │
+│                             │
+│ Routing Model: SWMM        │
+│ Area: from subcatchment     │
+│ Slope: 0.5%                │
+│ Manning's n: 0.013         │
+│ Depression Storage: 0.05in │
+│ Initial Abstraction: same  │
+└────────────────────────────┘
+
+SLIDER: Rain Intensity [━━━━━━●━━━━━] 
+        Watch depression storage fill
+        Then overland flow begins
+        Manning's equation drives runoff
+```
+
+---
+
+## Category 7: Real-Time Control Animations
+
+### 🎬 Animation 18: RTC Rule Execution Comparison
+
+```
+REAL-TIME CONTROL ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 CONTROL RULE:
+┌──────────────────────────────┐
+│ [CONTROLS]                   │
+│ RULE R1                      │
+│ IF NODE J1 DEPTH > 5.0       │
+│ THEN PUMP P1 STATUS = ON     │
+│ IF NODE J1 DEPTH < 2.0       │
+│ THEN PUMP P1 STATUS = OFF    │
+│ PRIORITY 1                   │
+└──────────────────────────────┘
+
+ICM RTC:
+┌──────────────────────────────┐
+│ RTC Rule: R1                 │
+│ Sensor: Node J1, Level       │
+│ Condition: Level > 105.0 mAOD│ ← Absolute elevation!
+│ Action: Pump P1 → ON        │
+│                              │
+│ Sensor: Node J1, Level       │
+│ Condition: Level < 102.0 mAOD│
+│ Action: Pump P1 → OFF       │
+│ Priority: 1                  │
+└──────────────────────────────┘
+
+⚠ KEY DIFFERENCE:
+SWMM5 uses DEPTH (relative to invert)
+ICM uses LEVEL (absolute elevation)
+
+If invert = 100.0:
+  SWMM5 trigger at depth 5.0 = elevation 105.0
+  ICM trigger at level 105.0 = same physical point
+
+ANIMATION:
+[Water rises in wet well]
+[Depth gauge on left (SWMM5)]
+[Level gauge on right (ICM)]
+[Both trigger pump at same physical depth]
+[Shows the number conversion clearly]
+```
+
+---
+
+### 🎬 Animation 19: PID Controller Comparison
+
+```
+PID CONTROLLER ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+Both SWMM5 and ICM support PID control.
+The animation shows a gate responding to maintain
+a target water level:
+
+   Target Level ─────────────────── 5.0 ft
+                    ╱╲  ╱╲
+   Actual Level ──╱──╲╱──╲──────── Oscillation
+                                    dampens
+   
+   Gate Opening ──╱╲─╱╲─────────── Settles
+   
+   P (Proportional): How hard to correct
+   I (Integral):     How to eliminate steady error
+   D (Derivative):   How to prevent overshoot
+
+   ┌───────────────────────────────┐
+   │ Kp: [━━━━●━━━━━━] 0.5       │ ← Too high = oscillation
+   │ Ki: [━━●━━━━━━━━] 0.1       │ ← Too high = slow response
+   │ Kd: [━━━━━━━●━━━] 0.01      │ ← Too high = noise amplification
+   │                               │
+   │ Target: 5.0 ft               │
+   │ Current: 4.82 ft             │
+   │ Gate: 62%                    │
+   │                               │
+   │ [Run PID Simulation]          │
+   └───────────────────────────────┘
+```
+
+---
+
+## Category 8: 2D Surface Flooding (ICM Only)
+
+### 🎬 Animation 20: 1D-2D Coupling (ICM Unique Feature)
+
+```
+1D-2D COUPLING ANIMATION (ICM ONLY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5:
+┌──────────────────────────────┐
+│ Surface flooding = ponded    │
+│ volume at node (simple pool) │
+│                              │
+│  ┌──────┐                    │
+│  │pond  │ ← A_ponded area   │
+│  │░░░░░░│   No flow path     │
+│  └──┬───┘   No routing       │
+│     │                        │
+│  ═══╪═══ 1D pipe network     │
+│                              │
+│  SWMM5 does NOT route        │
+│  surface flow between nodes  │
+└──────────────────────────────┘
+
+ICM:
+┌──────────────────────────────┐
+│ Surface flooding = 2D mesh   │
+│ with shallow water equations │
+│                              │
+│  ┌──────────────────────┐   │
+│  │ 2D MESH              │   │
+│  │ ░░░░░→░░░░→░░░░      │   │
+│  │ ░░↓░░░░↓░░░░↓░░      │   │
+│  │ ░░░░░→░░░░→░░░░      │   │
+│  └──┬───────┬───────┬───┘   │
+│     │       │       │        │
+│  ═══╪═══════╪═══════╪═══    │
+│  1D network connected to     │
+│  2D mesh at every manhole    │
+│                              │
+│  Water FLOWS between         │
+│  manholes on the surface     │
+│  following topography        │
+└──────────────────────────────┘
+
+ANIMATION:
+1. Storm begins → 1D pipes fill
+2. Pipe surcharges → water rises in manhole
+3. Water reaches ground → enters 2D mesh
+4. Water flows across surface (following DTM)
+5. Water enters DIFFERENT manhole downstream
+6. Returns to 1D network
+7. This exchange happens at EVERY timestep
+```
+
+**This is the most important animation you can add** because 1D-2D coupling is ICM's signature capability and SWMM5 simply does not have it.
+
+---
+
+### 🎬 Animation 21: Surface Mesh Resolution Impact
+
+```
+2D MESH RESOLUTION ANIMATION (ICM ONLY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COARSE MESH (20m):              FINE MESH (2m):
+┌──┬──┬──┬──┬──┐              ┌┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┐
+│  │  │  │  │  │              ├┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┤
+├──┼──┼──┼──┼──┤              ├┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┤
+│  │██│  │  │  │              ├┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┤
+├──┼──┼──┼──┼──┤              ├┼┼┼██████┼┼┼┼┼┼┼┼┼┼┤
+│  │  │  │  │  │              ├┼┼┼┼████┼┼┼┼┼┼┼┼┼┼┼┤
+└──┴──┴──┴──┴──┘              └┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┘
+
+25 cells                       400 cells
+Fast (seconds)                 Slow (minutes)
+Misses street flow paths       Captures curb and gutter
+Flood area approximate         Flood area detailed
+
+SLIDER: Mesh Resolution [━━●━━━━━━━━]
+        Coarse ←────────→ Fine
+        
+Computation Time:  0.3 sec ←→ 45 sec
+Flood Area:        12,400 m² ←→ 8,230 m²
+Max Depth:         0.45 m ←→ 0.62 m
+
+⚠ Rule of Thumb (William James, Ch. 4):
+  "Match model complexity to data quality"
+  2m mesh + 10m DTM = false precision
+```
+
+---
+
+## Category 9: Water Quality Animations
+
+### 🎬 Animation 22: Pollutant Routing Comparison
+
+```
+WATER QUALITY ROUTING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5:
+Full advection-dispersion or CSTR
+at every node and link
+
+  TSS: 150 mg/L →→→ 120 →→→ 95 →→→ 80 mg/L
+       Buildup    Washoff  Transport  Treatment
+       ████████   ░░░░░░   ──────→    ▓▓▓▓▓▓
+
+  SWMM5 tracks pollutants through:
+  - Subcatchment buildup/washoff
+  - Conduit transport (advection)
+  - Node treatment (removal expressions)
+  - First-order decay
+
+ICM:
+Similar capability but different syntax
+
+  Determinand: TSS
+  Buildup: per land use
+  Washoff: EMC or exponential
+  Transport: advective routing
+  Treatment: R = removal expression
+
+KEY DIFFERENCE:
+SWMM5 calls them "Pollutants"
+ICM calls them "Determinands"
+
+SWMM5 treatment: C = 0.75 * HRT / (0.5 + HRT)
+ICM treatment:   Same expression, different variable names
+```
+
+---
+
+## Category 10: Energy & Head Loss Animations
+
+### 🎬 Animation 23: Energy Grade Line vs Hydraulic Grade Line
+
+```
+EGL/HGL ANIMATION
+━━━━━━━━━━━━━━━━━
+
+   ──── EGL (Energy Grade Line)
+   ─ ─ HGL (Hydraulic Grade Line)
+
+   EGL ────────────╲────────────╲──────────
+                    ╲            ╲
+   HGL ─ ─ ─ ─ ─ ─ ╲─ ─ ─ ─ ─ ╲─ ─ ─ ─
+                     ↕            ↕
+                   v²/2g        v²/2g
+                   (velocity    (velocity
+                    head)        head)
+   
+   ╔════════╗     ╔════════╗     ╔════════╗
+   ║ Node 1 ║─────║ Node 2 ║─────║ Node 3 ║
+   ╚════════╝     ╚════════╝     ╚════════╝
+   
+   Entry loss ↑    Friction loss   Exit loss ↑
+   K_entry         along pipe      K_exit
+   
+   SLIDER: Flow Rate [━━━━━●━━━━━]
+   
+   As flow increases:
+   - Friction slope increases
+   - Velocity head increases  
+   - Head losses at nodes increase
+   - EGL and HGL both drop faster
+   
+   SWMM5: Entry/exit losses in [LOSSES] section
+   ICM:   US/DS Headloss Coefficients on conduit
+```
+
+---
+
+### 🎬 Animation 24: Minor Loss at Junction
+
+```
+JUNCTION HEAD LOSS ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    Inlet Pipe        Manhole        Outlet Pipe
+    ──────────→   ┌──────────┐   ──────────→
+                  │          │
+    EGL ──────────│──╲       │────────────
+    HGL ─ ─ ─ ─ ─│─ ─╲─ ─ ─│─ ─ ─ ─ ─ ─
+                  │    ↕     │
+                  │  K×v²/2g │ ← Minor loss
+                  │          │
+                  └──────────┘
+    
+    SWMM5:                   ICM:
+    [LOSSES]                 Conduit properties:
+    C1 0.5 1.0 0 NO 0       US Headloss Coeff: 0.5
+    ↑   ↑   ↑                DS Headloss Coeff: 1.0
+    Link K_in K_out           US Headloss Type: Normal
+                              DS Headloss Type: Normal
+    
+    LOSS SCENARIOS (toggleable):
+    ○ Straight through:  K = 0.1
+    ○ 45° bend:          K = 0.3
+    ○ 90° bend:          K = 0.6
+    ● Manhole with drop:  K = 1.0
+    ○ Expansion:          K = 1.5
+    
+    [Show velocity vectors in manhole]
+```
+
+---
+
+### 🎬 Animation 25: Culvert Inlet/Outlet Control
+
+```
+CULVERT ANALYSIS ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+INLET CONTROL (steep culvert):
+                ┌─── Headwater
+   ████████████ │
+   ████████████ ├──╗═══════════════╗
+   ████████████ │  ║ ░░░░░░░░░░░░ ║──→ Free outfall
+   ████████████ │  ║ ░░░░░░░░░░░░ ║    (not full)
+   ████████████ │  ╚═══════════════╝
+   ████████████ │
+                └─── Flow controlled by inlet geometry
+
+OUTLET CONTROL (mild culvert):
+                ┌─── Headwater
+   ████████████ │
+   ████████████ ├──╗═══════════════╗── Tailwater
+   ████████████ │  ║ ██████████████║    controls
+   ████████████ │  ║ ██████████████║    (pipe full)
+   ████████████ │  ╚═══════════════╝
+   ████████████ │
+                └─── Flow controlled by pipe friction + tailwater
+
+SWMM5 CULVERT CODES:
+  1 = Circular, square edge
+  2 = Circular, socket end
+  3 = Circular, projecting
+  ... (57 types in Appendix A.10)
+
+ICM CULVERT:
+  Represented as conduit with
+  entry/exit loss coefficients
+  No dedicated culvert code system
+
+HW/D RATIO: [━━━━━━━●━━━━━] 1.5
+  
+  At HW/D < 1.2: Inlet control (weir flow)
+  At HW/D > 1.5: Outlet control (pipe flow)
+  Between: Transition zone
+  
+  SWMM5 uses FHWA HDS-5 methodology
+  ICM uses entry/exit loss approach
+```
+
+---
+
+## Implementation Priority
+
+| | | | Priority | Animation | Effort | Educational Value | |  |
+|---|---|---|---|
+| | | **1** | ICM Node Chamber Detail (#1) | High | 🔥🔥🔥🔥🔥 | |  |
+| | | **2** | Distributed Computation Points (#4) | Medium | 🔥🔥🔥🔥🔥 | |  |
+| | | **3** | 1D-2D Coupling (#20) | High | 🔥🔥🔥🔥🔥 | |  |
+| | | **4** | Backwater Propagation (#8) | Medium | 🔥🔥🔥🔥🔥 | |  |
+| | | **5** | CFL Condition (#9) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **6** | Weir Cd Conversion (#11) | Low | 🔥🔥🔥🔥🔥 | |  |
+| | | **7** | Froude Number Handling (#6) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **8** | Force Main Pressure Flow (#7) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **9** | Flood Type Comparison (#3) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **10** | Orifice Cd Conversion (#12) | Low | 🔥🔥🔥🔥🔥 | |  |
+| | | **11** | Pump Operations (#13) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **12** | EGL/HGL Visualization (#23) | Medium | 🔥🔥🔥🔥 | |  |
+| | | **13** | RTC Rule Comparison (#18) | Medium | 🔥🔥🔥 | |  |
+| | | **14** | Adaptive Time Stepping (#10) | Low | 🔥🔥🔥 | |  |
+| | | **15** | Partial Flow Cross-Section (#5) | Low | 🔥🔥🔥 | |  |
+
+---
+
+## The Bottom Line
+
+Your app already has the best interactive SWMM5-vs-ICM comparison on the internet. These 25 animations would make it the **definitive educational resource** for understanding the differences between the world's two most important urban drainage solvers.
+
+The ICM Node Chamber animation (#1) is your most-requested feature. The 1D-2D Coupling animation (#20) is your most-important feature. The Weir and Orifice Cd conversions (#11, #12) are your most-practical features — they prevent the import errors that waste more engineering hours than any other single issue in SWMM-to-ICM migration.
+
+**Every animation is a LinkedIn post. Every animation is a newsletter section. Every animation is a conference slide.**
+
+Build them, and the engineers will come.

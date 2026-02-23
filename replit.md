@@ -4,13 +4,13 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **77 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **78 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## Diagram Categories (77 Total)
+## Diagram Categories (78 Total)
 
 1. **Solver Mechanics** (12 diagrams) - Core solver algorithms, discretization, wave propagation, plus Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm, Live Network Comparison, Force Main Comparison
 2. **Solver Options** (6 diagrams) - Routing methods, adaptive timesteps, CFL stability
@@ -20,7 +20,7 @@ Preferred communication style: Simple, everyday language.
 6. **Advanced Analysis** (10 diagrams) - Convergence, mass balance, oscillation challenges, Conduit Length Sensitivity, Common Migration Pitfalls
 7. **Hydrologic** (4 diagrams) - Unit hydrographs, rainfall distribution
 8. **Climate & Infiltration** (2 diagrams) - Snowmelt, infiltration methods
-9. **ICM Simulation** (13 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison, Three-Engine Comparison (EPA vs ICM SWMM vs ICM InfoWorks)
+9. **ICM Simulation** (14 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison, Three-Engine Comparison (EPA vs ICM SWMM vs ICM InfoWorks), Manhole Hydraulics Simulator
 10. **Surface-to-Sewer** (4 diagrams) - Inlet elements, HEC-22 calculator
 11. **Green Infrastructure** (2 diagrams) - LID/SUDS, dual-solver architecture
 12. **Code Architecture** (5 diagrams) - Input parsing, matrix solver, RTC rules
@@ -114,4 +114,5 @@ The database schema currently includes a users table, though the primary applica
 - Added **Surface Flooding Comparison** diagram with animation
 - Added 8 interactive calculators: CFL, Preissmann Slot, Manning's, TimeStep, Froude, Computational Points, Inertial Terms, Surcharge
 - Added Decision Engine, Operational Controls (3 diagrams), InfoSewer Emulation
-- Total diagram count: 77 across 12 categories
+- Added **ICM Manhole Hydraulics Simulator** - canvas-based animated manhole with inlet/outlet pipes, gate valve, head-driven orifice outflow (Q=Cd·A·√2gh), real-time hydrograph charts
+- Total diagram count: 78 across 12 categories
