@@ -4,27 +4,30 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **95 interactive diagrams and calculators** organized across **13 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **117 interactive diagrams and calculators** organized across **16 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## Diagram Categories (95 Total)
+## Diagram Categories (117 Total)
 
-1. **Solver Mechanics** (13 diagrams) - Core solver algorithms, discretization, wave propagation, plus Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm, Live Network Comparison, Force Main Comparison, Backwater Propagation
-2. **Solver Options** (6 diagrams) - Routing methods, adaptive timesteps, CFL stability
+1. **Solver Mechanics** (16 diagrams) - Core solver algorithms, discretization, wave propagation, Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm, Live Network Comparison, Force Main Comparison, Backwater Propagation, Newton-Raphson Convergence, Theta Weighting, Staggered Grid
+2. **Solver Options** (8 diagrams) - Routing methods, adaptive timesteps, CFL stability, Routing Method Comparison, Timestep Instability
 3. **Dynamic Wave Options** (10 diagrams) - Inertial terms, surcharge methods, convergence, plus Froude Number Calculator, Inertial Terms Calculator
 4. **Temporal Dynamics** (6 diagrams) - CFL conditions, adaptive stepping, startup behavior, plus CFL Stability Calculator, Time Step Efficiency Estimator
 5. **Operational Controls** (3 diagrams) - RTC logic, PID controllers, execution timeline
 6. **Advanced Analysis** (10 diagrams) - Convergence, mass balance, oscillation challenges, Conduit Length Sensitivity, Common Migration Pitfalls
-7. **Hydrologic** (4 diagrams) - Unit hydrographs, rainfall distribution
+7. **Hydrologic** (6 diagrams) - Unit hydrographs, rainfall distribution, Nonlinear Reservoir, Width Sensitivity
 8. **Climate & Infiltration** (2 diagrams) - Snowmelt, infiltration methods
-9. **ICM Simulation** (17 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison, Three-Engine Comparison (EPA vs ICM SWMM vs ICM InfoWorks), Manhole Hydraulics Simulator, 1D-2D Coupling, Manhole Storage Volume, Flood Type Comparison
+9. **ICM Simulation** (17 diagrams) - Base flow, Preissmann slot, headloss, InfoSewer emulation, Surface Flooding Comparison, Three-Engine Comparison, Manhole Hydraulics Simulator, 1D-2D Coupling, Manhole Storage Volume, Flood Type Comparison
 10. **Surface-to-Sewer** (4 diagrams) - Inlet elements, HEC-22 calculator
-11. **Green Infrastructure** (2 diagrams) - LID/SUDS, dual-solver architecture
+11. **Green Infrastructure** (3 diagrams) - LID/SUDS, dual-solver architecture, LID Layer Stack
 12. **Code Architecture** (5 diagrams) - Input parsing, matrix solver, RTC rules
-13. **Historical Engineering** (13 diagrams) - Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat, Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon, Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley Drains, Archimedes Screw
+13. **Boundary Conditions** (4 diagrams) - Outfall Types, Inflow Types, Treatment at Nodes, Coefficient Conversion Cheat Sheet
+14. **Real-World Scenarios** (4 diagrams) - CSO Modeling, Detention Pond, Parallel Pipe Analysis, Calibration Visual
+15. **Performance & Topology** (6 diagrams) - Loop Detection, Boundary Influence, Performance Scaling, Warning Messages Decoded, Solver Evolution Timeline, Saint-Venant Equations Side-by-Side
+16. **Historical Engineering** (13 diagrams) - Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat, Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon, Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley Drains, Archimedes Screw
 
 ## System Architecture
 
@@ -56,6 +59,12 @@ The frontend follows a component-based architecture with:
   - `HistoricalAnimations.tsx` - Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat
   - `HistoricalAnimations2.tsx` - Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon
   - `HistoricalAnimations3.tsx` - Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley, Archimedes Screw
+  - `SolverMechanicsExtra.tsx` - Newton-Raphson Convergence, Theta Weighting, Staggered Grid
+  - `SolverOptionsExtra.tsx` - Routing Method Comparison, Timestep Instability
+  - `BoundaryDiagrams.tsx` - Outfall Types, Inflow Types, Treatment at Nodes, Coefficient Conversion
+  - `HydrologyExtraDiagrams.tsx` - LID Layer Stack, Nonlinear Reservoir, Width Sensitivity
+  - `ScenarioDiagrams.tsx` - CSO Modeling, Detention Pond, Parallel Pipe, Calibration Visual
+  - `PerformanceDiagrams.tsx` - Loop Detection, Boundary Influence, Performance Scaling, Warning Messages, Solver Evolution, Equations
 - Static comparison data in `client/src/data/comparison-data.ts`
 - Source code snippets in `client/src/data/source-code-snippets.ts`
 
@@ -125,4 +134,12 @@ The database schema currently includes a users table, though the primary applica
 - Added **Flood Type Comparison** showing Lost/Ponded/Stored/2D options
 - Added **Dark Mode Toggle** with blue theme across light and dark modes
 - Added **Historical Engineering** category (13 animations) — Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat, Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon, Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley Drains, Archimedes Screw
-- Total diagram count: 95 across 13 categories
+- Added **22 new animations** across 6 new component files:
+  - **SolverMechanicsExtra**: Newton-Raphson Convergence, Theta Weighting Factor, Staggered Grid visualization
+  - **SolverOptionsExtra**: Routing Method Comparison (Steady/KinWave/DynWave), Timestep Instability demonstration
+  - **BoundaryDiagrams**: Outfall Types (5 types animated), Inflow Types (Direct/DWF/RDII), Treatment at Nodes, Coefficient Conversion Cheat Sheet
+  - **HydrologyExtraDiagrams**: LID Layer Stack (bio-retention cell), Nonlinear Reservoir model, Width Sensitivity
+  - **ScenarioDiagrams**: CSO Modeling, Detention Pond routing, Parallel Pipe analysis, Calibration Visual
+  - **PerformanceDiagrams**: Loop Detection, Boundary Influence, Performance Scaling, Warning Messages, Solver Evolution Timeline, Saint-Venant Equations Side-by-Side
+- Added 3 new categories: Boundary Conditions, Real-World Scenarios, Performance & Topology
+- Total diagram count: 117 across 16 categories

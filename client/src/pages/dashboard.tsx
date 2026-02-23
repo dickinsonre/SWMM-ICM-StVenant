@@ -24,7 +24,10 @@ import {
   Workflow,
   Moon,
   Sun,
-  Landmark
+  Landmark,
+  MapPin,
+  FlaskConical,
+  AlertTriangle
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
@@ -97,6 +100,12 @@ import { BackwaterPropagation, OneDTwoDCoupling, ManholeStorageVolume, FloodType
 import { RomanAqueductAnimation, DujiangyanAnimation, IncaFountainAnimation, PersianQanatAnimation } from "@/components/visuals/HistoricalAnimations";
 import { IndianStepwellAnimation, AztecDikeAnimation, DutchPolderAnimation, RomanSiphonAnimation } from "@/components/visuals/HistoricalAnimations2";
 import { MayaFiltrationAnimation, KhmerBarayAnimation, CloacaMaximaAnimation, IndusValleyDrainAnimation, ArchimedesScrewAnimation } from "@/components/visuals/HistoricalAnimations3";
+import { NewtonRaphsonConvergence, ThetaWeightingAnimation, StaggeredGridAnimation } from "@/components/visuals/SolverMechanicsExtra";
+import { RoutingMethodComparison, TimestepInstabilityAnimation } from "@/components/visuals/SolverOptionsExtra";
+import { OutfallTypesAnimation, InflowTypesAnimation, TreatmentAtNodesAnimation, CoefficientConversionAnimation } from "@/components/visuals/BoundaryDiagrams";
+import { LIDLayerStackAnimation, NonlinearReservoirAnimation, WidthSensitivityAnimation } from "@/components/visuals/HydrologyExtraDiagrams";
+import { CSOModelingAnimation, DetentionPondAnimation, ParallelPipeAnimation, CalibrationVisualAnimation } from "@/components/visuals/ScenarioDiagrams";
+import { LoopDetectionAnimation, BoundaryInfluenceAnimation, PerformanceScalingAnimation, WarningMessagesAnimation, SolverEvolutionTimeline, EquationsSideBySideAnimation } from "@/components/visuals/PerformanceDiagrams";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -116,18 +125,21 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 };
 
 const DIAGRAM_CATEGORIES = [
-  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 13 },
-  { id: "options", label: "Solver Options", icon: "settings", count: 6 },
+  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 16 },
+  { id: "options", label: "Solver Options", icon: "settings", count: 8 },
   { id: "dynwave", label: "Dynamic Wave Options", icon: "zap", count: 10 },
   { id: "temporal", label: "Temporal Dynamics", icon: "clock", count: 6 },
   { id: "controls", label: "Operational Controls", icon: "workflow", count: 3 },
   { id: "advanced", label: "Advanced Analysis", icon: "chart", count: 10 },
-  { id: "hydrologic", label: "Hydrologic", icon: "droplet", count: 4 },
+  { id: "hydrologic", label: "Hydrologic", icon: "droplet", count: 6 },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud", count: 2 },
   { id: "icm", label: "ICM Simulation", icon: "gauge", count: 17 },
   { id: "inlets", label: "Surface-to-Sewer", icon: "grid", count: 4 },
-  { id: "green", label: "Green Infrastructure", icon: "leaf", count: 2 },
+  { id: "green", label: "Green Infrastructure", icon: "leaf", count: 3 },
   { id: "architecture", label: "Code Architecture", icon: "code", count: 5 },
+  { id: "boundary", label: "Boundary Conditions", icon: "mappin", count: 4 },
+  { id: "scenarios", label: "Real-World Scenarios", icon: "flask", count: 4 },
+  { id: "performance", label: "Performance & Topology", icon: "alert", count: 6 },
   { id: "historical", label: "Historical Engineering", icon: "landmark", count: 13 },
 ];
 
@@ -217,7 +229,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">95 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">117 Interactive Diagrams</Badge>
               </div>
             </div>
             
@@ -490,6 +502,9 @@ export default function Dashboard() {
                                        cat.id === "green" ? Leaf : 
                                        cat.id === "icm" ? Gauge : 
                                        cat.id === "inlets" ? Grid3X3 : 
+                                      cat.id === "boundary" ? MapPin :
+                                      cat.id === "scenarios" ? FlaskConical :
+                                      cat.id === "performance" ? AlertTriangle :
                                       cat.id === "historical" ? Landmark : Code;
                  return (
                    <Button
@@ -554,6 +569,15 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-1 gap-6">
                     <BackwaterPropagation />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Numerical Methods Deep Dive</h4>
+                   <p className="text-muted-foreground text-sm">Convergence behavior, weighting schemes, and computational grid differences between the two solvers.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <NewtonRaphsonConvergence />
+                    <ThetaWeightingAnimation />
+                    <StaggeredGridAnimation />
+                 </div>
                </div>
              )}
 
@@ -575,6 +599,14 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-2 gap-6">
                     <RoutingMethodFlowchart />
                     <Coupling1D2DDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Routing & Stability Analysis</h4>
+                   <p className="text-muted-foreground text-sm">Compare routing methods side-by-side and explore what happens when timesteps are too large.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <RoutingMethodComparison />
+                    <TimestepInstabilityAnimation />
                  </div>
                </div>
              )}
@@ -635,6 +667,14 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-1 gap-6">
                     <BuildupWashoffDiagram />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Subcatchment Runoff Mechanics</h4>
+                   <p className="text-muted-foreground text-sm">The nonlinear reservoir model and how width controls hydrograph shape.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <NonlinearReservoirAnimation />
+                    <WidthSensitivityAnimation />
+                 </div>
                </div>
              )}
 
@@ -664,6 +704,13 @@ export default function Dashboard() {
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
                     <DualSolverArchitectureDiagram />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">LID Layer Mechanics</h4>
+                   <p className="text-muted-foreground text-sm">Interactive cross-section of a bio-retention cell showing infiltration, storage, and underdrain processes.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <LIDLayerStackAnimation />
                  </div>
                </div>
              )}
@@ -879,6 +926,94 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-2 gap-6">
                     <MinorLossesDiagram />
                     <ReportingSystemDiagram />
+                 </div>
+               </div>
+             )}
+
+             {/* Boundary Conditions */}
+             {activeCategory === "boundary" && (
+               <div className="space-y-6" data-testid="section-boundary">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Boundary Conditions & Data Exchange</h3>
+                   <p className="text-muted-foreground">Outfall types, inflow definitions, treatment functions, and the critical coefficient conversions between solvers.</p>
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Outfall & Inflow Definitions</h4>
+                   <p className="text-muted-foreground text-sm">How each solver defines system boundaries — outfall types and node inflow components.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <OutfallTypesAnimation />
+                    <InflowTypesAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Water Quality Treatment</h4>
+                   <p className="text-muted-foreground text-sm">How treatment functions reduce pollutant concentrations at nodes.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <TreatmentAtNodesAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Coefficient Conversion Cheat Sheet</h4>
+                   <p className="text-muted-foreground text-sm">The TOP 5 mistakes when converting models between SWMM5 and ICM — and how to fix them.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <CoefficientConversionAnimation />
+                 </div>
+               </div>
+             )}
+
+             {/* Real-World Scenarios */}
+             {activeCategory === "scenarios" && (
+               <div className="space-y-6" data-testid="section-scenarios">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Real-World Scenarios</h3>
+                   <p className="text-muted-foreground">Practical modeling scenarios connecting theory to practice — CSO events, detention design, pipe sizing, and calibration.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <CSOModelingAnimation />
+                    <DetentionPondAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Pipe Design & Calibration</h4>
+                   <p className="text-muted-foreground text-sm">Parallel pipe analysis and interactive model calibration.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ParallelPipeAnimation />
+                    <CalibrationVisualAnimation />
+                 </div>
+               </div>
+             )}
+
+             {/* Performance & Topology */}
+             {activeCategory === "performance" && (
+               <div className="space-y-6" data-testid="section-performance">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Performance, Topology & Diagnostics</h3>
+                   <p className="text-muted-foreground">Network topology handling, computational scaling, warning message decoding, solver evolution, and the full Saint-Venant equations.</p>
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Network Topology</h4>
+                   <p className="text-muted-foreground text-sm">How solvers handle loops and flow regime transitions.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <LoopDetectionAnimation />
+                    <BoundaryInfluenceAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Computational Performance</h4>
+                   <p className="text-muted-foreground text-sm">How computation time scales with network size and common warning messages decoded.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <PerformanceScalingAnimation />
+                    <WarningMessagesAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Solver History & Equations</h4>
+                   <p className="text-muted-foreground text-sm">The evolution of hydraulic solvers from 1971 to today, and the complete Saint-Venant equations compared.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <SolverEvolutionTimeline />
+                    <EquationsSideBySideAnimation />
                  </div>
                </div>
              )}
