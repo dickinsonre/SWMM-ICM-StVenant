@@ -1,0 +1,1268 @@
+# Historical Water Invention Animations for SWMM5 & ICM
+
+## Bringing 300,000 Years of Water Engineering to Life Through Interactive Hydraulic Simulations
+
+---
+
+## The Concept
+
+Each animation takes a real historical water invention from your database and shows it operating as a **live hydraulic simulation** — with the SWMM5/ICM equations visible, the flow animated, and the engineering principles highlighted. The user can adjust parameters and watch the ancient system respond.
+
+These are not just pretty pictures. These are **teaching tools** that connect ancient engineering intuition to modern computational hydraulics.
+
+---
+
+## Category 1: Gravity Flow Animations
+
+### 🎬 Animation 1: Roman Aqueduct — The 50km Gravity Machine
+
+```
+ROMAN AQUEDUCT ANIMATION
+Aqua Claudia Style — 8 nodes, 7 links, 50 km
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SPRING SOURCE                                    CASTELLUM
+(mountain)                                      (distribution)
+   ○                                               ○
+   ║  Reach 1        Reach 2      Reach 3         ║
+   ║  n=0.015        n=0.015      n=0.015         ║
+   ╠══════○══════════○════════════○════════════════╣
+   ║      ↑          ↑            ↑               ║
+   ║   Settling   Settling     Bridge/          Castellum
+   ║   Basin 1    Basin 2     Arcade           Divisorium
+   ║                          ┌──┐┌──┐
+   ║                          │  ││  │← Arcade
+   ║                          │  ││  │   (Pont du Gard style)
+   ║                          └──┘└──┘
+
+PROFILE VIEW (animated):
+Elevation
+(m)        Spring
+  400 ──── ○
+           ╲  S = 0.0005 (0.05% grade)
+  350 ──── ╲──○ Settling Basin 1
+                ╲
+  300 ────────── ╲──○ Basin 2
+                     ╲
+  250 ──── Bridge ────╲──┐
+                       ╲  │ Arcade
+  200 ──────────────────╲─┘──○ Castellum
+                              ↓
+                         Distribution to
+                         city fountains
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Source Flow:     [━━━━━━━●━━━━━] 500 L/s       │
+│ Channel Width:   [━━━━●━━━━━━━] 1.5 m          │
+│ Channel Depth:   [━━━━━●━━━━━━] 0.8 m          │
+│ Gradient:        [━━━━━━━━●━━━] 0.05%          │
+│ Manning's n:     [━━━━●━━━━━━━] 0.015          │
+│                                                  │
+│ REAL-TIME RESULTS:                               │
+│ ┌────────────────────────────────────────┐      │
+│ │ Velocity:      0.84 m/s               │      │
+│ │ Flow Depth:    0.52 m                 │      │
+│ │ Froude Number: 0.37 (subcritical) ✓   │      │
+│ │ Travel Time:   16.5 hours (!)         │      │
+│ │ Daily Delivery: 43,200 m³/day         │      │
+│ │ Olympic Pools:  17.3 pools/day        │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ SETTLING BASIN ANIMATION:                        │
+│ ┌─────────────────────────────┐                 │
+│ │ →→→→→→→↘                    │                 │
+│ │         ↓ sediment settles  │                 │
+│ │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │                 │
+│ │ Velocity drops: 0.84→0.12  │                 │
+│ │ Residence time: 45 min     │                 │
+│ └─────────────────────────────┘                 │
+│                                                  │
+│ SWMM5 EQUATIONS SHOWN:                          │
+│ Q = (1/n) × A × R^(2/3) × S^(1/2)             │
+│ v = Q/A = 0.84 m/s                             │
+│ Fr = v/√(gd) = 0.37                            │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "The Romans maintained 0.05% gradient over      │
+│  50 km — that's 25m of fall over the entire     │
+│  length. A surveying error of 0.5m would have   │
+│  caused backwater flooding at the source."      │
+│                                                  │
+│ [Copy .INP File]  [Open in SWMM5]              │
+└─────────────────────────────────────────────────┘
+```
+
+**Animation behavior:**
+1. Water flows from spring source through all reaches
+2. At settling basins, velocity visibly slows and particles settle
+3. At the arcade section, water flows across the bridge at elevation
+4. At the castellum, water divides into distribution channels
+5. Adjusting any parameter updates ALL reaches simultaneously
+6. Travel time counter shows water taking 16+ hours source to city
+
+---
+
+### 🎬 Animation 2: Dujiangyan — The Fish Mouth Flow Divider
+
+```
+DUJIANGYAN IRRIGATION SYSTEM ANIMATION
+15 nodes, 18 links, 500 m³/s capacity
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOP VIEW (animated):
+                    Min River
+                  ═══════════
+                 ╱            ╲
+    Outer River ╱  FISH MOUTH  ╲ Inner River
+    (flood)    ╱   (Yuzui) ◇    ╲ (irrigation)
+              ╱                   ╲
+             ╱     FLYING SAND     ╲
+            ╱      FENCE (Feisha   ╲
+           ╱       Yan) ■■■■■■■■    ╲
+          ╱                          ╲
+         ╱    BOTTLE NECK             ╲
+        ╱     (Baopingkou)             ╲
+       ╱      ←── narrow gap ──→        ╲
+      ╱           controls flow          ╲
+     ╱                                    ╲
+   Flood        Chengdu             Irrigation
+   Spillway     Plain               Channels
+   ↓            ↓↓↓↓↓↓              ↓↓↓↓↓↓
+
+FLOW SPLIT ANIMATION:
+
+Normal Flow (Q = 200 m³/s):
+  Fish Mouth splits: 60% inner / 40% outer
+  ████████████████████═══════════════
+  Inner: 120 m³/s → Irrigation ✓
+  Outer: 80 m³/s  → River continues
+
+Flood Flow (Q = 500 m³/s):
+  Fish Mouth splits: 40% inner / 60% outer
+  ████████████████████████████████████
+  Inner: 200 m³/s → Bottle Neck limits to 150 ✓
+  Outer: 300 m³/s → Flood spillway ✓
+  Excess: 50 m³/s → Over Flying Sand Fence ✓
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Min River Flow:  [━━━━━━━━━●━━] 500 m³/s      │
+│                                                  │
+│ SEASON SELECTOR:                                 │
+│ ● Dry Season (Dec-Mar):  Q = 100 m³/s          │
+│ ○ Normal (Apr-Jun):      Q = 250 m³/s          │
+│ ○ Flood Season (Jul-Sep): Q = 500 m³/s         │
+│ ○ Extreme Flood:          Q = 800 m³/s         │
+│                                                  │
+│ FLOW DISTRIBUTION:                               │
+│ ┌────────────────────────────────────────┐      │
+│ │       ╱╲                               │      │
+│ │      ╱  ╲  Outer (flood) channel       │      │
+│ │     ╱    ╲                             │      │
+│ │ ───╱──────╲────── Inner (irrigation)   │      │
+│ │  100  250  500  800                    │      │
+│ │       River Flow (m³/s)                │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ The split ratio CHANGES with flow:               │
+│ Low flow  → more goes to irrigation              │
+│ High flow → more goes to flood channel           │
+│ This is PASSIVE flow control — no gates!         │
+│                                                  │
+│ FLYING SAND FENCE:                               │
+│ ┌────────────────────────────────────────┐      │
+│ │ ═══→→→  sediment-laden flow            │      │
+│ │     ■■■■■■■ fence (weir)              │      │
+│ │     ↓↓↓↓↓↓↓                           │      │
+│ │  Sediment drops   Clean water passes   │      │
+│ │  into outer       to irrigation        │      │
+│ │  channel                               │      │
+│ │                                         │      │
+│ │  SWMM5: Modeled as WEIR + DIVIDER      │      │
+│ │  ICM:   Modeled as WEIR + Flow Split   │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ BOTTLE NECK (flow limiter):                      │
+│ ┌────────────────────────────────────────┐      │
+│ │ ════════╗   ╔════════                  │      │
+│ │         ╚═══╝  ← 20m wide gap         │      │
+│ │                   Maximum Q = 150 m³/s │      │
+│ │                                         │      │
+│ │ SWMM5: Modeled as CONSTRICTION         │      │
+│ │         (reduced cross-section conduit) │      │
+│ │ ICM:    Modeled as INLINE BANK         │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "Li Bing built this in 256 BCE. It still         │
+│  operates today — irrigating 5,000 km² with     │
+│  NO MOVING PARTS. The geometry does all the      │
+│  work. Manning's equation explains why."         │
+│                                                  │
+│ [Copy .INP File]  [View SWMM5 Network Map]      │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+### 🎬 Animation 3: Inca Fountain Chain — Machu Picchu
+
+```
+MACHU PICCHU FOUNTAIN SYSTEM ANIMATION
+16 fountains in series, gravity-fed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROFILE VIEW (animated — water cascading down):
+
+Spring Source (749m above valley)
+  ○ ← perennial spring, Q ≈ 25 L/min
+  ║ Supply canal (750m long, 10cm wide)
+  ║ Grade: 3%
+  ║
+  ╠═══○ Fountain 1 (Royal/Inca's private)
+  ║   ↓ 1.5m drop
+  ╠═══○ Fountain 2
+  ║   ↓ 1.5m drop
+  ╠═══○ Fountain 3
+  ║   ↓ 1.5m
+  ╠═══○ Fountain 4
+  ║   ...
+  ║   (16 fountains total)
+  ║   ...
+  ╠═══○ Fountain 15
+  ║   ↓
+  ╠═══○ Fountain 16 (lowest terrace)
+  ║
+  ╚═══→ Agricultural terraces
+
+INDIVIDUAL FOUNTAIN DETAIL:
+┌─────────────────────────────────┐
+│                                 │
+│  Inlet ═══╗                    │
+│           ║ ← Stone channel    │
+│           ║    10cm × 12cm     │
+│           ╚═╗                  │
+│             ║                  │
+│             ↓ FREE FALL        │
+│          ┌──╨──┐               │
+│          │█████│ ← Collection  │
+│          │█████│    basin      │
+│          └──╥──┘    (bathing/  │
+│             ║       drinking)  │
+│           Outlet to next       │
+│           fountain below       │
+│                                 │
+│  SWMM5 MODEL:                  │
+│  Node (storage) + Orifice      │
+│  + Free-fall weir              │
+│                                 │
+│  ICM MODEL:                    │
+│  Node + Weir link              │
+│  + downstream node             │
+└─────────────────────────────────┘
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Spring Flow:    [━━━━●━━━━━━━━] 25 L/min       │
+│                                                  │
+│ SEASON:                                          │
+│ ○ Dry Season:   Q = 10 L/min                    │
+│ ● Wet Season:   Q = 25 L/min                    │
+│ ○ Heavy Rain:   Q = 60 L/min                    │
+│                                                  │
+│ WATCH: Water cascades from fountain to fountain  │
+│ Each fountain fills before overflowing to next   │
+│ During dry season, lower fountains may run dry   │
+│                                                  │
+│ Fountain 1 flow:  25.0 L/min (full)  ✓         │
+│ Fountain 8 flow:  24.2 L/min (full)  ✓         │
+│ Fountain 16 flow: 22.8 L/min (full)  ✓         │
+│ System loss:      2.2 L/min (8.8%)              │
+│ Loss mechanism:   Stone joint seepage            │
+│                                                  │
+│ ENGINEERING INSIGHT:                             │
+│ "The Inca placed the Royal fountain FIRST in     │
+│  the chain — ensuring the king always had        │
+│  water even during drought. The commoners'       │
+│  fountains were last. Hydraulic engineering       │
+│  as social hierarchy."                           │
+│                                                  │
+│ ENERGY EQUATION:                                 │
+│ Each fountain: E = mgh                           │
+│ 16 fountains × 1.5m drop = 24m total head       │
+│ Power dissipated: P = ρgQΔh = 6.1 watts         │
+│ (All converted to sound and splash — the Inca    │
+│  designed for the SOUND of falling water)        │
+│                                                  │
+│ [Copy .INP File]  [View Node-Link Diagram]       │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 2: Underground/Groundwater Animations
+
+### 🎬 Animation 4: Persian Qanat — The Underground Aqueduct
+
+```
+PERSIAN QANAT SYSTEM ANIMATION
+12 nodes, 11 links, 5 km length
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LONGITUDINAL SECTION (animated):
+
+Mountain                                       Settlement
+Aquifer                                        (Oasis)
+  ┌────────────────────────────────────────────────────┐
+  │ ░░░░░░░ GROUND SURFACE ░░░░░░░░░░░░░░░░░░░░░░░░░ │
+  │                                                    │
+  │  ↕ Mother    ↕ Shaft 2   ↕ Shaft 3    ↕ Shaft 4  │
+  │  Well                                              │
+  │  ○           ○           ○            ○            │
+  │  ║ 45m       ║ 35m       ║ 25m        ║ 15m       │
+  │  ║           ║           ║            ║            │
+  │══╬═══════════╬═══════════╬════════════╬═══════○    │
+  │  TUNNEL      TUNNEL      TUNNEL       TUNNEL  ↓   │
+  │  Grade: 0.1-0.5%                      Outlet  │
+  │                                        to     │
+  │  ▓▓▓ WATER TABLE ▓▓▓▓▓▓▓▓▓           fields  │
+  │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓                    │
+  └────────────────────────────────────────────────────┘
+
+CROSS-SECTION OF TUNNEL:
+  ┌──────────┐
+  │ ╭──────╮ │  Width: 0.8m
+  │ │      │ │  Height: 1.5m
+  │ │      │ │  (enough for maintenance worker)
+  │ │ ████ │ │  Water depth: 0.3m
+  │ │ ████ │ │  Flow: 5-50 L/s
+  │ ╰──────╯ │
+  └──────────┘
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Water Table Level: [━━━━━━━●━━━] -15m          │
+│ Tunnel Gradient:   [━━━━━●━━━━━] 0.3%          │
+│ Tunnel Roughness:  [━━━━━━━●━━━] 0.025         │
+│                                                  │
+│ SEASON:                                          │
+│ ○ Spring (snowmelt):  Water table HIGH          │
+│ ● Summer (irrigation): Water table NORMAL       │
+│ ○ Autumn (depleted):   Water table LOW          │
+│ ○ Winter (recharge):   Water table RISING       │
+│                                                  │
+│ ANIMATION SHOWS:                                 │
+│ 1. Water seeps into tunnel from aquifer walls    │
+│ 2. Flow increases from mother well to outlet     │
+│ 3. Each shaft allows air circulation & access    │
+│ 4. Gradient carries water by gravity alone       │
+│                                                  │
+│ GROUNDWATER INTERACTION:                         │
+│ ┌────────────────────────────────────────┐      │
+│ │ Shaft 1  Shaft 2  Shaft 3  Shaft 4    │      │
+│ │  ↓ 12    ↓ 8      ↓ 5      ↓ 2  L/s  │      │
+│ │  Cumulative: 12→20→25→27 L/s          │      │
+│ │                                         │      │
+│ │  SWMM5: Modeled as GROUNDWATER inflow  │      │
+│ │  to conduit nodes via aquifer coupling  │      │
+│ │                                         │      │
+│ │  ICM: Modeled as Ground Infiltration    │      │
+│ │  object with lateral inflow             │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "Some Iranian qanats have operated continuously  │
+│  for over 2,700 years. The total length of       │
+│  qanat tunnels in Iran exceeds 270,000 km —      │
+│  enough to circle the Earth 6.7 times."          │
+│                                                  │
+│ [Copy .INP File]  [View Groundwater Model]       │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+### 🎬 Animation 5: Indian Stepwell — Vertical Water Access
+
+```
+INDIAN STEPWELL (VAV/BAOLI) ANIMATION
+5 nodes, 4 links, 30m deep
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CROSS-SECTION (animated):
+
+Ground Level ════════════════════════════
+              │ Step 1          │
+              │ ┌──┐            │
+              │ │  │ Step 2     │
+              │ │  │ ┌──┐       │
+              │ │  │ │  │ S3    │
+              │ │  │ │  │ ┌──┐  │
+              │ │  │ │  │ │  │  │
+              │ │  │ │  │ │  │  │
+              │ │  │ │  │ │ ██│ │ ← Water level
+              │ │  │ │  │ │████│ │   (rises/falls
+              │ │  │ │ ██│████│ │    with season)
+              │ │  │ │████████│ │
+              │ │ ██│█████████│ │
+              │ │██████████████│ │
+              └─┴──────────────┴─┘
+              Bottom (30m below ground)
+
+PLAN VIEW:
+┌────────────────────────────────────┐
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │  ┌──────────────────────┐   │  │
+│  │  │  ┌──────────────┐   │   │  │
+│  │  │  │  ┌────────┐  │   │   │  │
+│  │  │  │  │ WELL   │  │   │   │  │
+│  │  │  │  │  ○     │  │   │   │  │
+│  │  │  │  └────────┘  │   │   │  │
+│  │  │  └──────────────┘   │   │  │
+│  │  └──────────────────────┘   │  │
+│  └──────────────────────────────┘  │
+│                                    │
+│  Concentric terraces descend       │
+│  to water level                    │
+└────────────────────────────────────┘
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Season:                                          │
+│ [Jan][Feb][Mar][Apr][May][Jun]                   │
+│ [Jul][Aug][Sep][Oct][Nov][Dec]                   │
+│                                                  │
+│ Water Table Depth Below Ground:                  │
+│ Jan: 8m  ████████                               │
+│ Mar: 12m ████████████                           │
+│ Jun: 22m ██████████████████████ (pre-monsoon)   │
+│ Aug: 6m  ██████ (monsoon recharge)              │
+│ Oct: 10m ██████████                             │
+│ Dec: 9m  █████████                              │
+│                                                  │
+│ ANIMATION SHOWS:                                 │
+│ - Water level rises/falls through the year       │
+│ - Steps submerge and emerge                      │
+│ - Access level changes with season               │
+│ - Temperature gradient (cooler at depth)         │
+│                                                  │
+│ TEMPERATURE PROFILE:                             │
+│ Ground surface:    42°C (summer)                 │
+│ 10m depth:         32°C                          │
+│ 20m depth:         26°C                          │
+│ 30m depth (water): 22°C                          │
+│                                                  │
+│ The stepwell is an AIR CONDITIONER.              │
+│ Hot air enters at top, cools as it descends,     │
+│ creating a passive cooling draft.                │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Storage nodes at each terrace level              │
+│ Connected by orifice links (step overflow)       │
+│ Groundwater inflow at bottom node                │
+│ Seasonal variation via time series               │
+│                                                  │
+│ ICM MODEL:                                       │
+│ Storage nodes with depth-area curves             │
+│ Ground infiltration object for GW               │
+│ Level event data for seasonal water table        │
+│                                                  │
+│ [Copy .INP File]  [Seasonal Animation ▶]         │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 3: Flood Control Animations
+
+### 🎬 Animation 6: Aztec Dike System — Tenochtitlan
+
+```
+TENOCHTITLAN DIKE SYSTEM ANIMATION
+Nezahualcóyotl's Great Dike — 1449 CE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PLAN VIEW (animated):
+┌────────────────────────────────────────────────┐
+│                                                │
+│           Lake Texcoco                         │
+│        (brackish/salt water)                   │
+│     ░░░░░░░░░░░░░░░░░░░░░░░░                 │
+│     ░░░░░░░░░░░░░░░░░░░░░░░░                 │
+│     ░░░░░░░░░░░░░░░░░░░░░░░░                 │
+│     ░░░░░║░░░░░░░░░░░░░░░░░░                 │
+│     ░░░░░║░░░░░░░░░░░░░░░░░░                 │
+│     ░░░░░║═══ GREAT DIKE ═══║░░              │
+│     ░░░░░║   (16 km long)   ║░░              │
+│     ░░░░░║   Sluice gates   ║░░              │
+│     ░░░░░║░░░░░░░░░░░░░░░░░░                 │
+│          ║                                     │
+│    ┌─────╨─────────────────┐                  │
+│    │  TENOCHTITLAN         │                  │
+│    │  (freshwater lagoon)  │                  │
+│    │  ████ City Island ████│                  │
+│    │  ████████████████████ │                  │
+│    │  ═══ Causeways ═══    │                  │
+│    │  ═══════════════════  │                  │
+│    │  Protected from salt  │                  │
+│    │  and flood water      │                  │
+│    └───────────────────────┘                  │
+│                                                │
+│    ████ Lake Xochimilco ████                  │
+│    ████ (freshwater) ████████                 │
+│    ████ Chinampas ███████████                 │
+│                                                │
+└────────────────────────────────────────────────┘
+
+DIKE CROSS-SECTION:
+                Lake Texcoco (salt)
+   ~~~~~~~~~~~~~~~~~~~~║~~~~~~~~~~~~~~~~~~~~
+                       ║ ← Earth and stone dike
+                       ║    Height: 4m
+                       ║    Width: 8m at base
+   ─ ─ ─ ─ ─ ─ ─ ─ ─ ╬ ─ ─ ─ ─ ─ ─ ─ ─ ─
+                       ║
+   Freshwater lagoon   ║   Sluice gate
+   (Tenochtitlan)      ╠═══╗
+                       ║   ║ Controls water
+                       ║   ║ exchange
+                       ║   ╚═══→ When open:
+                       ║         freshwater
+                       ║         flushes salt
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Lake Texcoco Level: [━━━━━━━●━━━] 2.5m        │
+│ Rainfall Intensity: [━━━━━━━━●━━] Heavy        │
+│ Sluice Gate:        [OPEN ●  CLOSED]           │
+│                                                  │
+│ SCENARIOS:                                       │
+│ ○ Normal dry season — levels balanced            │
+│ ● Flood event 1449 — the reason the dike        │
+│   was built (lake overflowed into city)          │
+│ ○ Controlled flush — opening sluice gates        │
+│   to exchange water                              │
+│                                                  │
+│ FLOOD ANIMATION:                                 │
+│ Without dike (pre-1449):                         │
+│   Lake rises → salt water enters city            │
+│   Chinampas destroyed, drinking water            │
+│   contaminated, 200,000+ affected                │
+│                                                  │
+│ With dike (post-1449):                           │
+│   Lake rises → dike holds → city protected       │
+│   Sluice gates control any exchange              │
+│   Freshwater chinampas agriculture continues     │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Lake Texcoco = Storage node (tidal boundary)     │
+│ Dike = High weir (Crest = 4.0m)                 │
+│ Sluice = Orifice with RTC control               │
+│ Freshwater lagoon = Storage node                 │
+│ Chinampas = Subcatchments with LID               │
+│                                                  │
+│ [Copy .INP File]  [Run Flood Scenario]           │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+### 🎬 Animation 7: Dutch Polder System — Fighting the Sea
+
+```
+DUTCH POLDER SYSTEM ANIMATION
+Drainage windmill chain, 1200 CE - Present
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CROSS-SECTION (animated):
+
+Sea Level ═════════════════════════════════════
+  ↑ Dike ┃                                    │
+  │      ┃  Ring Canal (boezem)                │
+  │      ┃  ═══════════════════════            │
+  │      ┃        ↑                            │
+  │      ┃   Windmill 3 (lifts 1.5m)          │
+  │      ┃        ↑                            │
+  │      ┃  ═══ Middle Canal ═══               │
+  │      ┃        ↑                            │
+  │      ┃   Windmill 2 (lifts 1.5m)          │
+  │      ┃        ↑                            │
+  │      ┃  ═══ Lower Canal ═══               │
+  │      ┃        ↑                            │
+  │      ┃   Windmill 1 (lifts 1.5m)          │
+  │      ┃        ↑                            │
+  ↓      ┃  ═══ Polder (farmland) ═══         │
+  -4.5m  ┃  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓           │
+         ┃  (4.5m BELOW sea level!)            │
+
+WINDMILL DETAIL:
+       ╱│╲
+      ╱ │ ╲
+     ╱  │  ╲  ← Sails turn
+    ╱   │   ╲
+        │
+     ┌──┴──┐
+     │SCREW│ ← Archimedes screw inside
+     │     │    lifts water 1.5m
+     │  ↑  │
+     │  ↑  │
+     └──┬──┘
+   Low ─┘ └─ High
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Rainfall:     [━━━━━━━●━━━━━] 15 mm/day       │
+│ Wind Speed:   [━━━━━━━━●━━━] 25 km/h          │
+│ Sea Level:    [━━━━━━━━━●━━] NAP +0.5m        │
+│                                                  │
+│ POLDER WATER BALANCE:                            │
+│ Rain on polder:     +15 mm/day                   │
+│ Groundwater seepage: +5 mm/day                   │
+│ Crop evaporation:    -3 mm/day                   │
+│ Windmill pumping:   -18 mm/day                   │
+│ ─────────────────────────────                    │
+│ Net:                 -1 mm/day ✓ (draining)      │
+│                                                  │
+│ IF WIND STOPS:                                   │
+│ Pumping drops to 0                               │
+│ Polder floods in: 3.2 days                       │
+│ ⚠ This is why the Dutch never sleep              │
+│                                                  │
+│ MODERN REPLACEMENT:                              │
+│ Gemaal (electric pumping station)                │
+│ Q = 500 m³/min (vs windmill: 5 m³/min)          │
+│ 100× more capacity, works without wind           │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Polder = Large subcatchment (depression storage) │
+│ Canals = Conduits at staged elevations           │
+│ Windmills = Pump links (Type 2: depth-flow)      │
+│ Dike = Weir (emergency overflow)                 │
+│ Sea = Outfall (tidal boundary)                   │
+│                                                  │
+│ ICM MODEL:                                       │
+│ Same structure + 2D mesh for surface flooding    │
+│ when pumps fail (scenario analysis)              │
+│                                                  │
+│ [Copy .INP File]  [Simulate Pump Failure]        │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 4: Pressure Flow Animations
+
+### 🎬 Animation 8: Roman Inverted Siphon
+
+```
+ROMAN INVERTED SIPHON ANIMATION
+Lyon Gier Aqueduct — 12 atmospheres
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROFILE (animated — pressure flow):
+
+Header Tank                           Receiving Tank
+  ○ (263m)                              ○ (260m)
+  ║                                     ║
+  ║ ──── HGL (Hydraulic Grade Line) ─── ║
+  ║                                     ║
+  ╠═══╗                            ╔═══╣
+      ║   9 parallel lead pipes    ║
+      ║   each 20cm diameter       ║
+      ║                            ║
+      ╚═══════════╗    ╔══════════╝
+                  ║    ║
+                  ║    ║  Valley depth: 123m
+                  ║    ║  Pressure at bottom:
+                  ║    ║  12 atmospheres!
+                  ╚════╝
+                 (140m elevation)
+
+PRESSURE VISUALIZATION:
+At top (263m):     P = 0 atm (atmospheric)
+At valley (140m):  P = ρg(263-140) = 12 atm
+                   = 1.2 MPa
+                   = 174 psi
+
+Color-coded pipe:
+  ░░░░ Low pressure (< 3 atm)
+  ▓▓▓▓ Medium pressure (3-8 atm)
+  ████ High pressure (8-12 atm)
+
+  ░░░░░╗              ╔░░░░░
+       ▓▓╗          ╔▓▓
+         ██╗      ╔██
+           ████████
+         (12 atm at bottom)
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Source Head:      [━━━━━━━●━━━] 263 m          │
+│ Valley Elevation: [━━●━━━━━━━━] 140 m          │
+│ Number of Pipes:  [━━━━━━━━●━━] 9              │
+│ Pipe Diameter:    [━━━━●━━━━━━] 200 mm         │
+│ Pipe Material:    ○ Lead  ○ Stone  ○ Ceramic   │
+│                                                  │
+│ RESULTS:                                         │
+│ Max Pressure:     12.1 atm (at valley bottom)   │
+│ Flow Velocity:    1.8 m/s                       │
+│ Total Flow:       510 L/s (9 pipes combined)    │
+│ Head Loss:        3.0 m (1.1% of length)        │
+│                                                  │
+│ FORCE MAIN COMPARISON:                           │
+│                                                  │
+│ SWMM5 modeling:                                  │
+│   Force Main conduit                             │
+│   Hazen-Williams C = 80 (old lead)               │
+│   OR Darcy-Weisbach with ε = 0.5mm              │
+│                                                  │
+│ ICM modeling:                                    │
+│   Pressurized conduit                            │
+│   Preissmann slot extends naturally              │
+│   HW roughness or Colebrook-White               │
+│                                                  │
+│ SWMM5 vs ICM DIFFERENCE HERE:                   │
+│ ┌────────────────────────────────────┐          │
+│ │ SWMM5: Force main switches FROM    │          │
+│ │ Manning's TO Hazen-Williams when    │          │
+│ │ pipe becomes pressurized.           │          │
+│ │ Discrete transition.                │          │
+│ │                                     │          │
+│ │ ICM: Preissmann slot provides       │          │
+│ │ smooth transition from free-surface │          │
+│ │ to pressurized flow. No equation    │          │
+│ │ switch needed.                      │          │
+│ │                                     │          │
+│ │ The Romans didn't care about the    │          │
+│ │ transition. Their siphon was ALWAYS │          │
+│ │ pressurized. Both solvers agree     │          │
+│ │ on the steady-state answer.         │          │
+│ └────────────────────────────────────┘          │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "The Romans used 9 parallel pipes instead of     │
+│  one large pipe because lead cannot withstand    │
+│  12 atm in a large diameter. Smaller pipes =     │
+│  thicker wall ratio = higher pressure rating.    │
+│  This is the SAME principle behind modern        │
+│  force main design. Pipe wall stress = PD/2t."  │
+│                                                  │
+│ [Copy .INP File]  [Pressure Profile Animation]   │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 5: Water Treatment & Quality
+
+### 🎬 Animation 9: Maya Water Filtration — Tikal
+
+```
+MAYA WATER FILTRATION ANIMATION
+Corriental Reservoir — Tikal, 250-900 CE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CROSS-SECTION (animated):
+
+Rainfall ▼▼▼▼▼▼▼▼▼
+         │
+         ↓ Surface runoff from plaza
+┌────────────────────────────────────────┐
+│  ░░░░░░░ RAW WATER INLET ░░░░░░░░░░  │
+│  ░░ turbid, sediment-laden ░░░░░░░░░  │
+│                                        │
+│  ════════════╗                         │
+│  SETTLING    ║                         │
+│  ZONE        ║  Velocity < 0.01 m/s   │
+│  (first      ║  Residence time: 2 hrs │
+│  chamber)    ║  TSS drops 80%         │
+│  ▓▓▓▓▓▓▓▓▓▓ ║  (sediment settles)    │
+│              ╠══════════════╗          │
+│              ║  SAND/ZEOLITE║          │
+│              ║  FILTER BED  ║          │
+│              ║  ┌──────────┐║          │
+│              ║  │::::::::::│║          │
+│              ║  │ zeolite  │║ ← Removes│
+│              ║  │ mineral  │║   color, │
+│              ║  │::::::::::│║   taste, │
+│              ║  │ quartz   │║   microbes│
+│              ║  │ sand     │║          │
+│              ║  └──────────┘║          │
+│              ╚══════════════╣          │
+│                             ║          │
+│              CLEAN WATER    ║          │
+│              RESERVOIR      ║          │
+│              ████████████████║          │
+│              ████████████████║          │
+│              (drinking water)║          │
+└──────────────────────────────╩──────────┘
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Rainfall Intensity: [━━━━━━●━━━━━] 25 mm/hr   │
+│                                                  │
+│ WATER QUALITY TRACKING:                          │
+│                                                  │
+│ Stage          TSS    Color    Bacteria          │
+│ ──────────────────────────────────────           │
+│ Inlet         500mg/L  Brown   High              │
+│ After Settle  100mg/L  Yellow  Medium            │
+│ After Filter   15mg/L  Clear   Low               │
+│ Storage         8mg/L  Clear   Very Low          │
+│                                                  │
+│ REMOVAL EFFICIENCY:                              │
+│ TSS:       98.4%                                 │
+│ Color:     95%                                   │
+│ Bacteria:  90%+                                  │
+│                                                  │
+│ SWMM5 WATER QUALITY MODEL:                      │
+│ Inlet: [LOADINGS] TSS = 500 mg/L               │
+│ Settling: [TREATMENT] at Node                    │
+│   R = 0.80                                       │
+│ Filter: [TREATMENT] at Node                      │
+│   C = 15 * exp(-0.5 * HRT)                      │
+│ Storage: First-order decay                       │
+│   Kdecay = 0.1 /day                             │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "Researchers discovered that the Maya            │
+│  deliberately imported zeolite mineral from      │
+│  miles away to build this filter — the same     │
+│  mineral used in modern water treatment          │
+│  plants. They understood filtration chemistry    │
+│  1,500 years before European science."          │
+│                                                  │
+│ [Copy .INP File]  [Run WQ Simulation]            │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 6: Reservoir & Storage Animations
+
+### 🎬 Animation 10: Khmer Baray — The Mega-Reservoir
+
+```
+WEST BARAY RESERVOIR ANIMATION
+6 nodes, 8 links, 50 million m³
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PLAN VIEW (animated):
+
+     Inflow Channels (monsoon fed)
+     ↓    ↓    ↓    ↓    ↓
+┌════╧════╧════╧════╧════╧════════════════┐
+║                                          ║
+║          WEST BARAY                      ║
+║          8 km × 2.3 km                  ║
+║          50,000,000 m³                  ║
+║                                          ║
+║    ████████████████████████████          ║
+║    ████████████████████████████          ║
+║    ████████████████████████████          ║
+║    ████████████████████████████          ║
+║    ████████████████████████████          ║
+║                                          ║
+║    Neak Poan Temple ○ (center island)   ║
+║    (water treatment + hospital)          ║
+║                                          ║
+╚════╤════╤════╤════╤════╤════════════════╝
+     ↓    ↓    ↓    ↓    ↓
+     Outlet Channels → Irrigation canals
+     → Rice paddies (thousands of hectares)
+
+WATER BALANCE ANIMATION:
+┌─────────────────────────────────────────────────┐
+│ Month:  [Jan][Feb][Mar][Apr][May][Jun]          │
+│         [Jul][Aug][Sep][Oct][Nov][Dec]          │
+│                                                  │
+│ STORAGE LEVEL:                                   │
+│ ┌────────────────────────────────────────┐      │
+│ │ 50M ┤                    ████          │      │
+│ │     │                ████████████      │      │
+│ │ 40M ┤            ████████████████      │      │
+│ │     │        ████████████████████      │      │
+│ │ 30M ┤    ████████████████████████      │      │
+│ │     │████████████████████████████████  │      │
+│ │ 20M ┤████████████████████████████████  │      │
+│ │     │████████████████████████████████  │      │
+│ │ 10M ┤████████████████████████████████  │      │
+│ │     J  F  M  A  M  J  J  A  S  O  N  D│      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ Monsoon fills:    Jun-Oct (+40M m³)              │
+│ Irrigation draws: Nov-May (-35M m³)              │
+│ Evaporation:      Year-round (-5M m³)            │
+│ Carry-over:       10M m³ (buffer)                │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Baray = STORAGE node                             │
+│   Shape: TABULAR (depth-area curve)              │
+│   Max depth: 3.0m                                │
+│   Surface area: 18.4 km² at max                  │
+│ Inflows = INFLOW time series (monsoon)           │
+│ Irrigation = OUTFALL with time series            │
+│ Evaporation = [EVAPORATION] MONTHLY              │
+│                                                  │
+│ ICM MODEL:                                       │
+│ Storage Node with depth-area table               │
+│ Inflow Events (monsoon rainfall)                 │
+│ Controlled outflow via RTC rules                 │
+│                                                  │
+│ IRRIGATION DISTRIBUTION:                         │
+│ 12 outlet channels → 200+ km of canals          │
+│ → 1,000+ km² of rice paddies                    │
+│ Fed 750,000+ people                              │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "The Khmer hydraulic network supported the       │
+│  largest pre-industrial city on Earth.            │
+│  Angkor's population exceeded 750,000 —          │
+│  larger than any European city at the time.      │
+│  It was entirely water-dependent. When the       │
+│  hydraulic system failed (drought + siltation    │
+│  in the 14th-15th century), the city             │
+│  was abandoned."                                 │
+│                                                  │
+│ [Copy .INP File]  [Annual Cycle Animation ▶]     │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 7: Sanitation Animations
+
+### 🎬 Animation 11: Cloaca Maxima — 2,600-Year-Old Sewer
+
+```
+CLOACA MAXIMA ANIMATION
+10 nodes, 9 links, 3.2m diameter
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LONGITUDINAL SECTION (animated):
+
+Forum Romanum                              Tiber River
+  ○ ────────────○────────────○──────────── ○ Outfall
+  N1           N2           N3             N4
+  │            │            │              │
+  El: 15.0m    El: 12.0m    El: 9.0m      El: 6.0m
+  
+  Grade: 0.3% (9m drop over 3km)
+  
+CROSS-SECTION (animated):
+           ╭────────────╮
+          ╱              ╲     3.2m diameter
+         │     AIR        │    Stone-lined arch
+         │                │
+         │   ████████     │ ← Flow depth varies
+         │   ████████     │    with rain
+         │   ████████████ │
+          ╲  ████████████╱
+           ╰────────────╯
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Weather:                                         │
+│ ○ Dry (base flow only):     Q = 0.5 m³/s       │
+│ ● Light rain:               Q = 3.0 m³/s       │
+│ ○ Heavy storm:              Q = 12.0 m³/s      │
+│ ○ Extreme (100-year):       Q = 25.0 m³/s      │
+│                                                  │
+│ FLOW PROFILE:                                    │
+│ ┌────────────────────────────────────────┐      │
+│ │ Depth                                   │      │
+│ │ 3.2m ┤────────────────── Full ──────── │      │
+│ │      │                                  │      │
+│ │ 2.0m ┤ ─── Heavy storm ──────────      │      │
+│ │      │                                  │      │
+│ │ 0.8m ┤ ─── Light rain ────────────     │      │
+│ │      │                                  │      │
+│ │ 0.2m ┤ ─── Dry weather ───────────     │      │
+│ │      └─────────────────────────────     │      │
+│ │      N1    N2    N3    N4 (outfall)     │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ COMBINED SEWER BEHAVIOR:                         │
+│ Dry: Sanitary flow only (baths, latrines)        │
+│ Wet: Rain runoff mixes with sanitary             │
+│ Storm: Combined flow → Tiber River               │
+│                                                  │
+│ ⚠ This IS a CSO (Combined Sewer Overflow)        │
+│ The world's first CSO is 2,600 years old        │
+│                                                  │
+│ Manning's Equation for 3.2m stone arch:          │
+│ n = 0.020 (rough stone)                          │
+│ A = 6.16 m² (full circular)                      │
+│ R = 0.80 m                                       │
+│ S = 0.003                                        │
+│ Q_full = (1/0.020) × 6.16 × 0.80^(2/3)         │
+│        × 0.003^(1/2)                             │
+│ Q_full = 14.6 m³/s                              │
+│                                                  │
+│ COMPARISON TO MODERN:                            │
+│ Typical modern trunk sewer: 2.4m, Q = 8 m³/s    │
+│ Cloaca Maxima: 3.2m, Q = 14.6 m³/s              │
+│ The Romans overbuilt. That's why it still works. │
+│                                                  │
+│ [Copy .INP File]  [CSO Analysis Mode]            │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+### 🎬 Animation 12: Indus Valley Covered Drains — Mohenjo-Daro
+
+```
+INDUS VALLEY DRAINAGE ANIMATION
+Mohenjo-Daro Urban Drainage — 2600 BCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PLAN VIEW (animated — flow routing through city):
+
+┌──────────────────────────────────────────┐
+│                                          │
+│  ┌─House─┐  ┌─House─┐  ┌─House─┐       │
+│  │ ○bath │  │ ○bath │  │ ○bath │       │
+│  │   ↓   │  │   ↓   │  │   ↓   │       │
+│  └───╫───┘  └───╫───┘  └───╫───┘       │
+│      ║          ║          ║            │
+│  ════╬══════════╬══════════╬════════    │
+│      ║  COVERED STREET DRAIN  ║         │
+│      ║  (brick-lined, graded) ║         │
+│      ║  Width: 30cm           ║         │
+│      ║  Depth: 45cm           ║         │
+│      ║  Grade: 1-2%           ║         │
+│      ║                        ║         │
+│  ┌───╫───┐  ┌───╫───┐                  │
+│  │Soak Pit│  │Soak Pit│ ← Overflow     │
+│  │ ░░░░░ │  │ ░░░░░ │   infiltration   │
+│  │ ░░░░░ │  │ ░░░░░ │                  │
+│  └───────┘  └───────┘                  │
+│                                          │
+│  ════════════════╗                      │
+│  MAIN TRUNK DRAIN ║                     │
+│  Width: 60cm      ║                     │
+│  Depth: 90cm      ║                     │
+│  ══════════════════╝                    │
+│              ↓                           │
+│         City Outfall                     │
+│         (to river)                       │
+└──────────────────────────────────────────┘
+
+DRAIN CROSS-SECTION:
+┌──── Cover stone ────┐
+│                      │
+│  ████  ← Brick walls │  W: 30cm
+│  ████     (fired)     │  D: 45cm
+│  ████                 │
+│  ████  ░░░ water ░░░ │  d: 5-15cm
+│  ████  ░░░░░░░░░░░░  │
+│  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │ ← Brick floor
+└───────────────────────┘
+
+SOAK PIT DETAIL:
+┌──────────────────┐
+│  Inlet ═══╗      │
+│           ╚═╗    │
+│  ┌─────────╨─┐  │
+│  │ ░░░░░░░░░ │  │ ← Perforated
+│  │ ░ soak  ░ │  │    brick walls
+│  │ ░ pit   ░ │  │
+│  │ ░░░░░░░░░ │  │    Water infiltrates
+│  │ ▓▓ sand ▓▓│  │    into ground
+│  │ ▓▓▓▓▓▓▓▓▓│  │
+│  └───────────┘  │
+└──────────────────┘
+
+INTERACTIVE CONTROLS:
+┌─────────────────────────────────────────────────┐
+│ Number of Houses:    [━━━━━━●━━━━━] 50         │
+│ Persons per House:   [━━━━●━━━━━━━] 8          │
+│ Water Use per Person:[━━━━━●━━━━━━] 20 L/day   │
+│ Rainfall (if wet):   [━━━━━━━●━━━━] 10 mm/hr   │
+│                                                  │
+│ DRY WEATHER FLOW:                                │
+│ Total DWF = 50 × 8 × 20 × 0.8 = 6,400 L/day   │
+│ Average DWF = 0.074 L/s                         │
+│                                                  │
+│ WET WEATHER FLOW:                                │
+│ Roof area = 50 × 100m² = 5,000 m²              │
+│ Street area = 2,000 m²                          │
+│ Q_storm = 7,000 × 10/1000/3600 = 0.019 m³/s    │
+│ Total Q = 0.074 + 19.4 = 19.5 L/s              │
+│                                                  │
+│ DRAIN CAPACITY CHECK:                            │
+│ Main drain: 0.6m × 0.9m, n=0.015, S=0.015      │
+│ Q_full = 0.28 m³/s = 280 L/s                    │
+│ Utilization: 19.5/280 = 7.0%                    │
+│ ✓ MASSIVELY overdesigned (like the Romans!)     │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Houses = Subcatchments (100% impervious)         │
+│ Covered drains = Conduits (RECT_CLOSED)          │
+│ Soak pits = LID (Infiltration Trench)           │
+│ Main drain = Conduit (RECT_CLOSED, larger)      │
+│ Outfall = FREE type                              │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "4,600 years ago, Mohenjo-Daro had:             │
+│  - Indoor bathrooms in EVERY house               │
+│  - Covered street drains with inspection access  │
+│  - Soak pits for overflow infiltration           │
+│  - Standardized brick sizes for construction     │
+│  - Graded drainage to central trunk              │
+│                                                  │
+│  Most European cities did not have covered        │
+│  drains until the 1800s. The Indus Valley was    │
+│  4,000 years ahead."                             │
+│                                                  │
+│ [Copy .INP File]  [Compare to Modern CSO Model]  │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Category 8: Water Lifting Animations
+
+### 🎬 Animation 13: Archimedes Screw — The Original Pump
+
+```
+ARCHIMEDES SCREW ANIMATION
+4 nodes, 3 links, 3m lift
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANIMATED SCREW (rotating):
+
+                    ╱ Upper basin
+                   ╱  (irrigation canal)
+                  ╱   El: 103.0m
+                 ╱    ○
+                ╱    ╱│
+               ╱    ╱ │
+              ╱  ◐╱  │  ← Water trapped
+             ╱  ╱◐   │    between screw
+            ╱  ╱  ◐  │    flights rises
+           ╱  ╱    ◐ │    as screw turns
+          ╱  ╱      ◐│
+         ╱  ╱ angle: 30°
+        ╱  ╱
+       ╱  ╱
+      ╱  ╱
+     ╱──╱──── Lower basin
+    ╱         (river/canal)
+   ○          El: 100.0m
+
+SCREW PARAMETERS:
+┌─────────────────────────────────────────────────┐
+│ Screw Angle:       [━━━━━━━●━━━] 30°           │
+│ Screw Diameter:    [━━━━━●━━━━━] 0.5 m         │
+│ Screw Length:      [━━━━━━━━●━━] 6.0 m         │
+│ Rotation Speed:    [━━━━━●━━━━━] 20 RPM        │
+│ Number of Flights: [━━━━●━━━━━━] 3             │
+│                                                  │
+│ RESULTS:                                         │
+│ Lift Height:  3.0 m                             │
+│ Flow Rate:    12.5 L/s                          │
+│ Efficiency:   70%                               │
+│ Power Input:  0.53 kW (0.7 HP)                  │
+│ Power Output: 0.37 kW (Q × ρ × g × h)          │
+│                                                  │
+│ EFFICIENCY vs ANGLE:                             │
+│ ┌────────────────────────────────────────┐      │
+│ │ Eff                                     │      │
+│ │ 80%┤        ╱╲                          │      │
+│ │    │      ╱    ╲                        │      │
+│ │ 60%┤    ╱        ╲                      │      │
+│ │    │  ╱            ╲                    │      │
+│ │ 40%┤╱                ╲                  │      │
+│ │    └───────────────────                 │      │
+│ │    10° 20° 30° 40° 50° 60°             │      │
+│ │              ↑ Optimal                  │      │
+│ └────────────────────────────────────────┘      │
+│                                                  │
+│ SWMM5 MODEL:                                     │
+│ Lower basin = Storage node (El: 100.0)           │
+│ Upper basin = Storage node (El: 103.0)           │
+│ Screw = Pump link (Type 4: variable speed)       │
+│ Pump curve: Q vs RPM                             │
+│                                                  │
+│ ICM MODEL:                                       │
+│ Lower basin = Storage node                       │
+│ Upper basin = Storage node                       │
+│ Screw = Scrpmp (Screw pump) link                │
+│ Head-discharge table from screw geometry         │
+│                                                  │
+│ HISTORICAL FACT:                                 │
+│ "Attributed to Archimedes (287-212 BCE),         │
+│  though possibly Egyptian in origin. Still       │
+│  manufactured today for:                         │
+│  - Wastewater treatment plant influent           │
+│  - Fish-friendly pumping stations                │
+│  - Low-head hydropower generation                │
+│  The design has not changed in 2,300 years       │
+│  because the physics has not changed."           │
+│                                                  │
+│ [Copy .INP File]  [Spin the Screw ▶]            │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Implementation Roadmap
+
+### Phase 1: Core 6 Animations (Highest Impact)
+
+| | | | | # | Animation | Civilization | Category | Unique Teaching Point | |  |
+|---|---|---|---|---|
+| | | | 1 | Roman Aqueduct | Roman Empire | Gravity Flow | Manning's equation over 50 km | |  |
+| | | | 2 | Dujiangyan | Ancient China | Flood Control | Passive flow splitting without gates | |  |
+| | | | 3 | Persian Qanat | Ancient Persia | Groundwater | Groundwater-surface coupling | |  |
+| | | | 4 | Cloaca Maxima | Roman Empire | Sanitation | Combined sewer overflow (first CSO!) | |  |
+| | | | 5 | Khmer Baray | Khmer Empire | Reservoir | Seasonal storage mass balance | |  |
+| | | | 6 | Roman Siphon | Roman Empire | Pressure | Force main at 12 atmospheres | |  |
+
+### Phase 2: Cultural Diversity (6 more)
+
+| | | | | # | Animation | Civilization | Why Important | |  |
+|---|---|---|---|
+| | | | 7 | Machu Picchu Fountains | Inca Empire | Series-connected nodes, social hierarchy | |  |
+| | | | 8 | Dutch Polder | Netherlands | Pump chain, water balance, failure analysis | |  |
+| | | | 9 | Aztec Dike | Mesoamerica | Salt/fresh separation, sluice control | |  |
+| | | | 10 | Maya Filtration | Maya Classic | Water quality treatment chain | |  |
+| | | | 11 | Indus Valley Drains | Indus Valley | Urban drainage 4,600 years ago | |  |
+| | | | 12 | Archimedes Screw | Ancient Greece | Pump modeling, efficiency curves | |  |
+
+### Phase 3: Global Expansion (6 more)
+
+| | | | | # | Animation | Civilization | |  |
+|---|---|---|
+| | | | 13 | Sri Lankan Tank Cascade | Ancient Sri Lanka | |  |
+| | | | 14 | Hohokam Canal System | Hohokam | |  |
+| | | | 15 | Nabataean Flash Flood Dam | Nabataean Kingdom | |  |
+| | | | 16 | Biso Kotuwa Valve Pit | Ancient Sri Lanka | |  |
+| | | | 17 | Al-Jazari Water Automata | Islamic Golden Age | |  |
+| | | | 18 | Palenque Pressurized Aqueduct | Maya Classic | |  |
+
+---
+
+## Content Flywheel for Each Animation
+
+Every animation generates:
+
+| | | | Content Type | Example | |  |
+|---|---|
+| | | **Newsletter** | "Edition 55: I built a SWMM5 model of a 2,600-year-old Roman sewer. Here is what the Manning equation tells us." | |  |
+| | | **LinkedIn Article** | "The Cloaca Maxima: The World's First CSO and What It Teaches Us About Combined Sewer Design" (with animation screenshots) | |  |
+| | | **LinkedIn Post** | "A 3.2m Roman sewer from 600 BCE has Q_full = 14.6 m³/s. Most modern trunk sewers: 8 m³/s. The Romans overbuilt. That is why it still works. [screenshot]" | |  |
+| | | **X Thread** | "I modeled 12 ancient water systems in SWMM5. Here are the 7 that would pass modern design review. Thread 🧵" | |  |
+| | | **Conference Talk** | "Historical Hydraulic Validation: Using SWMM5 to Verify Ancient Engineering Decisions" | |  |
+
+**12 animations = 60+ content pieces = 1 year of the flywheel spinning.**
+
+---
+
+## The Closing Line for Any Presentation
+
+> "The Manning equation does not know what century it is. It governs flow in a Roman sewer from 600 BCE exactly as it governs flow in your 48-inch RCP from 2026. These animations prove it — and they are all runnable SWMM5 models you can take home today."

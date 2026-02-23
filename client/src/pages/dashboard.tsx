@@ -21,8 +21,11 @@ import {
   Grid3X3,
   Zap,
   Clock,
-  Workflow
+  Workflow,
+  Moon,
+  Sun
 } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -89,6 +92,7 @@ import {
   VersionTracker
 } from "@/components/visuals/ReviewDiagrams";
 import { ICMManholeSimulator } from "@/components/visuals/ICMManholeSimulator";
+import { BackwaterPropagation, OneDTwoDCoupling, ManholeStorageVolume, FloodTypeComparison } from "@/components/visuals/NodeAnimations";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -108,7 +112,7 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 };
 
 const DIAGRAM_CATEGORIES = [
-  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 12 },
+  { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 13 },
   { id: "options", label: "Solver Options", icon: "settings", count: 6 },
   { id: "dynwave", label: "Dynamic Wave Options", icon: "zap", count: 10 },
   { id: "temporal", label: "Temporal Dynamics", icon: "clock", count: 6 },
@@ -116,13 +120,14 @@ const DIAGRAM_CATEGORIES = [
   { id: "advanced", label: "Advanced Analysis", icon: "chart", count: 10 },
   { id: "hydrologic", label: "Hydrologic", icon: "droplet", count: 4 },
   { id: "climate", label: "Climate & Infiltration", icon: "cloud", count: 2 },
-  { id: "icm", label: "ICM Simulation", icon: "gauge", count: 14 },
+  { id: "icm", label: "ICM Simulation", icon: "gauge", count: 17 },
   { id: "inlets", label: "Surface-to-Sewer", icon: "grid", count: 4 },
   { id: "green", label: "Green Infrastructure", icon: "leaf", count: 2 },
   { id: "architecture", label: "Code Architecture", icon: "code", count: 5 },
 ];
 
 export default function Dashboard() {
+  const { theme, toggleTheme } = useTheme();
   const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
   const [activeCategory, setActiveCategory] = useState("solver");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -207,7 +212,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">78 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">82 Interactive Diagrams</Badge>
               </div>
             </div>
             
@@ -254,6 +259,16 @@ export default function Dashboard() {
             >
               <Download className="h-3.5 w-3.5" />
               <span>Markdown</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              data-testid="button-theme-toggle"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             
             <Separator orientation="vertical" className="h-6 mx-2 hidden md:block" />
@@ -526,6 +541,13 @@ export default function Dashboard() {
                     <LiveNetworkComparison />
                     <ForceMainComparison />
                  </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Backwater Effects</h4>
+                   <p className="text-muted-foreground text-sm">How downstream boundary changes propagate upstream through each solver's computational grid.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <BackwaterPropagation />
+                 </div>
                </div>
              )}
 
@@ -691,6 +713,21 @@ export default function Dashboard() {
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
                     <ICMManholeSimulator />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">1D-2D Coupling</h4>
+                   <p className="text-muted-foreground text-sm">ICM's signature capability — coupling underground pipe networks with surface flood routing.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <OneDTwoDCoupling />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Storage & Flooding</h4>
+                   <p className="text-muted-foreground text-sm">How each solver computes manhole storage volume and handles surface flooding.</p>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <ManholeStorageVolume />
+                    <FloodTypeComparison />
                  </div>
                </div>
              )}

@@ -37,82 +37,107 @@
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar-background: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
 }
 
 :root {
-  /* Precision Engineering Theme - Light Mode */
-  --background: 0 0% 98%;
-  --foreground: 220 10% 10%;
+  --background: 214 32% 97%;
+  --foreground: 214 32% 8%;
   
-  --card: 0 0% 100%;
-  --card-foreground: 220 10% 10%;
+  --card: 214 40% 100%;
+  --card-foreground: 214 32% 8%;
   
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 10% 10%;
+  --popover: 214 40% 100%;
+  --popover-foreground: 214 32% 8%;
   
-  --primary: 210 100% 50%; /* Scientific Blue */
+  --primary: 217 91% 50%;
   --primary-foreground: 0 0% 100%;
   
-  --secondary: 220 10% 94%;
-  --secondary-foreground: 220 10% 10%;
+  --secondary: 214 32% 93%;
+  --secondary-foreground: 214 32% 15%;
   
-  --muted: 220 10% 94%;
-  --muted-foreground: 220 10% 46%;
+  --muted: 214 25% 93%;
+  --muted-foreground: 214 15% 46%;
   
-  --accent: 210 100% 96%;
-  --accent-foreground: 210 100% 50%;
+  --accent: 214 60% 95%;
+  --accent-foreground: 217 91% 45%;
   
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 210 100% 50%;
+  --border: 214 25% 89%;
+  --input: 214 25% 89%;
+  --ring: 217 91% 50%;
   
-  --radius: 0.25rem; /* Tighter radius for technical feel */
+  --radius: 0.5rem;
 
-  --chart-1: 210 100% 50%; /* Blue */
-  --chart-2: 160 84% 39%;  /* Green */
-  --chart-3: 30 80% 55%;   /* Orange */
-  --chart-4: 280 65% 60%;  /* Purple */
-  --chart-5: 340 75% 55%;  /* Pink */
+  --chart-1: 217 91% 50%;
+  --chart-2: 199 89% 48%;
+  --chart-3: 173 80% 40%;
+  --chart-4: 246 65% 60%;
+  --chart-5: 339 75% 55%;
+
+  --sidebar-background: 214 40% 98%;
+  --sidebar-foreground: 214 32% 8%;
+  --sidebar-primary: 217 91% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 214 60% 95%;
+  --sidebar-accent-foreground: 217 91% 45%;
+  --sidebar-border: 214 25% 89%;
+  --sidebar-ring: 217 91% 50%;
 }
 
 .dark {
-  /* Precision Engineering Theme - Dark Mode */
-  --background: 224 15% 10%;
-  --foreground: 210 20% 98%;
+  --background: 220 25% 7%;
+  --foreground: 210 30% 96%;
   
-  --card: 224 15% 12%;
-  --card-foreground: 210 20% 98%;
+  --card: 220 25% 10%;
+  --card-foreground: 210 30% 96%;
   
-  --popover: 224 15% 12%;
-  --popover-foreground: 210 20% 98%;
+  --popover: 220 25% 10%;
+  --popover-foreground: 210 30% 96%;
   
-  --primary: 210 100% 55%;
+  --primary: 213 94% 56%;
   --primary-foreground: 0 0% 100%;
   
-  --secondary: 224 15% 18%;
-  --secondary-foreground: 210 20% 98%;
+  --secondary: 220 25% 16%;
+  --secondary-foreground: 210 30% 96%;
   
-  --muted: 224 15% 18%;
-  --muted-foreground: 215 15% 65%;
+  --muted: 220 25% 16%;
+  --muted-foreground: 215 20% 60%;
   
-  --accent: 224 15% 20%;
-  --accent-foreground: 210 100% 55%;
+  --accent: 220 30% 18%;
+  --accent-foreground: 213 94% 60%;
   
   --destructive: 0 62% 30%;
   --destructive-foreground: 0 85% 95%;
   
-  --border: 224 15% 20%;
-  --input: 224 15% 20%;
-  --ring: 210 100% 55%;
+  --border: 220 25% 18%;
+  --input: 220 25% 18%;
+  --ring: 213 94% 56%;
 
-  --chart-1: 210 100% 55%;
-  --chart-2: 160 84% 45%;
-  --chart-3: 30 80% 60%;
-  --chart-4: 280 65% 65%;
-  --chart-5: 340 75% 60%;
+  --chart-1: 213 94% 56%;
+  --chart-2: 199 89% 55%;
+  --chart-3: 173 80% 50%;
+  --chart-4: 246 65% 65%;
+  --chart-5: 339 75% 60%;
+
+  --sidebar-background: 220 25% 9%;
+  --sidebar-foreground: 210 30% 96%;
+  --sidebar-primary: 213 94% 56%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 220 30% 18%;
+  --sidebar-accent-foreground: 213 94% 60%;
+  --sidebar-border: 220 25% 18%;
+  --sidebar-ring: 213 94% 56%;
 }
 
 @layer base {
@@ -125,7 +150,6 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-medium tracking-tight;
   }
-  /* Technical data styling */
   .font-mono {
     font-variant-numeric: tabular-nums;
   }
