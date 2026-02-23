@@ -4,13 +4,13 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **82 interactive diagrams and calculators** organized across **12 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **95 interactive diagrams and calculators** organized across **13 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## Diagram Categories (82 Total)
+## Diagram Categories (95 Total)
 
 1. **Solver Mechanics** (13 diagrams) - Core solver algorithms, discretization, wave propagation, plus Preissmann Slot Calculator, Manning's Flow Calculator, Computational Points, Surcharge Algorithm, Live Network Comparison, Force Main Comparison, Backwater Propagation
 2. **Solver Options** (6 diagrams) - Routing methods, adaptive timesteps, CFL stability
@@ -24,6 +24,7 @@ Preferred communication style: Simple, everyday language.
 10. **Surface-to-Sewer** (4 diagrams) - Inlet elements, HEC-22 calculator
 11. **Green Infrastructure** (2 diagrams) - LID/SUDS, dual-solver architecture
 12. **Code Architecture** (5 diagrams) - Input parsing, matrix solver, RTC rules
+13. **Historical Engineering** (13 diagrams) - Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat, Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon, Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley Drains, Archimedes Screw
 
 ## System Architecture
 
@@ -52,6 +53,9 @@ The frontend follows a component-based architecture with:
   - `InletDiagrams.tsx` - Surface-to-sewer connections
   - `GreenInfraDiagrams.tsx` - LID/SUDS controls
   - `ArchitecturalDiagrams.tsx` - Code structure visualization
+  - `HistoricalAnimations.tsx` - Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat
+  - `HistoricalAnimations2.tsx` - Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon
+  - `HistoricalAnimations3.tsx` - Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley, Archimedes Screw
 - Static comparison data in `client/src/data/comparison-data.ts`
 - Source code snippets in `client/src/data/source-code-snippets.ts`
 
@@ -120,4 +124,5 @@ The database schema currently includes a users table, though the primary applica
 - Added **Manhole Storage Volume** comparison with tapered vs uniform shaft geometry
 - Added **Flood Type Comparison** showing Lost/Ponded/Stored/2D options
 - Added **Dark Mode Toggle** with blue theme across light and dark modes
-- Total diagram count: 82 across 12 categories
+- Added **Historical Engineering** category (13 animations) — Roman Aqueduct, Dujiangyan, Inca Fountains, Persian Qanat, Indian Stepwell, Aztec Dike, Dutch Polder, Roman Siphon, Maya Filtration, Khmer Baray, Cloaca Maxima, Indus Valley Drains, Archimedes Screw
+- Total diagram count: 95 across 13 categories

@@ -23,7 +23,8 @@ import {
   Clock,
   Workflow,
   Moon,
-  Sun
+  Sun,
+  Landmark
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,9 @@ import {
 } from "@/components/visuals/ReviewDiagrams";
 import { ICMManholeSimulator } from "@/components/visuals/ICMManholeSimulator";
 import { BackwaterPropagation, OneDTwoDCoupling, ManholeStorageVolume, FloodTypeComparison } from "@/components/visuals/NodeAnimations";
+import { RomanAqueductAnimation, DujiangyanAnimation, IncaFountainAnimation, PersianQanatAnimation } from "@/components/visuals/HistoricalAnimations";
+import { IndianStepwellAnimation, AztecDikeAnimation, DutchPolderAnimation, RomanSiphonAnimation } from "@/components/visuals/HistoricalAnimations2";
+import { MayaFiltrationAnimation, KhmerBarayAnimation, CloacaMaximaAnimation, IndusValleyDrainAnimation, ArchimedesScrewAnimation } from "@/components/visuals/HistoricalAnimations3";
 import heroImage from "@assets/generated_images/abstract_fluid_dynamics_network_blueprint.png";
 
 const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> = {
@@ -124,6 +128,7 @@ const DIAGRAM_CATEGORIES = [
   { id: "inlets", label: "Surface-to-Sewer", icon: "grid", count: 4 },
   { id: "green", label: "Green Infrastructure", icon: "leaf", count: 2 },
   { id: "architecture", label: "Code Architecture", icon: "code", count: 5 },
+  { id: "historical", label: "Historical Engineering", icon: "landmark", count: 13 },
 ];
 
 export default function Dashboard() {
@@ -212,7 +217,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">82 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">95 Interactive Diagrams</Badge>
               </div>
             </div>
             
@@ -484,7 +489,8 @@ export default function Dashboard() {
                                        cat.id === "climate" ? Cloud : 
                                        cat.id === "green" ? Leaf : 
                                        cat.id === "icm" ? Gauge : 
-                                       cat.id === "inlets" ? Grid3X3 : Code;
+                                       cat.id === "inlets" ? Grid3X3 : 
+                                      cat.id === "historical" ? Landmark : Code;
                  return (
                    <Button
                      key={cat.id}
@@ -873,6 +879,82 @@ export default function Dashboard() {
                  <div className="grid md:grid-cols-2 gap-6">
                     <MinorLossesDiagram />
                     <ReportingSystemDiagram />
+                 </div>
+               </div>
+             )}
+
+             {activeCategory === "historical" && (
+               <div className="space-y-6" data-testid="section-historical">
+                 <div className="mb-4">
+                   <h3 className="text-2xl font-bold tracking-tight mb-2">Historical Water Engineering</h3>
+                   <p className="text-muted-foreground">300,000 years of water engineering brought to life through interactive hydraulic simulations — with SWMM5/ICM equations visible and parameters adjustable.</p>
+                 </div>
+                 <div className="mt-4 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Gravity Flow Systems</h4>
+                   <p className="text-muted-foreground text-sm">Ancient civilizations mastered gravity-driven water delivery across vast distances.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <RomanAqueductAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <DujiangyanAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <IncaFountainAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Underground & Groundwater</h4>
+                   <p className="text-muted-foreground text-sm">Ingenious systems for tapping aquifers and accessing water tables.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <PersianQanatAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <IndianStepwellAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Flood Control</h4>
+                   <p className="text-muted-foreground text-sm">How ancient engineers protected cities from floods using dikes, polders, and passive flow control.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <AztecDikeAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <DutchPolderAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Pressure Flow</h4>
+                   <p className="text-muted-foreground text-sm">Pressurized pipe systems that predate modern force main engineering.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <RomanSiphonAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Water Treatment & Storage</h4>
+                   <p className="text-muted-foreground text-sm">Filtration, reservoir management, and water quality — solved millennia ago.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <MayaFiltrationAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <KhmerBarayAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Sanitation & Drainage</h4>
+                   <p className="text-muted-foreground text-sm">The world's first sewers and urban drainage networks — some still in operation.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <CloacaMaximaAnimation />
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <IndusValleyDrainAnimation />
+                 </div>
+                 <div className="mt-6 mb-4">
+                   <h4 className="text-xl font-bold tracking-tight mb-2">Water Lifting</h4>
+                   <p className="text-muted-foreground text-sm">Mechanical pumping technology that hasn't been improved in 2,200 years.</p>
+                 </div>
+                 <div className="grid md:grid-cols-1 gap-6">
+                    <ArchimedesScrewAnimation />
                  </div>
                </div>
              )}
