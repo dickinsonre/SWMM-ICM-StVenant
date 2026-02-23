@@ -1,0 +1,1929 @@
+# Additional SWMM5 vs ICM Animation Suggestions
+
+## Building on What Already Exists
+
+Your app already has excellent animations for: Preissmann Slot, Wave Propagation, Dry Network Handling, Manhole vs Node, Head & Flow Calculation Points, Manning's Flow Comparison, Computational Points Density, Surcharge Algorithm, Live 5-Node Network, and Force Main Comparison.
+
+Here are **30 new animations** organized by the tabs you already have, plus new tab suggestions — each one designed to fill a specific gap in understanding.
+
+---
+
+## For Your Existing Tab: Solver Mechanics
+
+### 🎬 1: Newton-Raphson vs Successive Relaxation Convergence
+
+```
+CONVERGENCE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━
+
+Show the SAME timestep being solved by both methods:
+
+SWMM5 SUCCESSIVE RELAXATION:
+Iteration 1: Q = 10.0 ──→ H = 5.2
+Iteration 2: Q = 8.4  ──→ H = 4.8
+Iteration 3: Q = 9.1  ──→ H = 5.0
+Iteration 4: Q = 8.8  ──→ H = 4.9  ← converging slowly
+Iteration 5: Q = 8.9  ──→ H = 4.95
+Iteration 6: Q = 8.9  ──→ H = 4.95 ✓ converged
+
+   Q │     
+     │ ○                     
+   10├─○──────────────────── target
+     │   ○                   
+   9 ├─────○──○──○──○ ← oscillates then settles
+     │                       
+   8 ├───○                   
+     └──────────────────── iteration
+      1  2  3  4  5  6
+
+ICM NEWTON-RAPHSON:
+Iteration 1: Q = 10.0, ∂Q/∂H = -3.2 → correction
+Iteration 2: Q = 8.7  ──→ H = 4.92
+Iteration 3: Q = 8.9  ──→ H = 4.95 ✓ converged
+
+   Q │     
+     │ ○                     
+   10├─────────────────────── 
+     │                       
+   9 ├───○──○ ← quadratic convergence
+     │                       
+   8 ├                       
+     └──────────────────── iteration
+      1  2  3
+
+INTERACTIVE:
+[Slider: Problem Nonlinearity]
+  Linear ←─────────────→ Highly Nonlinear
+  
+  At low nonlinearity: Both converge in 2-3 iterations
+  At high nonlinearity: SWMM5 needs 8-10, ICM needs 3-4
+  At extreme: SWMM5 may not converge, ICM still does
+
+WHY ICM IS FASTER PER STEP (but does more work per iteration):
+  SWMM5: Simple update, many iterations
+  ICM:   Jacobian matrix solve, few iterations
+  
+  Trade-off: ICM iterations are more expensive
+  but there are fewer of them
+```
+
+**Why this matters:** Engineers always ask "which solver is faster?" This animation shows it is not about speed — it is about convergence behavior. ICM converges quadratically (Newton-Raphson) while SWMM5 converges linearly (relaxation). The difference matters most in highly nonlinear conditions (surcharge transitions, pump cycling, rapid changes).
+
+---
+
+### 🎬 2: Theta (θ) Weighting Factor — ICM's Secret Weapon
+
+```
+PREISSMANN THETA ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ICM uses θ ≈ 0.65 in its 4-point scheme.
+What does this actually MEAN?
+
+TIME WEIGHTING:
+                    
+  t+Δt ──○──────────○──── future (unknown)
+         │╲         │
+         │  ╲ θ=0.65│     65% weight on future
+         │    ╲     │     35% weight on present
+         │      ╲   │
+  t    ──○────────╲─○──── present (known)
+         │          │
+       x=0        x=Δx
+
+  θ = 0.5: Crank-Nicolson (centered, 2nd order accurate)
+           Most accurate BUT can oscillate
+           
+  θ = 1.0: Fully implicit (backward Euler)
+           Most stable BUT most diffusive
+           Like SWMM5's approach
+           
+  θ = 0.65: ICM's sweet spot
+            Good accuracy + good stability
+            Slightly diffusive (smooths wiggles)
+
+ANIMATION:
+[Slider: θ from 0.5 to 1.0]
+
+Show same sharp wave propagating through pipe:
+
+θ = 0.5:  ╱╲    Sharp peak preserved
+          │  │   BUT oscillations behind wave
+          │  │ ~~~~ wiggles
+          
+θ = 0.65: ╱╲    Peak slightly rounded
+          │ ╲   No oscillations ✓
+          │  ╲  Best compromise
+          
+θ = 1.0:  ╱──╲  Peak very rounded
+         ╱    ╲  Maximum numerical diffusion
+         Very smooth but peak attenuated
+
+SWMM5 COMPARISON:
+SWMM5 uses backward Euler (effectively θ = 1.0)
+This is WHY SWMM5 tends to smooth out sharp peaks
+more than ICM does — it is more diffusive by design
+```
+
+**Why this matters:** This explains a mystery that every modeler who has compared SWMM5 and ICM results has noticed — ICM peaks are slightly sharper. It is not a bug. It is the theta parameter.
+
+---
+
+### 🎬 3: Staggered Grid — Where H and Q Live
+
+```
+STAGGERED GRID ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5: H at nodes, Q at links (non-staggered in practice)
+
+  H₁           Q₁₂           H₂           Q₂₃           H₃
+  ○═══════════════════════════○═══════════════════════════○
+  Node 1       Link 1-2       Node 2       Link 2-3       Node 3
+  
+  H computed here             H computed here
+            Q computed here              Q computed here
+
+ICM: H and Q at EVERY point (staggered within conduit)
+
+  Node1  pt1   pt2   pt3   pt4   pt5   Node2
+  ○──────●─────●─────●─────●─────●──────○
+  H,Q    H,Q   H,Q   H,Q   H,Q   H,Q   H,Q
+  
+  Actually staggered:
+  H:  ○──H──●──H──●──H──●──H──●──H──●──H──○
+  Q:  ○──────Q─────Q─────Q─────Q─────Q──────○
+  
+  H and Q are computed at slightly offset positions
+  This prevents checkerboard oscillations
+
+ANIMATION:
+Show a wave entering from left
+SWMM5: H jumps at Node 1, Q updates for entire Link 1-2
+ICM:   H and Q update progressively point by point
+
+[Toggle: Show H field / Show Q field / Show both]
+```
+
+---
+
+## For Your Existing Tab: Solver Options
+
+### 🎬 4: SWMM5 Routing Method Comparison (STEADY / KINWAVE / DYNWAVE)
+
+```
+ROUTING METHOD ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+Same network, same storm, three routing methods:
+
+STEADY STATE:
+  ┌────────────────────────────────────────┐
+  │ Each timestep solved independently     │
+  │ No wave propagation                    │
+  │ No backwater effects                   │
+  │ No surcharge                           │
+  │ Fastest computation                    │
+  │                                         │
+  │ Hydrograph at outlet:                   │
+  │    ╱╲     ← Same shape as inflow       │
+  │   ╱  ╲      (no attenuation)           │
+  │  ╱    ╲     Instantaneous translation  │
+  │ ╱      ╲                               │
+  └────────────────────────────────────────┘
+
+KINEMATIC WAVE:
+  ┌────────────────────────────────────────┐
+  │ Wave travels downstream only           │
+  │ No backwater (upstream influence)       │
+  │ Can handle normal surcharge            │
+  │ Moderate computation time              │
+  │                                         │
+  │ Hydrograph at outlet:                   │
+  │     ╱╲    ← Slightly attenuated        │
+  │    ╱  ╲     Peak delayed               │
+  │   ╱    ╲    Shape modified             │
+  │  ╱      ╲                              │
+  └────────────────────────────────────────┘
+
+DYNAMIC WAVE:
+  ┌────────────────────────────────────────┐
+  │ Full Saint-Venant equations            │
+  │ Backwater effects ✓                    │
+  │ Surcharge ✓                            │
+  │ Reverse flow ✓                         │
+  │ Slowest computation                    │
+  │                                         │
+  │ Hydrograph at outlet:                   │
+  │      ╱╲   ← Most attenuated            │
+  │     ╱  ╲    Most delayed               │
+  │    ╱    ╲   Backwater effects visible   │
+  │   ╱      ╲──╲   ← tail from backwater  │
+  └────────────────────────────────────────┘
+
+INTERACTIVE:
+[Run all three simultaneously on same chart]
+
+Peak Flow Comparison:
+  Steady:    50.0 cfs (100% of input)
+  Kinematic: 42.3 cfs (84.6%)
+  Dynamic:   38.7 cfs (77.4%)
+  
+Time to Peak:
+  Steady:    2.00 hr (same as input)
+  Kinematic: 2.45 hr (+22.5%)
+  Dynamic:   2.82 hr (+41.0%)
+
+ICM NOTE:
+ICM ALWAYS uses dynamic wave (full St. Venant)
+There is no kinematic wave option in ICM
+This is a fundamental design philosophy difference
+```
+
+**Why this matters:** Many SWMM5 users do not understand why their routing method selection changes their results so dramatically. This animation shows the three options side by side with the same input, making the differences visceral.
+
+---
+
+### 🎬 5: Variable vs Fixed Time Step Behavior
+
+```
+TIME STEP ANIMATION
+━━━━━━━━━━━━━━━━━━━
+
+SWMM5 VARIABLE TIME STEP:
+┌─────────────────────────────────────────────┐
+│                                              │
+│  Inflow:     ╱╲                              │
+│             ╱  ╲                             │
+│            ╱    ╲                            │
+│                                              │
+│  Time Steps:                                 │
+│  ██████  ███ ██ █ █ ██ ███  ██████  ████████│
+│  30s     15  10 5 5 10 15   30s     30s     │
+│  ← dry → ← rising → ← peak → ← recession →│
+│                                              │
+│  CFL Check at each step:                    │
+│  Δt ≤ Δx/(v+c)                              │
+│  Shortest pipe controls Δt for ALL pipes    │
+│                                              │
+│  ⚠ One short pipe can force tiny Δt         │
+│  for the entire network                      │
+│                                              │
+│  SWMM5 [OPTIONS]:                            │
+│  VARIABLE_STEP  75   (% of CFL limit)       │
+│  LENGTHENING_STEP 0  (conduit lengthening)  │
+│  MIN_ROUTE_STEP  0.5 (minimum seconds)      │
+└─────────────────────────────────────────────┘
+
+ICM ADAPTIVE TIME STEP:
+┌─────────────────────────────────────────────┐
+│                                              │
+│  Time Steps:                                 │
+│  ████████████  ████████  ████  ████████████ │
+│  60s           30s       15s   60s          │
+│  ← dry →       ← rising → ↑    ← recession│
+│                           Peak              │
+│                                              │
+│  Convergence-based:                          │
+│  If Newton-Raphson converges in < 3 iter:   │
+│    Increase Δt                               │
+│  If convergence needs > 6 iter:             │
+│    Decrease Δt                               │
+│  If convergence FAILS:                      │
+│    Halve Δt and retry                       │
+│                                              │
+│  CFL does NOT strictly constrain ICM        │
+│  because Preissmann scheme is implicit      │
+│                                              │
+│  This is why ICM can use LARGER time steps  │
+│  than SWMM5 for the same network            │
+└─────────────────────────────────────────────┘
+
+SIDE BY SIDE:
+Total timesteps for 24-hour simulation:
+  SWMM5: 4,827 steps (avg Δt = 17.9s)
+  ICM:   1,440 steps (avg Δt = 60.0s)
+  
+  ICM uses 3.4× fewer steps
+  BUT each step involves matrix solve
+  
+  Net computation time: often similar
+  (ICM does less work total, each piece is bigger)
+```
+
+---
+
+## For Your Existing Tab: Dynamic Wave Options
+
+### 🎬 6: Inertial Damping — The Three Modes
+
+```
+INERTIAL DAMPING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The momentum equation:
+∂Q/∂t + ∂(Q²/A)/∂x + gA∂H/∂x + gASf = 0
+  ↑         ↑              ↑         ↑
+  Local   Convective    Pressure   Friction
+  accel   acceleration  gradient    slope
+
+SWMM5 applies damping factor σ to acceleration terms:
+
+σ × [∂Q/∂t + ∂(Q²/A)/∂x] + gA∂H/∂x + gASf = 0
+
+DAMPING = NONE (σ = 1.0 always):
+┌────────────────────────────────────────┐
+│ Full momentum equation everywhere      │
+│ Most physically accurate               │
+│ BUT: Can be unstable at supercritical  │
+│      transitions and hydraulic jumps   │
+│                                         │
+│ ═══════╗                               │
+│        ║ ← Hydraulic jump              │
+│ ═══════╝   OSCILLATES wildly           │
+│ ╱╲╱╲╱╲╱╲╱╲ ← numerical instability    │
+└────────────────────────────────────────┘
+
+DAMPING = PARTIAL (σ varies with Froude number):
+┌────────────────────────────────────────┐
+│ σ = 1.0 when Fr < 0.5 (full momentum) │
+│ σ → 0.0 as Fr → Fr_limit              │
+│                                         │
+│ σ = 1 - (Fr - 0.5)² / (Fr_limit-0.5)² │
+│                                         │
+│ ═══════╗                               │
+│        ╠══ ← Smooth transition          │
+│ ═══════╝   Damped at jump              │
+│ ──────── ← stable but less accurate    │
+│                                         │
+│ DEFAULT SETTING — recommended for most  │
+└────────────────────────────────────────┘
+
+DAMPING = FULL (σ = 0.0 always):
+┌────────────────────────────────────────┐
+│ Removes ALL inertial terms             │
+│ Equation becomes diffusion wave:       │
+│ gA∂H/∂x + gASf = 0                    │
+│                                         │
+│ ═════════════════                       │
+│ ← Very smooth, very stable             │
+│   But cannot model supercritical flow   │
+│   Cannot model hydraulic jumps          │
+│   Backwater curve is diffused           │
+└────────────────────────────────────────┘
+
+ICM COMPARISON:
+ICM does NOT have user-selectable inertial damping
+ICM handles supercritical transitions internally
+through its adaptive convergence scheme
+
+The user does not choose. ICM decides.
+
+INTERACTIVE:
+[Slider: Froude Number 0.2 → 2.0]
+Show momentum terms as stacked bars:
+  ████ Local acceleration
+  ████ Convective acceleration  } These get damped
+  ████ Pressure gradient
+  ████ Friction slope
+
+As Fr increases with PARTIAL damping:
+  ██   Local (shrinking)
+  ██   Convective (shrinking)
+  ████ Pressure gradient (unchanged)
+  ████ Friction slope (unchanged)
+```
+
+---
+
+### 🎬 7: Normal Flow Criteria
+
+```
+NORMAL FLOW CRITERIA ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 [OPTIONS]:
+NORMAL_FLOW_LIMITED = SLOPE / FROUDE / BOTH
+
+What this controls:
+When should SWMM5 limit flow to normal depth capacity?
+
+SLOPE CRITERION:
+  If downstream head < upstream head + pipe slope:
+    Flow is downstream-controlled (normal flow)
+    Cap Q at Manning's normal flow
+    
+  Visualization:
+  ──── EGL ──────────╲────── ← EGL slopes down
+  ── HGL ─────────────╲──── ← HGL slopes down
+  ═══════════════════════════ ← Pipe
+  
+  Normal flow: pipe acts as if infinite downstream
+
+FROUDE CRITERION:
+  If Fr > 1.0 at downstream end:
+    Flow is supercritical
+    Upstream conditions control (not downstream)
+    Cap Q to prevent excessive velocity
+    
+  Visualization:
+  ═══════════════╗
+                 ║  Fr > 1 at exit
+                 ╚══→ Critical/supercritical flow
+  
+BOTH:
+  Apply whichever criterion is more restrictive
+
+ICM COMPARISON:
+  ICM handles this automatically
+  No user selection needed
+  Internal algorithms detect flow regime
+  and apply appropriate limiting
+
+INTERACTIVE:
+[Pipe slope slider]
+[Downstream depth slider]
+
+Show flow regime changing:
+  Mild slope + high tailwater = SUBCRITICAL (backwater)
+  Steep slope + low tailwater = SUPERCRITICAL (normal flow)
+  Transition = CRITICAL (limiting applies)
+```
+
+---
+
+## For Your Existing Tab: Temporal Dynamics
+
+### 🎬 8: Ponding vs 2D Surface Flooding
+
+```
+SURFACE FLOODING COMPARISON
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When water exceeds manhole capacity, what happens?
+
+SWMM5 — NO PONDING (ALLOW_PONDING = NO):
+┌──────────────────────────────────────────┐
+│                                          │
+│  Water reaches max depth                 │
+│  ════════════════════ Ground level       │
+│  │████████████████│                      │
+│  │████████████████│ ← System full        │
+│  │████████████████│                      │
+│  └────────────────┘                      │
+│                                          │
+│  ⚠ Excess water LOST from system        │
+│  ⚠ Mass balance error increases          │
+│  ⚠ Continuity error in RPT file          │
+│                                          │
+│  No surface interaction                  │
+│  No flooding to adjacent nodes           │
+│  Water simply disappears                 │
+└──────────────────────────────────────────┘
+
+SWMM5 — WITH PONDING (ALLOW_PONDING = YES):
+┌──────────────────────────────────────────┐
+│                                          │
+│     ┌──────────────────────┐             │
+│     │  ░░░░░░░░░░░░░░░░░  │ ← Ponded   │
+│     │  ░░░░ Pond ░░░░░░░  │   area      │
+│     │  ░░░░░░░░░░░░░░░░░  │   (A_ponded)│
+│  ═══╪══════════════════════╪═══          │
+│  │████████████████│                      │
+│  │████████████████│                      │
+│  └────────────────┘                      │
+│                                          │
+│  Water stored above ground               │
+│  Volume = A_ponded × depth_above_ground  │
+│  Re-enters system when capacity returns  │
+│  ✓ Mass conserved                        │
+│  ✗ No overland flow between manholes     │
+│  ✗ No flow routing on surface            │
+│  ✗ Just a vertical storage column        │
+└──────────────────────────────────────────┘
+
+ICM — FLOOD TYPE = STORED:
+┌──────────────────────────────────────────┐
+│  Similar to SWMM5 ponding                │
+│  Ponded area from node data              │
+│  Water stored and returned               │
+│  No surface routing                      │
+└──────────────────────────────────────────┘
+
+ICM — FLOOD TYPE = LOST:
+┌──────────────────────────────────────────┐
+│  Same as SWMM5 without ponding           │
+│  Water removed from system               │
+│  ⚠ Mass balance warning                 │
+└──────────────────────────────────────────┘
+
+ICM — FLOOD TYPE = 2D:    ← ICM ONLY!
+┌──────────────────────────────────────────┐
+│                                          │
+│  ┌─────────────────────────────────┐    │
+│  │  2D MESH (DTM surface)          │    │
+│  │  ░░░→░░░→░░░→░░░→░░░           │    │
+│  │  ░↓░░░░↓░░░░↓░░░░↓░░           │    │
+│  │  ░░░→░░░→░░░→░░░→░░░           │    │
+│  └──╤───────────╤───────────╤──────┘    │
+│     │ MH1       │ MH2       │ MH3       │
+│  ═══╪═══════════╪═══════════╪═══════    │
+│  1D pipe network connected to 2D mesh   │
+│                                          │
+│  Water FLOWS on the surface:             │
+│  - Follows topography (streets, yards)   │
+│  - Can enter DIFFERENT manholes          │
+│  - Uses shallow water equations          │
+│  - Full 2D hydrodynamic routing          │
+│                                          │
+│  This is the KEY DIFFERENCE              │
+│  SWMM5 has NO equivalent                 │
+└──────────────────────────────────────────┘
+
+ANIMATION:
+[Storm slider: 0% → 200% of pipe capacity]
+
+Show water rising in manholes:
+  At 80%:  Both solvers — water rising in pipe
+  At 100%: Both — pipe just full
+  At 120%: SWMM5 — water in ponded area (column)
+           ICM — water flows across 2D mesh surface
+  At 150%: SWMM5 — deeper pond, still no routing
+           ICM — flood extent grows, enters other MHs
+  At 200%: SWMM5 — very deep pond at single node
+           ICM — widespread surface flooding visible
+
+This is why ICM is preferred for flood mapping
+```
+
+---
+
+### 🎬 9: Continuity Error — What It Means and Why It Differs
+
+```
+CONTINUITY ERROR ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+What is continuity error?
+
+ERROR = (Volume_In - Volume_Out - ΔStorage) / Volume_In × 100%
+
+If error = 0%: Perfect mass conservation
+If error > 0: System is "creating" water (bad)
+If error < 0: System is "losing" water (also bad)
+
+SWMM5 RPT FILE:
+┌──────────────────────────────────────────┐
+│  Flow Routing Continuity                 │
+│  ──────────────────────                  │
+│  Dry Weather Inflow:     0.000 MG        │
+│  Wet Weather Inflow:     2.450 MG        │
+│  External Inflow:        0.000 MG        │
+│  Flooding Loss:          0.123 MG  ← ⚠  │
+│  Outfall Flow:           2.280 MG        │
+│  Storage Change:         0.042 MG        │
+│  Continuity Error:       0.201 %   ← KEY│
+└──────────────────────────────────────────┘
+
+ICM RESULTS:
+┌──────────────────────────────────────────┐
+│  Mass Balance Summary                    │
+│  ──────────────────                      │
+│  Total Inflow:          2.450 MG         │
+│  Total Outflow:         2.425 MG         │
+│  Flood Volume:          0.018 MG         │
+│  Volume Change:         0.006 MG         │
+│  Continuity Error:      0.041 %    ← KEY│
+└──────────────────────────────────────────┘
+
+WHY ICM TYPICALLY HAS LOWER ERROR:
+┌────────────────────────────────────────┐
+│ SWMM5:                                 │
+│ - Node-link: volume accounting at nodes│
+│   only. Volume "in" the link is an     │
+│   approximation based on average depth │
+│                                         │
+│ ICM:                                   │
+│ - Distributed: volume tracked at EVERY │
+│   computational point along conduit    │
+│   More precise volume accounting       │
+│                                         │
+│ Error comparison (typical):            │
+│ SWMM5: 0.1 - 1.0% (acceptable < 1%)  │
+│ ICM:   0.01 - 0.1% (typically better) │
+└────────────────────────────────────────┘
+
+INTERACTIVE:
+[Slider: Network complexity]
+  Simple (5 nodes): Both ≈ 0.01%
+  Medium (50 nodes): SWMM5 ≈ 0.2%, ICM ≈ 0.05%
+  Large (500 nodes): SWMM5 ≈ 0.5%, ICM ≈ 0.08%
+  Extreme (5000 nodes): SWMM5 ≈ 1.5%, ICM ≈ 0.15%
+
+⚠ SWMM5 target: Continuity error < 1%
+⚠ ICM target: Continuity error < 0.5%
+```
+
+---
+
+## New Tab Suggestion: "Boundary Conditions"
+
+### 🎬 10: Outfall Types — All Five, Animated
+
+```
+OUTFALL TYPE COMPARISON
+━━━━━━━━━━━━━━━━━━━━━━━
+
+[Toggle between 5 outfall types]
+
+FREE:
+  ═══════════╗
+             ║ Critical depth
+             ╚══→ Free discharge to air
+  
+  SWMM5: Type = FREE in [OUTFALLS]
+  ICM:   Outfall Type = Free
+
+NORMAL:
+  ═══════════════════════→ Normal depth
+  
+  Flow at Manning's normal depth for pipe slope
+  SWMM5: Type = NORMAL
+  ICM:   Outfall Type = Normal
+
+FIXED:
+  ═══════════╗
+             ║ Fixed water surface elevation
+  ═══════════╩═══════════ Stage = 95.0
+  
+  SWMM5: Type = FIXED, Stage = 95.0
+  ICM:   Outfall Type = Fixed, Level = 95.0
+
+TIDAL:
+  ═══════════╗      ╱╲  ╱╲
+             ║    ╱    ╲╱    ╲
+  ═══════════╩══╱════════════╲══
+  
+  Stage varies with tide curve
+  SWMM5: Type = TIDAL, references [CURVES]
+  ICM:   Tidal Curve object
+  
+  ⚠ WHEN TIDE > PIPE HEAD:
+  SWMM5: Reverse flow OR flap gate prevents
+  ICM:   Same behavior, Flap Valve object
+
+TIME SERIES:
+  ═══════════╗    ╱╲ ╱╲ ╱╲
+             ║  ╱  ╲╱  ╲╱
+  ═══════════╩═╱═══════════
+  
+  Stage from measured time series data
+  SWMM5: Type = TIMESERIES, references [TIMESERIES]
+  ICM:   Level Event data
+
+INTERACTIVE:
+[Select outfall type]
+[Adjust downstream level]
+[Toggle flap gate ON/OFF]
+
+Show flow direction reversing when tide exceeds pipe head
+Show flap gate closing to prevent reverse flow
+Show flow resuming when tide drops
+```
+
+---
+
+### 🎬 11: Inflow Types — Direct, DWF, RDII
+
+```
+INFLOW TYPES ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Three types of inflow at nodes:
+
+DIRECT INFLOW (time series):
+┌────────────────────────────────────────┐
+│  Q │    ╱╲                             │
+│    │   ╱  ╲                            │
+│    │  ╱    ╲                           │
+│    │ ╱      ╲                          │
+│    └──────────── time                  │
+│                                        │
+│  SWMM5: [INFLOWS] section              │
+│  J1 FLOW TS1 FLOW 1.0 1.0 0           │
+│                                        │
+│  ICM: Inflow Event object              │
+│  Linked to node                        │
+└────────────────────────────────────────┘
+
+DRY WEATHER FLOW (diurnal pattern):
+┌────────────────────────────────────────┐
+│  Q │   ╱╲    ╱╲                        │
+│    │  ╱  ╲  ╱  ╲                       │
+│    │ ╱    ╲╱    ╲                      │
+│    │╱              ╲                   │
+│    └─ 0  6  12  18  24 ── hours       │
+│      Morning  Lunch  Evening           │
+│      peak     peak   peak             │
+│                                        │
+│  Baseline × Monthly × Daily × Hourly  │
+│                                        │
+│  SWMM5: [DWF] + [PATTERNS]            │
+│  J1 FLOW 0.5 DailyPat HourlyPat       │
+│                                        │
+│  ICM: Population + Wastewater Profile  │
+│  ⚠ DIFFERENT APPROACH:                │
+│  SWMM5: DWF defined at NODES          │
+│  ICM: DWF from SUBCATCHMENT population│
+└────────────────────────────────────────┘
+
+RDII (Rainfall-Dependent Infiltration/Inflow):
+┌────────────────────────────────────────┐
+│      Rain: ▼▼▼▼▼▼▼▼▼▼                │
+│                                        │
+│  Q │   ╱╲                    SHORT     │
+│    │  ╱  ╲     ╱╲            MEDIUM    │
+│    │ ╱    ╲   ╱  ╲    ╱──╲   LONG     │
+│    │╱      ╲ ╱    ╲  ╱    ╲           │
+│    │        ╲╱      ╲╱      ╲          │
+│    └──────────────────────── time      │
+│                                        │
+│  Three triangular unit hydrographs:    │
+│  R: Fraction of rainfall volume        │
+│  T: Time to peak                       │
+│  K: Recession ratio (recession/rise)   │
+│                                        │
+│  SWMM5: [RDII] + [HYDROGRAPHS]        │
+│  ICM: RDII with same R-T-K approach   │
+│                                        │
+│  ⚠ SAME METHOD in both solvers        │
+│  Parameters transfer directly          │
+└────────────────────────────────────────┘
+
+INTERACTIVE:
+[Toggle: Direct / DWF / RDII / All combined]
+Show all three inflow components stacking:
+  Total Q = Direct + DWF + RDII
+```
+
+---
+
+## New Tab Suggestion: "LID & Green Infrastructure"
+
+### 🎬 12: LID Layer Stack Animation
+
+```
+LID LAYER STACK ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 BIO-RETENTION CELL:
+
+Rain ▼▼▼▼▼▼▼▼▼
+     │
+     ↓
+┌────────────────────────────────────────┐
+│ SURFACE LAYER                          │
+│ ░░░░░░░░░░░░░░░ ponding depth         │
+│ ▓▓▓ vegetation ▓▓▓                    │
+│ Berm height: 6 in                     │
+│ Roughness: 0.1 (Manning's n)          │
+├────────────────────────────────────────┤
+│ SOIL LAYER                             │
+│ ::::::::::::::::: growing medium      │
+│ Thickness: 18 in                       │
+│ Porosity: 0.5                          │
+│ Field capacity: 0.2                    │
+│ Wilting point: 0.1                     │
+│ Conductivity: 0.5 in/hr               │
+├────────────────────────────────────────┤
+│ STORAGE LAYER                          │
+│ ○○○○○○○○○○○○○○○ gravel/aggregate     │
+│ Height: 12 in                          │
+│ Void ratio: 0.75                       │
+│ Seepage rate: 0.5 in/hr               │
+├────────────────────────────────────────┤
+│ UNDERDRAIN                             │
+│ ═══════════════ perforated pipe       │
+│ Coefficient: 0.5                       │
+│ Exponent: 0.5                          │
+│ Offset: 6 in (from bottom)            │
+└────────────────────────────────────────┘
+     │
+     ↓ Drain outflow to storm sewer
+
+ANIMATION BEHAVIOR:
+1. Rain begins → surface ponds
+2. Water infiltrates through soil
+3. Soil moisture increases (color changes)
+4. Percolation into storage layer
+5. Storage fills from bottom
+6. When storage > drain offset → drain flows
+7. If storage full → seepage to native soil
+8. If surface full → overflow
+
+INTERACTIVE:
+[Rain intensity slider: 0-4 in/hr]
+[Show moisture content profile]
+[Show cumulative volume balance]
+
+SWMM5: Full LID module since v5.1
+ICM:   LID only in ICM SWMM networks
+       NOT in native InfoWorks networks
+       ⚠ This is a significant limitation
+       For InfoWorks, LID must be represented
+       as modified subcatchment parameters
+```
+
+---
+
+### 🎬 13: LID Performance Comparison
+
+```
+LID TYPES COMPARISON ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Same storm applied to 8 LID types:
+
+       Bio-     Rain    Green   Infil   Perm    Rain   Rooftop  Veg
+       Retention Garden  Roof   Trench  Pave   Barrel  Discon   Swale
+
+Runoff ████     ████    ████    ████    ████    ████    ████    ████
+Reduc  90%      85%     60%     95%     80%     40%     30%     75%
+
+Peak   ████     ████    ████    ████    ████    ████    ████    ████
+Reduc  95%      90%     50%     97%     85%     60%     40%     80%
+
+Volume ████     ████    ████    ████    ████    ████    ████    ████
+Reduc  85%      80%     45%     90%     75%     35%     25%     70%
+
+INTERACTIVE:
+[Select two LID types to compare side-by-side]
+[Adjust storm size: 0.5" → 4.0"]
+[Show cross-section of each type]
+
+PERFORMANCE vs STORM SIZE:
+┌────────────────────────────────────────┐
+│ Reduction                              │
+│ 100%┤●──●──●                           │
+│     │       ●──●                       │
+│  75%┤            ●──●                  │
+│     │                 ●──●             │
+│  50%┤                      ●──●        │
+│     │                           ●      │
+│  25%┤                                  │
+│     └──────────────────────────────    │
+│     0.5  1.0  1.5  2.0  2.5  3.0  in  │
+│                Storm Size              │
+│                                        │
+│ Small storms: LID captures everything  │
+│ Large storms: LID overwhelmed          │
+│ Breakpoint depends on storage capacity │
+└────────────────────────────────────────┘
+
+ICM NOTE:
+LID_CONTROLS and LID_USAGE sections import
+to ICM SWMM networks directly.
+For InfoWorks networks, LID behavior must be
+approximated using modified runoff surfaces,
+storage nodes, and treatment.
+```
+
+---
+
+## New Tab Suggestion: "Water Quality"
+
+### 🎬 14: Pollutant Buildup & Washoff
+
+```
+BUILDUP AND WASHOFF ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DRY PERIOD (buildup accumulates):
+Day 1:  ░                              TSS: 10 lb/acre
+Day 3:  ░░░                            TSS: 28 lb/acre
+Day 7:  ░░░░░░                         TSS: 55 lb/acre
+Day 14: ░░░░░░░░░░                     TSS: 82 lb/acre
+Day 30: ░░░░░░░░░░░░░ (approaching max) TSS: 95 lb/acre
+
+BUILDUP FUNCTIONS (toggleable):
+┌────────────────────────────────────────┐
+│ B │ ░░░░░░░░░░░░░░░░── max            │
+│   │ ░░░░░░░░░░ POWER: B = C1×t^C2     │
+│   │ ░░░░░░ EXPONENTIAL: B=C1(1-e^-C2t)│
+│   │ ░░░ SATURATION: B = C1×t/(C2+t)   │
+│   └───────────────────── days          │
+└────────────────────────────────────────┘
+
+RAIN EVENT (washoff):
+▼▼▼▼▼▼▼▼▼▼▼▼▼
+│
+↓
+┌────────────────────────────────────────┐
+│ Runoff carries pollutants:             │
+│                                        │
+│ EMC Method:                            │
+│   C = constant (Event Mean Conc)       │
+│   Simple but crude                     │
+│                                        │
+│ Exponential:                           │
+│   W = C1 × Q^C2 × B                   │
+│   Rate depends on flow AND buildup     │
+│                                        │
+│ Rating Curve:                          │
+│   W = C1 × Q^C2                        │
+│   Rate depends only on flow            │
+│                                        │
+│ ANIMATION shows:                       │
+│   Buildup mass depleting               │
+│   Concentration rising in runoff       │
+│   "First flush" effect visible         │
+│   Concentration declining over time    │
+└────────────────────────────────────────┘
+
+SWMM5 vs ICM:
+SWMM5 calls them "Pollutants"
+ICM calls them "Determinands"
+Same physics, different terminology
+
+SWMM5: [BUILDUP] and [WASHOFF] sections
+ICM:   Land Use object → Buildup/Washoff tabs
+```
+
+---
+
+### 🎬 15: Treatment at Nodes
+
+```
+TREATMENT ANIMATION
+━━━━━━━━━━━━━━━━━━━
+
+SWMM5 TREATMENT EXPRESSIONS:
+
+Node with treatment function:
+
+  Inflow ═══╗
+  TSS=150   ║
+            ╠═══ Outflow
+            ║    TSS = ?
+            ║
+  Treatment: R = 0.75 × HRT / (0.5 + HRT)
+
+HRT = Hydraulic Residence Time (hours)
+    = Volume / Flow
+
+INTERACTIVE:
+[Slider: Inflow rate 1-100 L/s]
+
+At low flow (long HRT):
+  HRT = 2.0 hrs
+  R = 0.75 × 2.0/(0.5+2.0) = 0.60
+  TSS out = 150 × (1-0.60) = 60 mg/L ✓ Good treatment
+
+At high flow (short HRT):
+  HRT = 0.1 hrs
+  R = 0.75 × 0.1/(0.5+0.1) = 0.125
+  TSS out = 150 × (1-0.125) = 131 mg/L ✗ Poor treatment
+
+VISUALIZATION:
+┌────────────────────────────────────────┐
+│ Removal│                               │
+│  100%  ┤                               │
+│   75%  ┤──── asymptote ──────────────  │
+│        │          ╱                     │
+│   50%  ┤        ╱                      │
+│        │      ╱                         │
+│   25%  ┤    ╱                          │
+│        │  ╱                             │
+│    0%  ┤╱                              │
+│        └──────────────────── HRT (hrs) │
+│        0   0.5   1.0   1.5   2.0      │
+└────────────────────────────────────────┘
+
+BOTH SOLVERS:
+Same expression syntax
+R = removal fraction
+C = effluent concentration
+HRT and DT (detention time) available
+```
+
+---
+
+## New Tab Suggestion: "Subcatchment Hydrology"
+
+### 🎬 16: Nonlinear Reservoir — The Core Runoff Model
+
+```
+NONLINEAR RESERVOIR ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 treats each subcatchment as a nonlinear reservoir:
+
+Rain ▼▼▼▼▼▼▼▼▼
+     │
+     ↓
+┌──────────────────────────────────────────┐
+│            SUBCATCHMENT SURFACE          │
+│                                          │
+│  ░░░░░░░░░░░░░░ water depth (d) ░░░░░░ │
+│  ▓▓▓▓▓ depression storage (ds) ▓▓▓▓▓▓ │
+│  █████████████████████████████████████  │ ← Slope S
+│                                          │
+│  Width (W) ──────────────────────→      │
+└──────────────────────────────────────────┘
+                    │
+                    ↓ Runoff Q
+          Q = (W/n) × (d - ds)^(5/3) × S^(1/2)
+          
+          Only when d > ds (depth exceeds depression storage)
+
+MASS BALANCE:
+  d(d)/dt = i - e - f - Q/A
+  
+  Where:
+  i = rainfall intensity
+  e = evaporation rate
+  f = infiltration rate
+  Q = surface runoff
+  A = subcatchment area
+
+ANIMATION:
+[Rain intensity slider: 0 → 4 in/hr]
+
+Phase 1: Rain begins, d < ds
+  Depression storage filling
+  No runoff yet
+  ▓▓░░░░░░ filling ─→ ▓▓▓▓▓░░░ filling
+
+Phase 2: d = ds (depression storage full)
+  Runoff begins
+  Q small at first (d-ds small)
+  ▓▓▓▓▓▓░░░ → ▓▓▓▓▓▓▓░░░░ → Q starting
+
+Phase 3: Steady state
+  Rain = Infiltration + Runoff + Evaporation
+  d stabilizes above ds
+  Q = constant
+
+Phase 4: Rain stops
+  d decreasing, Q decreasing
+  Eventually d < ds, Q = 0
+  Depression storage drains by evaporation + infiltration
+
+BOTH SOLVERS USE THIS MODEL:
+SWMM5: Native implementation
+ICM:   SWMM Runoff Surface type replicates exactly
+       (InfoWorks has additional runoff models)
+```
+
+---
+
+### 🎬 17: Subcatchment Width Sensitivity
+
+```
+WIDTH SENSITIVITY ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The WIDTH parameter is the most misunderstood
+parameter in SWMM5. It controls hydrograph shape.
+
+SAME SUBCATCHMENT, DIFFERENT WIDTHS:
+
+Narrow Width (W = 100 ft):
+  Long overland flow path
+  ┌──────────────────────────────────┐
+  │  ═══════════════════════════════ │ ← flow path
+  │  → → → → → → → → → → → → → → │
+  │  ═══════════════════════════════ │
+  └──────────────────────────────────┘
+  
+  Hydrograph: ╱──╲     Slow response
+             ╱    ╲    Long tail
+            ╱      ╲   Low peak
+           ╱        ╲
+  Peak: 2.1 cfs, Tp: 45 min
+
+Wide Width (W = 500 ft):
+  Short overland flow path
+  ┌──────┐
+  │ ════ │ ← short flow path
+  │ → →  │
+  │ ════ │
+  │ → →  │
+  │ ════ │
+  └──────┘
+  
+  Hydrograph:   ╱╲      Fast response
+               ╱  ╲     Short tail
+              ╱    ╲    High peak
+  Peak: 8.4 cfs, Tp: 12 min
+
+INTERACTIVE:
+[Width slider: 50 → 1000 ft]
+[Area stays constant at 5 acres]
+[All other parameters fixed]
+
+Show hydrograph changing shape in real-time
+as width slider moves
+
+RULE OF THUMB:
+Width ≈ Area / Length of longest overland flow path
+Width ≈ √(Area) for roughly square catchments
+
+BOTH SOLVERS:
+Same parameter, same effect
+SWMM5: Width in [SUBCATCHMENTS]
+ICM:   Width in Runoff Surface or Subcatchment
+```
+
+---
+
+## New Tab Suggestion: "Import/Export Gotchas"
+
+### 🎬 18: The Coefficient Conversion Cheat Sheet
+
+```
+COEFFICIENT CONVERSION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THE TOP 5 IMPORT MISTAKES:
+
+1. WEIR DISCHARGE COEFFICIENT:
+┌────────────────────────────────────────┐
+│ SWMM5: Q = Cd × L × H^1.5            │
+│ ICM:   Q = (2/3)Cd × L × √(2g) × H^1.5│
+│                                        │
+│ Cd_SWMM = 3.33                         │
+│ Cd_ICM  = 0.62                         │
+│                                        │
+│ Conversion: Cd_ICM = Cd_SWMM / (2/3×√(2g))│
+│                    = Cd_SWMM / 5.37    │
+│                                        │
+│ ⚠ Using SWMM5 Cd in ICM: Q is 5.4× too high│
+│ ⚠ Using ICM Cd in SWMM5: Q is 5.4× too low │
+└────────────────────────────────────────┘
+
+2. ORIFICE DISCHARGE COEFFICIENT:
+┌────────────────────────────────────────┐
+│ Cd_ICM = Cd_SWMM × √2                 │
+│                                        │
+│ Cd_SWMM = 0.65                         │
+│ Cd_ICM  = 0.919                        │
+│                                        │
+│ ⚠ Using SWMM5 Cd in ICM: Q is 29% too low│
+└────────────────────────────────────────┘
+
+3. MANNING'S N vs MANNING'S M:
+┌────────────────────────────────────────┐
+│ SWMM5: Uses Manning's n (roughness)    │
+│ ICM:   Can use n OR M (= 1/n)          │
+│                                        │
+│ n = 0.013 → M = 76.9                  │
+│ n = 0.015 → M = 66.7                  │
+│                                        │
+│ ⚠ Check ICM import: is it reading      │
+│   n directly or converting to M?       │
+└────────────────────────────────────────┘
+
+4. OFFSET vs ELEVATION:
+┌────────────────────────────────────────┐
+│ SWMM5: Offsets can be DEPTH or ELEVATION│
+│        Set in [OPTIONS] LINK_OFFSETS    │
+│                                        │
+│ ICM:   Always uses ELEVATION (absolute)│
+│                                        │
+│ If SWMM5 uses DEPTH:                   │
+│   US Invert = Node Invert + Z1         │
+│   DS Invert = Node Invert + Z2         │
+│                                        │
+│ ⚠ Wrong mode = inverts at wrong level  │
+│   Pipes may appear to go uphill        │
+└────────────────────────────────────────┘
+
+5. PUMP SWITCH LEVELS:
+┌────────────────────────────────────────┐
+│ SWMM5: Startup/Shutoff = DEPTH above  │
+│        node invert                     │
+│                                        │
+│ ICM:   Switch On/Off = ABSOLUTE        │
+│        elevation (m AOD)               │
+│                                        │
+│ SWMM5 Startup = 3.0 ft                │
+│ Node Invert = 100.0 ft                 │
+│ ICM Switch On = 103.0 ft               │
+│                                        │
+│ ⚠ Forgetting conversion = pump never   │
+│   turns on (or never turns off!)       │
+└────────────────────────────────────────┘
+
+INTERACTIVE CONVERTER:
+[Enter SWMM5 value] → [See ICM equivalent]
+[Enter ICM value]   → [See SWMM5 equivalent]
+
+For every hydraulic structure type:
+  Weirs, Orifices, Pumps, Outlets
+  All coefficient conversions shown
+```
+
+**Why this is critical:** This single animation would prevent more modeling errors than any other feature in the entire app. Every SWMM5-to-ICM migration involves these conversions, and every one of them is a potential disaster.
+
+---
+
+## New Tab Suggestion: "Numerical Experiments"
+
+### 🎬 19: What Happens When Δt Is Too Large?
+
+```
+TIMESTEP INSTABILITY ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Show the SAME simulation at different time steps:
+
+Δt = 5 sec (stable):
+  ╱╲       Smooth hydrograph
+ ╱  ╲      Physical results
+╱    ╲     Peak captured accurately
+
+Δt = 30 sec (marginal):
+  ╱╲       Slightly noisy
+ ╱ ╲╲     Minor oscillations on recession
+╱   ╲╲    Peak slightly different
+
+Δt = 120 sec (unstable):
+ ╱╲╱╲╱╲╱╲  Wild oscillations
+╱        ╲  Negative flows
+           Non-physical results
+           ⚠ GARBAGE
+
+SWMM5 RESPONSE:
+  Automatically reduces Δt (VARIABLE_STEP)
+  Reports adjusted Δt in RPT file
+  Warns if minimum Δt reached
+
+ICM RESPONSE:
+  Halves Δt and retries
+  If convergence still fails, halves again
+  Reports minimum Δt used
+
+INTERACTIVE:
+[Force time step slider: 1 → 300 seconds]
+[Show when instability begins]
+[Show error growing exponentially]
+
+KEY INSIGHT:
+SWMM5 instability is usually CFL violation
+ICM instability is usually convergence failure
+Different causes, similar symptoms
+```
+
+---
+
+### 🎬 20: Conduit Lengthening — SWMM5's Stability Trick
+
+```
+CONDUIT LENGTHENING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: Short conduits force tiny time steps
+  CFL: Δt ≤ Δx/(v+c)
+  If Δx = 10 ft and (v+c) = 20 ft/s:
+    Δt ≤ 0.5 seconds (very small!)
+
+SWMM5 SOLUTION: Make the conduit longer (virtually)
+
+Original: ○────10ft────○
+          Δt_max = 0.5s
+
+Lengthened: ○────────50ft────────○
+            Δt_max = 2.5s (5× larger!)
+
+[OPTIONS]
+LENGTHENING_STEP = 2.5
+
+SWMM5 finds the shortest stable Δt
+Then lengthens all conduits that violate CFL
+to allow that Δt
+
+TRADE-OFF:
+  ✓ Larger Δt = faster simulation
+  ✗ Artificial length = slight flow delay
+  ✗ Head loss calculation slightly affected
+
+ICM COMPARISON:
+  ICM does NOT need conduit lengthening
+  Because Preissmann implicit scheme
+  is NOT strictly CFL-limited
+  Short conduits are handled naturally
+
+INTERACTIVE:
+[Show original network with one short pipe]
+[Toggle LENGTHENING on/off]
+[Show time step and computation time change]
+[Show hydrograph difference (usually small)]
+```
+
+---
+
+## New Tab Suggestion: "Real-World Scenarios"
+
+### 🎬 21: Combined Sewer Overflow (CSO) Modeling
+
+```
+CSO SCENARIO ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━
+
+Combined sewer receives both:
+  Sanitary flow (DWF) + Stormwater runoff
+
+DRY WEATHER:
+  ═══════════════════════════════→ WWTP
+  Sanitary only: 2 MGD
+  All flow goes to treatment plant ✓
+
+WET WEATHER (moderate):
+  ═══════════════════════════════→ WWTP
+  Combined: 8 MGD
+  Plant can handle up to 10 MGD ✓
+
+WET WEATHER (heavy):
+  ═══════════╦════════════════════→ WWTP (10 MGD max)
+             ║
+             ╠════→ CSO OUTFALL ← overflow!
+             ║      5 MGD untreated
+             ║      to receiving water
+  Combined: 15 MGD
+
+INTERACTIVE:
+[Rain intensity slider]
+[Show flow split between WWTP and CSO]
+[Show CSO volume accumulating]
+[Show receiving water quality impact]
+
+SWMM5 MODEL:
+  Regulator = Flow Divider (WEIR type)
+  WWTP = Outfall with max flow
+  CSO = Outfall (tracks overflow volume)
+  
+ICM MODEL:
+  Regulator = Weir link or Overflow link
+  WWTP = Outfall or Storage with pump
+  CSO = Outfall with spill tracking
+  
+  ICM ADVANTAGE: Can model RTC to minimize CSO
+  Real-Time Control adjusts gates/pumps based
+  on sensor readings to maximize plant utilization
+```
+
+---
+
+### 🎬 22: Detention Pond Routing
+
+```
+DETENTION POND ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+INFLOW: Storm hydrograph
+OUTFLOW: Controlled by outlet structure
+
+              ╱╲ Inflow
+             ╱  ╲
+            ╱    ╲
+           ╱  ╱╲  ╲ Outflow (attenuated)
+          ╱  ╱  ╲  ╲
+         ╱  ╱    ╲  ╲
+        ╱  ╱      ╲  ╲───── tail
+       ╱  ╱        ╲
+      ╱──╱          ╲
+
+Peak reduction: 50-80% (depends on storage)
+Peak delay: 30-120 min
+
+OUTLET STRUCTURE (compound):
+┌────────────────────────────────────────┐
+│                                        │
+│  Low flow:  ○ orifice (6" pipe)       │
+│             Controls normal drainage   │
+│                                        │
+│  Mid flow:  ═══ weir (2 ft wide)      │
+│             Controls 2-10 year storms  │
+│                                        │
+│  High flow: Emergency spillway         │
+│             Only for extreme events    │
+│                                        │
+│  STAGE-DISCHARGE:                      │
+│  Q │           ╱ spillway              │
+│    │         ╱                          │
+│    │       ╱ weir                       │
+│    │     ╱                              │
+│    │   ╱ orifice                        │
+│    │ ╱                                  │
+│    └──────────── stage                  │
+└────────────────────────────────────────┘
+
+SWMM5:
+  Pond = STORAGE node (TABULAR or FUNCTIONAL)
+  Orifice = ORIFICE link
+  Weir = WEIR link
+  Spillway = WEIR link (higher crest)
+  
+ICM:
+  Pond = Storage Node with depth-area table
+  Compound outlet = User Control link
+  Or individual Orifice/Weir links
+
+INTERACTIVE:
+[Storm size: 2-yr, 10-yr, 25-yr, 100-yr]
+[Show pond filling and draining]
+[Show stage-discharge curve activating]
+[Compare: with pond vs. without pond]
+```
+
+---
+
+### 🎬 23: Parallel Pipe Analysis
+
+```
+PARALLEL PIPE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Common design question:
+One large pipe vs. two smaller pipes?
+
+SINGLE PIPE:
+  ○═══════════════════════════○
+  36" diameter
+  Q_full = 25.3 cfs
+
+TWO PARALLEL PIPES:
+  ○═══════════════════════════○
+  ○═══════════════════════════○
+  24" diameter each
+  Q_full = 10.1 cfs each = 20.2 cfs total
+
+⚠ Two 24" pipes carry LESS than one 36" pipe!
+   (20.2 vs 25.3 cfs — 20% less capacity)
+
+WHY? Area scales with D²
+     But hydraulic radius also changes
+     And Q ∝ A × R^(2/3)
+
+INTERACTIVE:
+[Large pipe diameter slider]
+[Number of parallel pipes slider]
+[Small pipe diameter auto-calculated for same total area]
+
+Show:
+  Total capacity comparison
+  Cost comparison (material + excavation)
+  Constructability comparison
+  Maintenance comparison
+
+SWMM5: Use BARRELS parameter in [XSECTIONS]
+  C1 CIRCULAR 3.0 0 0 0 2  ← 2 barrels
+  
+ICM: Create N parallel conduits explicitly
+  Each conduit has its own properties
+```
+
+---
+
+## New Tab Suggestion: "Calibration Comparison"
+
+### 🎬 24: Observed vs. Modeled Comparison
+
+```
+CALIBRATION VISUALIZATION ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 CALIBRATION:
+┌────────────────────────────────────────┐
+│  Q │ ○ ○ ○ observed (scatter)         │
+│    │  ╱╲    modeled (line)            │
+│    │ ╱○ ╲ ○                           │
+│    │╱  ○  ╲  ○                        │
+│    │  ○     ╲   ○                     │
+│    └──────────────── time              │
+│                                        │
+│  Nash-Sutcliffe: 0.82                  │
+│  R²:            0.87                   │
+│  PBIAS:         -5.2%                  │
+│  RMSE:          1.34 cfs               │
+│                                        │
+│  SWMM5 uses .CAL calibration files     │
+│  Loads observed data for comparison    │
+│  Shows on time series plots            │
+└────────────────────────────────────────┘
+
+ICM CALIBRATION:
+┌────────────────────────────────────────┐
+│  Same statistics available             │
+│  Level/Flow Events contain observed    │
+│  Results Analyzer computes fit metrics │
+│                                        │
+│  ICM also offers:                      │
+│  - Automated sensitivity analysis     │
+│  - Monte Carlo parameter sampling     │
+│  - Multi-event validation framework   │
+└────────────────────────────────────────┘
+
+INTERACTIVE:
+[Parameter sliders for calibration]
+  Manning's n:    [━━━●━━━━] 0.013
+  Imperviousness: [━━━━━●━━] 65%
+  Width:          [━━━●━━━━] 400 ft
+  Depression Stg: [━━━━●━━━] 0.05 in
+
+As user adjusts parameters:
+  Model hydrograph updates in real-time
+  Fit statistics update
+  Goodness-of-fit improves or worsens
+  
+  THIS is how calibration feels
+```
+
+---
+
+## New Tab Suggestion: "Network Topology"
+
+### 🎬 25: Loop Detection and Handling
+
+```
+LOOP HANDLING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━
+
+DENDRITIC (tree) NETWORK:
+  ○ → ○ → ○ → ○ → Outfall
+  ○ ↗     ↑
+  ○ → ○ → ○
+  
+  Simple upstream-to-downstream
+  No loops
+  Kinematic wave works fine
+  
+LOOPED NETWORK:
+  ○ → ○ → ○ → ○ → Outfall
+  ↑       ↓ ↑
+  ○ ← ○ ← ○
+  
+  Flow can go EITHER way in loop
+  Kinematic wave CANNOT handle this
+  Dynamic wave REQUIRED
+
+  SWMM5: Handles loops in DYNWAVE mode
+         Cannot handle in KINWAVE mode
+         
+  ICM:   Always handles loops
+         (always uses dynamic wave)
+
+ANIMATION:
+Show flow direction arrows changing:
+  During dry weather: flow goes one way
+  During storm: flow may reverse in loop
+  After storm: flow returns to original direction
+  
+  Animate arrows flipping direction
+  Show which solver handles it correctly
+```
+
+---
+
+### 🎬 26: Upstream vs Downstream Boundary Influence
+
+```
+BOUNDARY INFLUENCE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SUBCRITICAL FLOW (Fr < 1):
+  Downstream controls upstream
+  ────────────────────────→
+  ←──── influence propagates upstream
+  
+  If outfall level rises (tide):
+  The ENTIRE network responds
+  Backwater effect propagates upstream
+  
+  SWMM5: Dynamic wave captures this ✓
+  ICM:   Dynamic wave captures this ✓
+
+SUPERCRITICAL FLOW (Fr > 1):
+  Upstream controls downstream
+  ────────────────────────→
+  No upstream influence
+  
+  Downstream conditions don't affect upstream
+  Information cannot travel upstream against flow
+  
+  SWMM5: Inertial damping handles this
+  ICM:   Internal algorithms handle this
+
+MIXED FLOW (hydraulic jump):
+  ═══════════════╗
+  Supercritical  ║ ← Jump
+  ═══════════════╝   Subcritical
+  
+  Both flow regimes in same network
+  Most challenging numerical problem
+  
+  SWMM5: PARTIAL damping smooths transition
+  ICM:   Automatic internal handling
+
+INTERACTIVE:
+[Adjust pipe slope: 0.1% → 5%]
+[Adjust downstream level]
+[Show where flow transitions occur]
+[Show influence propagation direction]
+```
+
+---
+
+## New Tab Suggestion: "Performance & Diagnostics"
+
+### 🎬 27: Computational Performance Scaling
+
+```
+PERFORMANCE SCALING ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+How computation time scales with network size:
+
+                    SWMM5       ICM
+  100 nodes:        2 sec       3 sec
+  500 nodes:       15 sec      12 sec
+  1,000 nodes:     45 sec      25 sec
+  5,000 nodes:    8 min       3 min
+  10,000 nodes:  35 min       8 min
+  50,000 nodes:   6 hours     45 min
+
+WHY ICM SCALES BETTER:
+  SWMM5: O(n) per iteration, many iterations
+          Global time step limited by shortest pipe
+          
+  ICM:    O(n) per matrix solve, few iterations
+          Adaptive time step not CFL-limited
+          Banded matrix structure is efficient
+
+WHY SWMM5 CAN BE FASTER FOR SMALL NETWORKS:
+  Less overhead per timestep
+  Simpler solver (no matrix assembly)
+  No Newton-Raphson Jacobian computation
+
+CROSSOVER POINT:
+  Below ~500 nodes: SWMM5 often faster
+  Above ~500 nodes: ICM increasingly faster
+  Above ~5,000 nodes: ICM dramatically faster
+
+INTERACTIVE:
+[Network size slider: 10 → 50,000 nodes]
+[Show estimated computation time for both]
+[Show memory usage for both]
+```
+
+---
+
+### 🎬 28: Common Warning Messages Decoded
+
+```
+WARNING MESSAGE ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SWMM5 WARNINGS:
+┌────────────────────────────────────────┐
+│ WARNING 01: Simulation uses modified   │
+│ inertial damping                       │
+│                                        │
+│ Translation: Froude number exceeded    │
+│ the limit, so momentum terms were      │
+│ reduced. Check steep pipes.            │
+│                                        │
+│ Fix: Increase INERTIAL_DAMPING range   │
+│ or check pipe slopes                   │
+└────────────────────────────────────────┘
+
+┌────────────────────────────────────────┐
+│ WARNING 02: Node J15 is flooding      │
+│                                        │
+│ Translation: Water exceeded max depth  │
+│ and is being lost from the system.     │
+│                                        │
+│ Fix: Increase max depth, add ponding,  │
+│ or check inflow magnitude              │
+└────────────────────────────────────────┘
+
+┌────────────────────────────────────────┐
+│ WARNING 04: Node J22 has small volume  │
+│                                        │
+│ Translation: Junction volume is very   │
+│ small relative to flows passing through│
+│ Can cause instability.                 │
+│                                        │
+│ Fix: Add surcharge depth or increase   │
+│ max depth at junction                  │
+└────────────────────────────────────────┘
+
+ICM WARNINGS:
+┌────────────────────────────────────────┐
+│ "Convergence not achieved at timestep  │
+│  1234, reducing dt"                    │
+│                                        │
+│ Translation: Newton-Raphson failed to  │
+│ converge in max iterations. ICM halved │
+│ the time step and retried.             │
+│                                        │
+│ Fix: Usually self-correcting. If       │
+│ persistent, check network connectivity │
+│ and extreme geometry                   │
+└────────────────────────────────────────┘
+
+INTERACTIVE:
+[Show warning → explanation → fix]
+[Clickable warning messages]
+[Link to relevant chapter in manual]
+```
+
+---
+
+## New Tab Suggestion: "Historical Context"
+
+### 🎬 29: Evolution from EXTRAN to SWMM5 to ICM
+
+```
+SOLVER EVOLUTION TIMELINE
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+1971: SWMM I
+  └── TRANSPORT block (steady-state routing)
+      No dynamic wave
+
+1975: SWMM II
+  └── Improved routing
+      Still no dynamic wave
+
+1981: SWMM III
+  └── EXTRAN block introduced!
+      First dynamic wave in SWMM
+      Node-link formulation born here
+      Explicit time stepping
+      
+1988: SWMM IV (EXTRAN updated)
+  └── Improved stability
+      Same node-link architecture
+
+2004: SWMM 5.0
+  └── Complete rewrite in C
+      Implicit backward Euler (new!)
+      Variable time stepping
+      Same node-link topology
+      
+2012: SWMM 5.1.013
+  └── Preissmann Slot option added
+      Can now handle surcharge smoothly
+      Catches up to ICM capability
+
+Meanwhile in the UK:
+
+1987: InfoWorks (Wallingford Software)
+  └── Preissmann 4-point scheme
+      Distributed computation
+      Newton-Raphson from the start
+      
+2004: InfoWorks ICM (Integrated Catchment Model)
+  └── Added 2D surface flooding
+      1D-2D coupling
+      Real-time control
+      
+2019: ICM adds SWMM5 engine option
+  └── Can now run SWMM5 solver inside ICM
+      Best of both worlds
+      User chooses solver per simulation
+
+ANIMATION:
+Timeline scrolling left to right
+Each milestone shows the solver improvement
+with a mini-animation of what changed
+```
+
+---
+
+### 🎬 30: The Equations Side by Side — Full St. Venant
+
+```
+SAINT-VENANT EQUATIONS — COMPLETE COMPARISON
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTINUITY (same in both):
+  ∂A/∂t + ∂Q/∂x = q
+
+  Both solvers conserve mass
+  ICM does it at more points (distributed)
+  SWMM5 does it at nodes only
+
+MOMENTUM (where they diverge):
+
+SWMM5 (simplified node-link form):
+  dQ/dt = gA(H₁-H₂)/L - gASf + Q²/A terms
+  
+  Discretized per LINK
+  H from upstream and downstream NODES only
+  Friction slope from average properties
+  
+ICM (Preissmann 4-point form):
+  θ[Q^(n+1)] + (1-θ)[Q^n] terms at each point
+  
+  Discretized at EVERY computational point
+  H and Q at each point
+  Friction slope from local properties
+
+BOTH SOLVE:
+  ∂Q/∂t + ∂(Q²/A)/∂x + gA∂H/∂x + gASf = 0
+    ↑         ↑              ↑         ↑
+  Local    Convective     Pressure   Friction
+  accel    acceleration   gradient    slope
+
+BUT:
+  SWMM5 solves it at link level (coarse)
+  ICM solves it at segment level (fine)
+  
+  SWMM5 uses backward Euler (θ=1.0 effective)
+  ICM uses Preissmann (θ=0.65)
+  
+  SWMM5 uses relaxation (many simple iterations)
+  ICM uses Newton-Raphson (few complex iterations)
+
+SAME PHYSICS. DIFFERENT NUMERICAL METHODS.
+BOTH VALID. BOTH APPROXIMATE.
+NEITHER IS "BETTER" — THEY ARE DIFFERENT TOOLS.
+
+INTERACTIVE:
+[Highlight each term in the equation]
+[Show how each solver approximates that term]
+[Show the discretization stencil graphically]
+```
+
+---
+
+## Implementation Priority
+
+| | | | | Priority | Animation | Tab | Effort | Impact | | | |
+|---|---|---|---|---|
+| | | | **1** | Coefficient Conversion Cheat Sheet (#18) | Import/Export | Low | 🔥🔥🔥🔥🔥 | | | |
+| | | | **2** | Ponding vs 2D Surface Flooding (#8) | Temporal | Medium | 🔥🔥🔥🔥🔥 | | | |
+| | | | **3** | Routing Method Comparison (#4) | Solver Options | Medium | 🔥🔥🔥🔥🔥 | | | |
+| | | | **4** | Theta Weighting Factor (#2) | Solver Mechanics | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **5** | Inertial Damping 3 Modes (#6) | Dynamic Wave | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **6** | Newton-Raphson Convergence (#1) | Solver Mechanics | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **7** | LID Layer Stack (#12) | Green Infra | High | 🔥🔥🔥🔥 | | | |
+| | | | **8** | Inflow Types (#11) | Boundary Cond | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **9** | Continuity Error (#9) | Temporal | Low | 🔥🔥🔥🔥 | | | |
+| | | | **10** | Outfall Types (#10) | Boundary Cond | Medium | 🔥🔥🔥 | | | |
+| | | | **11** | CSO Modeling (#21) | Real-World | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **12** | Detention Pond (#22) | Real-World | Medium | 🔥🔥🔥 | | | |
+| | | | **13** | Nonlinear Reservoir (#16) | Hydrology | Medium | 🔥🔥🔥🔥 | | | |
+| | | | **14** | Width Sensitivity (#17) | Hydrology | Low | 🔥🔥🔥🔥 | | | |
+| | | | **15** | Variable Time Step (#5) | Solver Options | Medium | 🔥🔥🔥 | | | |
+| | | | **16** | Performance Scaling (#27) | Performance | Low | 🔥🔥🔥 | | | |
+| | | | **17** | Buildup/Washoff (#14) | Water Quality | Medium | 🔥🔥🔥 | | | |
+| | | | **18** | Warning Messages (#28) | Performance | Low | 🔥🔥🔥🔥 | | | |
+| | | | **19** | Conduit Lengthening (#20) | Numerical | Low | 🔥🔥🔥 | | | |
+| | | | **20** | Calibration Visual (#24) | Calibration | High | 🔥🔥🔥🔥 | | | |
+
+---
+
+## New Tab Summary
+
+Your current app has these tabs:
+- Solver Mechanics
+- Solver Options
+- Dynamic Wave Options
+- Temporal Dynamics
+- Operational Controls
+- Advanced Analysis
+- Hydrologic
+- Climate & Infiltration
+- ICM Simulation
+- Surface-to-Sewer
+- Green Infrastructure
+- Code Architecture
+
+**Add these new tabs:**
+
+| | | | | New Tab | Animations | Why | | | |
+|---|---|---|---|
+| | | | **Boundary Conditions** | #10, #11 | Every model needs boundaries | | | |
+| | | | **Import/Export Gotchas** | #18 | Prevents the most common errors | | | |
+| | | | **Numerical Experiments** | #19, #20 | Builds solver intuition | | | |
+| | | | **Real-World Scenarios** | #21, #22, #23 | Connects theory to practice | | | |
+| | | | **Water Quality** | #14, #15 | Completes the modeling picture | | | |
+| | | | **Subcatchment Hydrology** | #16, #17 | The "upstream" side of modeling | | | |
+| | | | **Calibration** | #24 | Every modeler's daily struggle | | | |
+| | | | **Network Topology** | #25, #26 | Understanding flow direction | | | |
+| | | | **Performance & Diagnostics** | #27, #28 | Troubleshooting support | | | |
+| | | | **Historical Context** | #29, #30 | Why the solvers are the way they are | | | |
+
+---
+
+## The Bottom Line
+
+Your app currently has approximately **15 animations** across 12 tabs. Adding these 30 would bring it to **45 animations** across **22 tabs** — making it the most comprehensive interactive comparison of any two hydraulic solvers ever built.
+
+Each animation is a LinkedIn post. Each new tab is a newsletter edition. Each set of 5 animations is a conference presentation.
+
+**The app is already excellent. These additions would make it encyclopedic.**
