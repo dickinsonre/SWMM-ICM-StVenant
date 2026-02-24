@@ -30,6 +30,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useUnits } from "@/contexts/UnitsContext";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -145,6 +146,7 @@ const DIAGRAM_CATEGORIES = [
 
 export default function Dashboard() {
   const { theme, toggleTheme } = useTheme();
+  const { unitSystem, toggleUnits } = useUnits();
   const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
   const [activeCategory, setActiveCategory] = useState("solver");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -276,6 +278,17 @@ export default function Dashboard() {
             >
               <Download className="h-3.5 w-3.5" />
               <span>Markdown</span>
+            </Button>
+            
+            <Button
+              variant={unitSystem === "SI" ? "default" : "outline"}
+              size="sm"
+              onClick={toggleUnits}
+              title={`Switch to ${unitSystem === "USA" ? "SI (metric)" : "USA (imperial)"} units`}
+              data-testid="button-units-toggle"
+              className="font-mono text-xs px-2 h-8 min-w-[70px]"
+            >
+              {unitSystem === "USA" ? "USA" : "SI"}
             </Button>
             
             <Button
