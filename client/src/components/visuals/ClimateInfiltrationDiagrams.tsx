@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Snowflake, Thermometer, Wind, Sun, CloudRain, Zap } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function SnowmeltAlgorithmsDiagram() {
+  const { u, conv } = useUnits();
   const [model, setModel] = useState<"swmm" | "icm">("swmm");
   const [airTemp, setAirTemp] = useState([2]);
   const [windSpeed, setWindSpeed] = useState([3]);
@@ -94,7 +96,7 @@ export function SnowmeltAlgorithmsDiagram() {
               </div>
               <div className="flex items-center gap-2">
                 <Wind className="w-4 h-4" />
-                <span className="text-sm w-32">Wind: {windSpeed[0]} m/s</span>
+                <span className="text-sm w-32">Wind: {windSpeed[0]} {u.velocity}</span>
                 <Slider value={windSpeed} onValueChange={setWindSpeed} min={0} max={10} step={0.5} className="flex-1" data-testid="slider-wind" />
               </div>
               <div className="flex items-center gap-2">
@@ -104,7 +106,7 @@ export function SnowmeltAlgorithmsDiagram() {
               </div>
               <div className="flex items-center gap-2">
                 <CloudRain className="w-4 h-4" />
-                <span className="text-sm w-32">Rain: {rainfall[0]} mm/hr</span>
+                <span className="text-sm w-32">Rain: {rainfall[0]} {u.rainfall}</span>
                 <Slider value={rainfall} onValueChange={setRainfall} min={0} max={20} step={0.5} className="flex-1" data-testid="slider-rain" />
               </div>
               {model === "swmm" && (
@@ -134,7 +136,7 @@ export function SnowmeltAlgorithmsDiagram() {
               </div>
               <div className="pt-2 border-t">
                 <span className="text-muted-foreground text-sm">Melt Rate</span>
-                <div className="font-mono text-xl text-blue-500">{meltRate.toFixed(2)} mm/hr</div>
+                <div className="font-mono text-xl text-blue-500">{meltRate.toFixed(2)} {u.rainfall}</div>
               </div>
             </div>
 
@@ -283,6 +285,7 @@ export function SnowmeltAlgorithmsDiagram() {
 }
 
 export function InfiltrationShootoutDiagram() {
+  const { u, conv } = useUnits();
   const [soilType, setSoilType] = useState<"sand" | "loam" | "clay">("loam");
   const [initialCondition, setInitialCondition] = useState<"dry" | "average" | "wet">("average");
   const [rainPattern, setRainPattern] = useState<"constant" | "storm">("constant");
@@ -498,7 +501,7 @@ export function InfiltrationShootoutDiagram() {
             <svg viewBox="0 0 200 250" className="w-full h-64 mt-6">
               <rect x="40" y="10" width="120" height="20" fill="#60a5fa" opacity="0.5" />
               <text x="100" y="24" textAnchor="middle" className="text-xs fill-foreground">
-                Ponding: {getRainIntensity(time).toFixed(0)} mm/hr
+                Ponding: {getRainIntensity(time).toFixed(0)} {u.rainfall}
               </text>
               
               <rect x="40" y="30" width="120" height="200" fill="#d4a574" stroke="#8b5a2b" strokeWidth="2" />
@@ -558,7 +561,7 @@ export function InfiltrationShootoutDiagram() {
                 <line x1="30" y1="130" x2="290" y2="130" stroke="currentColor" strokeWidth="1" />
                 <line x1="30" y1="10" x2="30" y2="130" stroke="currentColor" strokeWidth="1" />
                 <text x="160" y="148" textAnchor="middle" className="text-[10px] fill-muted-foreground">Time (min)</text>
-                <text x="12" y="70" textAnchor="middle" className="text-[10px] fill-muted-foreground" transform="rotate(-90, 12, 70)">f (mm/hr)</text>
+                <text x="12" y="70" textAnchor="middle" className="text-[10px] fill-muted-foreground" transform="rotate(-90, 12, 70)">f ({u.rainfall})</text>
                 
                 {Object.entries(infiltrationRates).map(([method, rates]) => (
                   <polyline
@@ -590,9 +593,9 @@ export function InfiltrationShootoutDiagram() {
             <div className="bg-muted p-3 rounded text-sm">
               <strong>Soil: {soilType.toUpperCase()}</strong>
               <div className="grid grid-cols-4 gap-2 mt-1 text-xs">
-                <div>f₀: {soilParams[soilType].f0} mm/hr</div>
-                <div>f∞: {soilParams[soilType].fmin} mm/hr</div>
-                <div>Ks: {soilParams[soilType].Ks} mm/hr</div>
+                <div>f₀: {soilParams[soilType].f0} {u.rainfall}</div>
+                <div>f∞: {soilParams[soilType].fmin} {u.rainfall}</div>
+                <div>Ks: {soilParams[soilType].Ks} {u.rainfall}</div>
                 <div>CN: {soilParams[soilType].CN}</div>
               </div>
             </div>

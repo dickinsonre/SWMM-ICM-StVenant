@@ -8,8 +8,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Droplets, ArrowDown, ArrowUp, Gauge, Waves, Grid3X3, Play, Pause, RotateCcw } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function InletElementDiagram() {
+  const { u, conv } = useUnits();
   const [surfaceDepth, setSurfaceDepth] = useState([0.15]);
   const [sewerHead, setSewerHead] = useState([0.5]);
   const [inletCapacity, setInletCapacity] = useState([50]);
@@ -196,7 +198,7 @@ export function InletElementDiagram() {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">Inlet Capacity: {inletCapacity[0]} L/s</Label>
+            <Label className="text-xs">Inlet Capacity: {inletCapacity[0]} {u.flowSmall}</Label>
             <Slider
               value={inletCapacity}
               onValueChange={setInletCapacity}
@@ -216,7 +218,7 @@ export function InletElementDiagram() {
             <strong>Sewer:</strong> {isSurcharged ? "Surcharged" : "Free Flow"}
           </div>
           <div className="p-2 rounded bg-blue-100 dark:bg-blue-900/30 border border-blue-300">
-            <strong>Captured:</strong> {capturedFlow.toFixed(1)} L/s
+            <strong>Captured:</strong> {capturedFlow.toFixed(1)} {u.flowSmall}
           </div>
         </div>
       </CardContent>
@@ -225,6 +227,7 @@ export function InletElementDiagram() {
 }
 
 export function HEC22InletCalculatorDiagram() {
+  const { u, conv } = useUnits();
   const [inletType, setInletType] = useState<"curb" | "grate" | "combination">("grate");
   const [gutterFlow, setGutterFlow] = useState([0.1]);
   const [longitudinalSlope, setLongitudinalSlope] = useState([0.02]);
@@ -343,23 +346,23 @@ export function HEC22InletCalculatorDiagram() {
             />
             
             <text x="10" y="25" className="text-[12px] fill-slate-700 dark:fill-slate-200 font-semibold">
-              Gutter Flow: {(gutterFlow[0] * 1000).toFixed(0)} L/s
+              Gutter Flow: {(gutterFlow[0] * 1000).toFixed(0)} {u.flowSmall}
             </text>
             <text x="10" y="42" className="text-[11px] fill-slate-500 dark:fill-slate-400">
-              Spread Width (T): {(spreadWidth * 100).toFixed(1)} cm
+              Spread Width (T): {(spreadWidth * 100).toFixed(1)} {u.lengthSmall}
             </text>
             
             <rect x="250" y="10" width="140" height="70" fill="white" fillOpacity="0.95" rx="5" />
             <text x="260" y="30" className="text-[11px] fill-slate-700 font-semibold">Results:</text>
-            <text x="260" y="47" className="text-[10px] fill-emerald-600">Captured: {(capturedFlow * 1000).toFixed(1)} L/s</text>
-            <text x="260" y="62" className="text-[10px] fill-amber-600">Bypass: {(bypassFlow * 1000).toFixed(1)} L/s</text>
+            <text x="260" y="47" className="text-[10px] fill-emerald-600">Captured: {(capturedFlow * 1000).toFixed(1)} {u.flowSmall}</text>
+            <text x="260" y="62" className="text-[10px] fill-amber-600">Bypass: {(bypassFlow * 1000).toFixed(1)} {u.flowSmall}</text>
             <text x="260" y="77" className="text-[10px] fill-blue-600">Efficiency: {(efficiency * 100).toFixed(1)}%</text>
           </svg>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">Gutter Flow: {(gutterFlow[0] * 1000).toFixed(0)} L/s</Label>
+            <Label className="text-xs">Gutter Flow: {(gutterFlow[0] * 1000).toFixed(0)} {u.flowSmall}</Label>
             <Slider
               value={gutterFlow}
               onValueChange={setGutterFlow}
@@ -392,7 +395,7 @@ export function HEC22InletCalculatorDiagram() {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">Inlet Length: {inletLength[0].toFixed(1)} m</Label>
+            <Label className="text-xs">Inlet Length: {inletLength[0].toFixed(1)} {u.length}</Label>
             <Slider
               value={inletLength}
               onValueChange={setInletLength}
@@ -404,7 +407,7 @@ export function HEC22InletCalculatorDiagram() {
           </div>
           {(inletType === "grate" || inletType === "combination") && (
             <div className="space-y-2">
-              <Label className="text-xs">Grate Width: {grateWidth[0].toFixed(1)} m</Label>
+              <Label className="text-xs">Grate Width: {grateWidth[0].toFixed(1)} {u.length}</Label>
               <Slider
                 value={grateWidth}
                 onValueChange={setGrateWidth}
@@ -437,6 +440,7 @@ export function HEC22InletCalculatorDiagram() {
 }
 
 export function FlowTransitionDiagram() {
+  const { u, conv } = useUnits();
   const [scenario, setScenario] = useState<"inflow" | "outflow">("inflow");
   const [isAnimating, setIsAnimating] = useState(false);
   const [time, setTime] = useState(0);
@@ -583,7 +587,7 @@ export function FlowTransitionDiagram() {
             
             <rect x="10" y="10" width="100" height="55" fill="white" fillOpacity="0.9" rx="5" />
             <text x="20" y="28" className="text-[10px] fill-slate-600">Rainfall</text>
-            <text x="20" y="42" className="text-[12px] fill-blue-600 font-bold">{rainfall.toFixed(0)} mm/hr</text>
+            <text x="20" y="42" className="text-[12px] fill-blue-600 font-bold">{rainfall.toFixed(0)} {u.rainfall}</text>
             <text x="20" y="58" className="text-[10px] fill-slate-500">Surface: {(surfaceLevel * 100).toFixed(0)} cm</text>
             
             <rect x="290" y="10" width="100" height="55" fill="white" fillOpacity="0.9" rx="5" />
@@ -625,6 +629,7 @@ export function FlowTransitionDiagram() {
 }
 
 export function InletEfficiencyCurvesDiagram() {
+  const { u, conv } = useUnits();
   const [selectedType, setSelectedType] = useState<"curb" | "grate" | "sag">("grate");
   const [velocity, setVelocity] = useState([1.5]);
   const [inletLength, setInletLength] = useState([1.5]);
@@ -694,7 +699,7 @@ export function InletEfficiencyCurvesDiagram() {
               </g>
             ))}
             <text x="215" y="218" className="text-[10px] fill-slate-600" textAnchor="middle">
-              {selectedType === "sag" ? "Depth (m)" : "Velocity (m/s)"}
+              {selectedType === "sag" ? `Depth (${u.length})` : `Velocity (${u.velocity})`}
             </text>
             
             {selectedType !== "sag" && (
@@ -755,11 +760,11 @@ export function InletEfficiencyCurvesDiagram() {
             <rect x="280" y="25" width="95" height="65" fill="white" fillOpacity="0.95" rx="3" stroke="#e2e8f0" />
             <text x="290" y="42" className="text-[9px] fill-slate-600 font-medium">Legend</text>
             <line x1="290" y1="52" x2="310" y2="52" stroke="#3b82f6" strokeWidth="2" />
-            <text x="315" y="55" className="text-[8px] fill-slate-600">L = 1.0m</text>
+            <text x="315" y="55" className="text-[8px] fill-slate-600">L = 1.0{u.length}</text>
             <line x1="290" y1="65" x2="310" y2="65" stroke="#22c55e" strokeWidth="2" />
-            <text x="315" y="68" className="text-[8px] fill-slate-600">L = 2.0m</text>
+            <text x="315" y="68" className="text-[8px] fill-slate-600">L = 2.0{u.length}</text>
             <line x1="290" y1="78" x2="310" y2="78" stroke="#a855f7" strokeWidth="2" />
-            <text x="315" y="81" className="text-[8px] fill-slate-600">L = 3.0m</text>
+            <text x="315" y="81" className="text-[8px] fill-slate-600">L = 3.0{u.length}</text>
             
             {selectedType !== "sag" && (
               <circle
@@ -779,7 +784,7 @@ export function InletEfficiencyCurvesDiagram() {
         {selectedType !== "sag" && (
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs">Approach Velocity: {velocity[0].toFixed(1)} m/s</Label>
+              <Label className="text-xs">Approach Velocity: {velocity[0].toFixed(1)} {u.velocity}</Label>
               <Slider
                 value={velocity}
                 onValueChange={setVelocity}
@@ -790,7 +795,7 @@ export function InletEfficiencyCurvesDiagram() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs">Inlet Length: {inletLength[0].toFixed(1)} m</Label>
+              <Label className="text-xs">Inlet Length: {inletLength[0].toFixed(1)} {u.length}</Label>
               <Slider
                 value={inletLength}
                 onValueChange={setInletLength}
@@ -808,7 +813,7 @@ export function InletEfficiencyCurvesDiagram() {
             {selectedType === "grate" && (
               <>
                 <strong>Grate inlets</strong> lose efficiency at high velocities due to splash-over. 
-                Longer grates capture more, but efficiency still drops above ~2.5 m/s.
+                Longer grates capture more, but efficiency still drops above ~2.5 {u.velocity}.
               </>
             )}
             {selectedType === "curb" && (

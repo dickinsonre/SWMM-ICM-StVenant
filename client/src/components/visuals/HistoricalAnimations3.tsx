@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function MayaFiltrationAnimation() {
+  const { u, conv } = useUnits();
   const [rainfall, setRainfall] = useState([25]);
   const [animOffset, setAnimOffset] = useState(0);
 
@@ -134,7 +136,7 @@ export function MayaFiltrationAnimation() {
         </svg>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium" data-testid="label-rainfall-intensity">Rainfall Intensity: {intensity} mm/hr</label>
+          <label className="text-xs font-medium" data-testid="label-rainfall-intensity">Rainfall Intensity: {conv.rainfall(intensity).toFixed(0)} {u.rainfall}</label>
           <Slider value={rainfall} onValueChange={setRainfall} min={5} max={50} step={1} data-testid="slider-rainfall-intensity" />
         </div>
 
@@ -189,6 +191,7 @@ export function MayaFiltrationAnimation() {
 }
 
 export function KhmerBarayAnimation() {
+  const { u, conv } = useUnits();
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthlyLevels = [25, 22, 19, 16, 13, 15, 25, 35, 45, 50, 45, 35];
   const [selectedMonth, setSelectedMonth] = useState(0);
@@ -224,7 +227,7 @@ export function KhmerBarayAnimation() {
         <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-khmer-baray">
           <rect x="0" y="0" width="400" height="300" fill="#fefce8" opacity="0.3" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
-            West Baray — Plan View (8km × 2.3km, 50M m³)
+            West Baray — Plan View ({conv.length(8000).toFixed(0)}{u.length} × {conv.length(2300).toFixed(0)}{u.length}, {conv.volume(50000000).toFixed(0)} {u.volume})
           </text>
 
           <rect x="50" y="40" width="300" height="130" fill="none" stroke="#a78b5a" strokeWidth="3" rx="2" />
@@ -263,7 +266,7 @@ export function KhmerBarayAnimation() {
           </g>
 
           <text x="200" y="60" textAnchor="middle" fontSize="7" fill="#1e40af">
-            Storage: {level}M m³ ({(fillFraction * 100).toFixed(0)}%)
+            Storage: {level}M {u.volume} ({(fillFraction * 100).toFixed(0)}%)
           </text>
 
           {months.map((m, i) => {
@@ -276,7 +279,7 @@ export function KhmerBarayAnimation() {
               </g>
             );
           })}
-          <text x="15" y="205" fontSize="6" fill="#94a3b8">Storage (M m³)</text>
+          <text x="15" y="205" fontSize="6" fill="#94a3b8">Storage (M {u.volume})</text>
         </svg>
 
         <div className="flex items-center gap-1 flex-wrap">
@@ -302,15 +305,15 @@ export function KhmerBarayAnimation() {
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div data-testid="text-baray-inflow">
               <span className="text-muted-foreground">Inflow:</span>{" "}
-              <span className="font-bold text-blue-600">{inflow}M m³/mo</span>
+              <span className="font-bold text-blue-600">{inflow}M {u.volume}/mo</span>
             </div>
             <div data-testid="text-baray-outflow">
               <span className="text-muted-foreground">Irrigation:</span>{" "}
-              <span className="font-bold text-green-600">{outflow}M m³/mo</span>
+              <span className="font-bold text-green-600">{outflow}M {u.volume}/mo</span>
             </div>
             <div data-testid="text-baray-evap">
               <span className="text-muted-foreground">Evaporation:</span>{" "}
-              <span className="font-bold text-orange-500">{evaporation}M m³/mo</span>
+              <span className="font-bold text-orange-500">{evaporation}M {u.volume}/mo</span>
             </div>
           </div>
         </div>
@@ -327,6 +330,7 @@ export function KhmerBarayAnimation() {
 }
 
 export function CloacaMaximaAnimation() {
+  const { u, conv } = useUnits();
   const [weather, setWeather] = useState<"dry" | "light" | "heavy" | "extreme">("dry");
   const [animOffset, setAnimOffset] = useState(0);
 
@@ -409,7 +413,7 @@ export function CloacaMaximaAnimation() {
                 <rect x={x - 3} y="80" width="6" height={sewerTop - 80 + 15} fill="#a78b5a" stroke="#8B7355" strokeWidth="0.5" />
 
                 <text x={x} y={sewerBot + 15} textAnchor="middle" fontSize="7" fill="#64748b" fontWeight="bold">{nodeLabels[i]}</text>
-                <text x={x} y={sewerBot + 25} textAnchor="middle" fontSize="6" fill="#3b82f6">d={nodeDepths[i].toFixed(1)}m</text>
+                <text x={x} y={sewerBot + 25} textAnchor="middle" fontSize="6" fill="#3b82f6">d={conv.length(nodeDepths[i]).toFixed(1)}{u.length}</text>
               </g>
             );
           })}
@@ -418,15 +422,15 @@ export function CloacaMaximaAnimation() {
           <text x="372" y="200" textAnchor="middle" fontSize="6" fill="#3b82f6">Tiber River</text>
 
           <g transform="translate(50, 220)">
-            <text x="0" y="0" fontSize="7" fill="#8B7355" fontWeight="bold">Cross-Section (Ø3.2m):</text>
+            <text x="0" y="0" fontSize="7" fill="#8B7355" fontWeight="bold">Cross-Section (Ø{conv.length(3.2).toFixed(1)}{u.length}):</text>
             <path d={`M 0,50 L 0,20 Q 25,0 50,20 L 50,50 Z`} fill="none" stroke="#8B7355" strokeWidth="2" />
             <rect x="2" y={50 - fillRatio * 45} width="46" height={fillRatio * 45} fill="rgba(59,130,246,0.4)" rx="1" />
-            <text x="25" y="60" textAnchor="middle" fontSize="6" fill="#64748b">3.2m stone arch</text>
+            <text x="25" y="60" textAnchor="middle" fontSize="6" fill="#64748b">{conv.length(3.2).toFixed(1)}{u.length} stone arch</text>
           </g>
 
           {isCSO && (
             <text x="200" y="285" textAnchor="middle" fontSize="8" fill="#ef4444" fontWeight="bold">
-              ⚠ CSO OVERFLOW — Q ({Q.toFixed(1)}) &gt; Q_full ({Q_full.toFixed(1)} m³/s)
+              ⚠ CSO OVERFLOW — Q ({conv.flow(Q).toFixed(1)}) &gt; Q_full ({conv.flow(Q_full).toFixed(1)} {u.flow})
             </text>
           )}
         </svg>
@@ -441,7 +445,7 @@ export function CloacaMaximaAnimation() {
               onClick={() => setWeather(w)}
               data-testid={`button-weather-${w}`}
             >
-              {weatherLabels[w]} ({weatherFlows[w]} m³/s)
+              {weatherLabels[w]} ({conv.flow(weatherFlows[w]).toFixed(1)} {u.flow})
             </Button>
           ))}
         </div>
@@ -451,12 +455,12 @@ export function CloacaMaximaAnimation() {
             Manning's: Q = (1/n)·A·R^(2/3)·S^(1/2) | n={n}, S={S}
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
-            <div data-testid="text-q-full"><span className="text-muted-foreground">Q_full:</span> <span className="font-bold">{Q_full.toFixed(1)} m³/s</span></div>
-            <div data-testid="text-current-q"><span className="text-muted-foreground">Q_current:</span> <span className="font-bold">{Q.toFixed(1)} m³/s</span></div>
-            <div data-testid="text-flow-depth-cloaca"><span className="text-muted-foreground">Depth:</span> <span className="font-bold">{depth.toFixed(2)} m</span></div>
-            <div data-testid="text-velocity-cloaca"><span className="text-muted-foreground">Velocity:</span> <span className="font-bold">{velocity.toFixed(2)} m/s</span></div>
+            <div data-testid="text-q-full"><span className="text-muted-foreground">Q_full:</span> <span className="font-bold">{conv.flow(Q_full).toFixed(1)} {u.flow}</span></div>
+            <div data-testid="text-current-q"><span className="text-muted-foreground">Q_current:</span> <span className="font-bold">{conv.flow(Q).toFixed(1)} {u.flow}</span></div>
+            <div data-testid="text-flow-depth-cloaca"><span className="text-muted-foreground">Depth:</span> <span className="font-bold">{conv.length(depth).toFixed(2)} {u.length}</span></div>
+            <div data-testid="text-velocity-cloaca"><span className="text-muted-foreground">Velocity:</span> <span className="font-bold">{conv.velocity(velocity).toFixed(2)} {u.velocity}</span></div>
             <div data-testid="text-fill-ratio"><span className="text-muted-foreground">Fill:</span> <span className="font-bold">{(fillRatio * 100).toFixed(0)}%</span></div>
-            <div data-testid="text-a-full"><span className="text-muted-foreground">A_full:</span> <span className="font-bold">{A_full.toFixed(2)} m²</span></div>
+            <div data-testid="text-a-full"><span className="text-muted-foreground">A_full:</span> <span className="font-bold">{conv.area(A_full).toFixed(2)} {u.area}</span></div>
           </div>
         </div>
 
@@ -470,7 +474,7 @@ export function CloacaMaximaAnimation() {
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3" data-testid="text-comparison-modern">
           <div className="text-xs font-semibold mb-1 text-blue-700 dark:text-blue-300">Modern vs Ancient:</div>
           <div className="text-xs text-blue-800 dark:text-blue-200">
-            Modern trunk sewer: Ø{modernD}m, Q={modernQ} m³/s | Cloaca Maxima: Ø{D}m, Q={Q_full.toFixed(1)} m³/s
+            Modern trunk sewer: Ø{conv.length(modernD).toFixed(1)}{u.length}, Q={conv.flow(modernQ).toFixed(1)} {u.flow} | Cloaca Maxima: Ø{conv.length(D).toFixed(1)}{u.length}, Q={conv.flow(Q_full).toFixed(1)} {u.flow}
           </div>
           <div className="text-xs font-bold text-blue-800 dark:text-blue-200 mt-1">
             "The Romans overbuilt. That's why it still works."
@@ -489,6 +493,7 @@ export function CloacaMaximaAnimation() {
 }
 
 export function IndusValleyDrainAnimation() {
+  const { u, conv } = useUnits();
   const [numHouses, setNumHouses] = useState([40]);
   const [personsPerHouse, setPersonsPerHouse] = useState([6]);
   const [waterUse, setWaterUse] = useState([20]);
@@ -573,7 +578,7 @@ export function IndusValleyDrainAnimation() {
           })}
 
           <rect x="25" y="225" width="320" height="8" fill="#a78b5a" stroke="#8B7355" strokeWidth="1.5" rx="1" />
-          <text x="185" y="222" textAnchor="middle" fontSize="6" fill="#8B7355">Main Trunk Drain (0.6m × 0.9m, covered)</text>
+          <text x="185" y="222" textAnchor="middle" fontSize="6" fill="#8B7355">Main Trunk Drain ({conv.length(0.6).toFixed(1)}{u.length} × {conv.length(0.9).toFixed(1)}{u.length}, covered)</text>
 
           {totalFlow > 0 && Array.from({ length: 8 }, (_, i) => {
             const t = ((animOffset + i * 35) % 300) / 300;
@@ -597,7 +602,7 @@ export function IndusValleyDrainAnimation() {
           <rect x="25" y="265" width={Math.min(utilization, 100) * 3.2} height="10" fill={utilization > 80 ? "#ef4444" : utilization > 50 ? "#f59e0b" : "#22c55e"} rx="2" />
           <rect x="25" y="265" width="320" height="10" fill="none" stroke="#94a3b8" strokeWidth="0.5" rx="2" />
           <text x="185" y="288" textAnchor="middle" fontSize="6" fill="#64748b">
-            Utilization: {utilization.toFixed(1)}% of {Q_full.toFixed(0)} L/s capacity
+            Utilization: {utilization.toFixed(1)}% of {conv.flowSmall(Q_full).toFixed(0)} {u.flowSmall} capacity
           </text>
         </svg>
 
@@ -611,11 +616,11 @@ export function IndusValleyDrainAnimation() {
             <Slider value={personsPerHouse} onValueChange={setPersonsPerHouse} min={4} max={12} step={1} data-testid="slider-persons" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-water-use">Water Use: {usage} L/day/person</label>
+            <label className="text-xs font-medium" data-testid="label-water-use">Water Use: {conv.flowSmall(usage / 86.4).toFixed(1)} {u.flowSmall}/person</label>
             <Slider value={waterUse} onValueChange={setWaterUse} min={10} max={40} step={2} data-testid="slider-water-use" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-rainfall-rate">Rainfall: {rain} mm/hr</label>
+            <label className="text-xs font-medium" data-testid="label-rainfall-rate">Rainfall: {conv.rainfall(rain).toFixed(0)} {u.rainfall}</label>
             <Slider value={rainfallRate} onValueChange={setRainfallRate} min={0} max={20} step={1} data-testid="slider-rainfall-rate" />
           </div>
         </div>
@@ -625,10 +630,10 @@ export function IndusValleyDrainAnimation() {
             Drainage Calculations
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
-            <div data-testid="text-dwf"><span className="text-muted-foreground">DWF:</span> <span className="font-bold">{(DWF * 1000).toFixed(1)} L/s</span></div>
-            <div data-testid="text-wwf"><span className="text-muted-foreground">WWF:</span> <span className="font-bold">{(WWF * 1000).toFixed(1)} L/s</span></div>
-            <div data-testid="text-total-flow"><span className="text-muted-foreground">Total:</span> <span className="font-bold">{(totalFlow * 1000).toFixed(1)} L/s</span></div>
-            <div data-testid="text-q-capacity"><span className="text-muted-foreground">Q_full:</span> <span className="font-bold">{Q_full.toFixed(0)} L/s</span></div>
+            <div data-testid="text-dwf"><span className="text-muted-foreground">DWF:</span> <span className="font-bold">{conv.flowSmall(DWF * 1000).toFixed(1)} {u.flowSmall}</span></div>
+            <div data-testid="text-wwf"><span className="text-muted-foreground">WWF:</span> <span className="font-bold">{conv.flowSmall(WWF * 1000).toFixed(1)} {u.flowSmall}</span></div>
+            <div data-testid="text-total-flow"><span className="text-muted-foreground">Total:</span> <span className="font-bold">{conv.flowSmall(totalFlow * 1000).toFixed(1)} {u.flowSmall}</span></div>
+            <div data-testid="text-q-capacity"><span className="text-muted-foreground">Q_full:</span> <span className="font-bold">{conv.flowSmall(Q_full).toFixed(0)} {u.flowSmall}</span></div>
             <div data-testid="text-utilization">
               <span className="text-muted-foreground">Used:</span>{" "}
               <span className={`font-bold ${utilization < 20 ? "text-green-600" : "text-blue-600"}`}>{utilization.toFixed(1)}%</span>
@@ -657,6 +662,7 @@ export function IndusValleyDrainAnimation() {
 }
 
 export function ArchimedesScrewAnimation() {
+  const { u, conv } = useUnits();
   const [screwAngle, setScrewAngle] = useState([30]);
   const [diameter, setDiameter] = useState([0.6]);
   const [rpm, setRpm] = useState([20]);
@@ -714,7 +720,7 @@ export function ArchimedesScrewAnimation() {
 
           <rect x="20" y="230" width="80" height="50" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" strokeWidth="1" rx="2" />
           <text x="60" y="260" textAnchor="middle" fontSize="7" fill="#1e40af">Lower Basin</text>
-          <text x="60" y="270" textAnchor="middle" fontSize="6" fill="#3b82f6">El: 100m</text>
+          <text x="60" y="270" textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(100).toFixed(0)}{u.length}</text>
 
           {Array.from({ length: 3 }, (_, i) => {
             const t = ((animOffset + i * 40) % 200) / 200;
@@ -723,7 +729,7 @@ export function ArchimedesScrewAnimation() {
 
           <rect x={screwEndX - 20} y={screwEndY - 30} width="80" height="50" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" strokeWidth="1" rx="2" />
           <text x={screwEndX + 20} y={screwEndY - 5} textAnchor="middle" fontSize="7" fill="#1e40af">Upper Basin</text>
-          <text x={screwEndX + 20} y={screwEndY + 5} textAnchor="middle" fontSize="6" fill="#3b82f6">El: 103m</text>
+          <text x={screwEndX + 20} y={screwEndY + 5} textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(103).toFixed(0)}{u.length}</text>
 
           <line x1={screwStartX} y1={screwStartY} x2={screwEndX} y2={screwEndY} stroke="#8B7355" strokeWidth="4" />
           <line x1={screwStartX} y1={screwStartY - D * 40} x2={screwEndX} y2={screwEndY - D * 40} stroke="#8B7355" strokeWidth="1.5" strokeDasharray="3,2" />
@@ -751,7 +757,7 @@ export function ArchimedesScrewAnimation() {
 
           <line x1={screwStartX + 10} y1={screwStartY + 30} x2={screwEndX - 10} y2={screwStartY + 30} stroke="#94a3b8" strokeWidth="0.5" strokeDasharray="2,2" />
           <text x={(screwStartX + screwEndX) / 2} y={screwStartY + 42} textAnchor="middle" fontSize="6" fill="#94a3b8">
-            L = {screwLength.toFixed(1)}m | Lift = {liftH}m
+            L = {conv.length(screwLength).toFixed(1)}{u.length} | Lift = {conv.length(liftH).toFixed(1)}{u.length}
           </text>
 
           <g transform="translate(290, 200)">
@@ -784,7 +790,7 @@ export function ArchimedesScrewAnimation() {
             <Slider value={screwAngle} onValueChange={setScrewAngle} min={15} max={45} step={1} data-testid="slider-screw-angle" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-diameter">Diameter: {D.toFixed(1)} m</label>
+            <label className="text-xs font-medium" data-testid="label-diameter">Diameter: {conv.length(D).toFixed(1)} {u.length}</label>
             <Slider value={diameter} onValueChange={setDiameter} min={0.3} max={1.0} step={0.1} data-testid="slider-diameter" />
           </div>
           <div className="space-y-1">
@@ -798,12 +804,12 @@ export function ArchimedesScrewAnimation() {
             P_out = ρ × g × Q × h | P_in = P_out / η
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
-            <div data-testid="text-lift-height"><span className="text-muted-foreground">Lift:</span> <span className="font-bold">{liftH} m</span></div>
-            <div data-testid="text-flow-rate"><span className="text-muted-foreground">Flow:</span> <span className="font-bold">{(Q * 1000).toFixed(1)} L/s</span></div>
+            <div data-testid="text-lift-height"><span className="text-muted-foreground">Lift:</span> <span className="font-bold">{conv.length(liftH).toFixed(1)} {u.length}</span></div>
+            <div data-testid="text-flow-rate"><span className="text-muted-foreground">Flow:</span> <span className="font-bold">{conv.flowSmall(Q * 1000).toFixed(1)} {u.flowSmall}</span></div>
             <div data-testid="text-efficiency"><span className="text-muted-foreground">Efficiency:</span> <span className="font-bold">{(efficiency * 100).toFixed(0)}%</span></div>
             <div data-testid="text-power-out"><span className="text-muted-foreground">P_out:</span> <span className="font-bold">{P_out.toFixed(0)} W</span></div>
             <div data-testid="text-power-in"><span className="text-muted-foreground">P_in:</span> <span className="font-bold">{P_in.toFixed(0)} W</span></div>
-            <div data-testid="text-screw-length"><span className="text-muted-foreground">Length:</span> <span className="font-bold">{screwLength.toFixed(1)} m</span></div>
+            <div data-testid="text-screw-length"><span className="text-muted-foreground">Length:</span> <span className="font-bold">{conv.length(screwLength).toFixed(1)} {u.length}</span></div>
           </div>
         </div>
 

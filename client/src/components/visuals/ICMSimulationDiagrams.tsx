@@ -7,8 +7,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
 import { Droplets, Grid3X3, Gauge, Timer, TrendingUp, Play, Pause, RotateCcw, CheckCircle2, XCircle, AlertTriangle, Waves } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function BaseFlowStabilityDiagram() {
+  const { u, conv } = useUnits();
   const [baseFlowFactor, setBaseFlowFactor] = useState([0.001]);
   const [minBaseFlowDepth, setMinBaseFlowDepth] = useState([0.001]);
   const [slope, setSlope] = useState([0.01]);
@@ -58,7 +60,7 @@ export function BaseFlowStabilityDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-blue-300">Min Base Flow Depth (DLMIN): {minBaseFlowDepth[0].toFixed(4)} m</Label>
+            <Label className="text-xs text-blue-300">Min Base Flow Depth (DLMIN): {conv.length(minBaseFlowDepth[0]).toFixed(4)} {u.length}</Label>
             <Slider
               value={minBaseFlowDepth}
               onValueChange={setMinBaseFlowDepth}
@@ -101,10 +103,10 @@ export function BaseFlowStabilityDiagram() {
               y_base = y_sed + MAX(DLMIN, DLFAC × (y_full - y_sed))
             </div>
             <div className="text-xs text-blue-200" data-testid="text-calculated-base-flow">
-              Calculated: <span className="font-bold">{(calculatedBaseFlow * 1000).toFixed(2)} mm</span>
+              Calculated: <span className="font-bold">{conv.lengthSmall(calculatedBaseFlow * 1000).toFixed(2)} {u.lengthSmall}</span>
             </div>
             <div className="text-xs text-blue-200" data-testid="text-effective-base-flow">
-              With slope factor: <span className="font-bold">{(effectiveBaseFlow * 1000).toFixed(2)} mm</span>
+              With slope factor: <span className="font-bold">{conv.lengthSmall(effectiveBaseFlow * 1000).toFixed(2)} {u.lengthSmall}</span>
             </div>
             {slopeMultiplier > 1 && (
               <div className="text-xs text-yellow-400">
@@ -207,6 +209,7 @@ export function BaseFlowStabilityDiagram() {
 }
 
 export function SpatialDiscretizationDiagram() {
+  const { u, conv } = useUnits();
   const [conduitLength, setConduitLength] = useState([500]);
   const [conduitWidth, setConduitWidth] = useState([2.0]);
   const [conduitHeight, setConduitHeight] = useState([1.5]);
@@ -240,7 +243,7 @@ export function SpatialDiscretizationDiagram() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-3">
           <div>
-            <Label className="text-xs text-emerald-300">Conduit Length: {conduitLength[0]} m</Label>
+            <Label className="text-xs text-emerald-300">Conduit Length: {conv.length(conduitLength[0]).toFixed(0)} {u.length}</Label>
             <Slider
               value={conduitLength}
               onValueChange={setConduitLength}
@@ -253,7 +256,7 @@ export function SpatialDiscretizationDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-emerald-300">Conduit Width: {conduitWidth[0].toFixed(1)} m</Label>
+            <Label className="text-xs text-emerald-300">Conduit Width: {conv.length(conduitWidth[0]).toFixed(1)} {u.length}</Label>
             <Slider
               value={conduitWidth}
               onValueChange={setConduitWidth}
@@ -266,7 +269,7 @@ export function SpatialDiscretizationDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-emerald-300">Conduit Height: {conduitHeight[0].toFixed(1)} m</Label>
+            <Label className="text-xs text-emerald-300">Conduit Height: {conv.length(conduitHeight[0]).toFixed(1)} {u.length}</Label>
             <Slider
               value={conduitHeight}
               onValueChange={setConduitHeight}
@@ -293,7 +296,7 @@ export function SpatialDiscretizationDiagram() {
           
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-xs text-emerald-300">Min Step: {minSpaceStep[0]} m</Label>
+              <Label className="text-xs text-emerald-300">Min Step: {conv.length(minSpaceStep[0]).toFixed(0)} {u.length}</Label>
               <Slider
                 value={minSpaceStep}
                 onValueChange={setMinSpaceStep}
@@ -305,7 +308,7 @@ export function SpatialDiscretizationDiagram() {
               />
             </div>
             <div>
-              <Label className="text-xs text-emerald-300">Max Step: {maxSpaceStep[0]} m</Label>
+              <Label className="text-xs text-emerald-300">Max Step: {conv.length(maxSpaceStep[0]).toFixed(0)} {u.length}</Label>
               <Slider
                 value={maxSpaceStep}
                 onValueChange={setMaxSpaceStep}
@@ -325,13 +328,13 @@ export function SpatialDiscretizationDiagram() {
               Space Step = Multiplier × MIN(Width, Height)
             </div>
             <div className="text-xs text-emerald-200">
-              Calculated: {calculatedSpaceStep.toFixed(1)} m → Bounded: {boundedSpaceStep.toFixed(1)} m
+              Calculated: {conv.length(calculatedSpaceStep).toFixed(1)} {u.length} → Bounded: {conv.length(boundedSpaceStep).toFixed(1)} {u.length}
             </div>
             <div className="text-xs text-emerald-200" data-testid="text-num-nodes">
               <span className="font-bold text-emerald-100">{numNodes}</span> computational nodes
             </div>
             <div className="text-xs text-emerald-200" data-testid="text-actual-spacing">
-              Actual spacing: <span className="font-bold">{actualSpacing.toFixed(1)} m</span>
+              Actual spacing: <span className="font-bold">{conv.length(actualSpacing).toFixed(1)} {u.length}</span>
             </div>
           </div>
           
@@ -348,11 +351,11 @@ export function SpatialDiscretizationDiagram() {
             ))}
             
             <text x="160" y="95" textAnchor="middle" className="text-[8px] fill-slate-300">
-              {numNodes} nodes along {conduitLength[0]}m conduit
+              {numNodes} nodes along {conv.length(conduitLength[0]).toFixed(0)}{u.length} conduit
             </text>
             
             <text x="10" y="25" className="text-[8px] fill-emerald-400">
-              Width: {conduitWidth[0].toFixed(1)}m × Height: {conduitHeight[0].toFixed(1)}m
+              Width: {conv.length(conduitWidth[0]).toFixed(1)}{u.length} × Height: {conv.length(conduitHeight[0]).toFixed(1)}{u.length}
             </text>
           </svg>
           
@@ -371,6 +374,7 @@ export function SpatialDiscretizationDiagram() {
 }
 
 export function ICMPreissmannSlotDiagram() {
+  const { u, conv } = useUnits();
   const [celerityRatio, setCelerityRatio] = useState([0.1]);
   const [minSlotWidth, setMinSlotWidth] = useState([0.01]);
   const [waterLevel, setWaterLevel] = useState([0.8]);
@@ -418,7 +422,7 @@ export function ICMPreissmannSlotDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-purple-300">Min Slot Width: {(minSlotWidth[0] * 1000).toFixed(1)} mm</Label>
+            <Label className="text-xs text-purple-300">Min Slot Width: {conv.lengthSmall(minSlotWidth[0] * 1000).toFixed(1)} {u.lengthSmall}</Label>
             <Slider
               value={minSlotWidth}
               onValueChange={setMinSlotWidth}
@@ -457,10 +461,10 @@ export function ICMPreissmannSlotDiagram() {
               B_slot = g × A / (CELRAT × c)²
             </div>
             <div className="text-xs text-purple-200" data-testid="text-calculated-slot-width">
-              Calculated width: <span className="font-bold">{(calculatedSlotWidth * 1000).toFixed(2)} mm</span>
+              Calculated width: <span className="font-bold">{conv.lengthSmall(calculatedSlotWidth * 1000).toFixed(2)} {u.lengthSmall}</span>
             </div>
             <div className="text-xs text-purple-200" data-testid="text-effective-slot-width">
-              Effective: <span className="font-bold">{(effectiveSlotWidth * 1000).toFixed(2)} mm</span>
+              Effective: <span className="font-bold">{conv.lengthSmall(effectiveSlotWidth * 1000).toFixed(2)} {u.lengthSmall}</span>
             </div>
           </div>
         </div>
@@ -527,7 +531,7 @@ export function ICMPreissmannSlotDiagram() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              {(slotPixelWidth / 10).toFixed(1)}mm
+              {conv.lengthSmall(slotPixelWidth / 10).toFixed(1)}{u.lengthSmall}
             </motion.text>
             
             {waterLevel[0] > 1 && (
@@ -1020,6 +1024,7 @@ export function HeadlossTransitionDiagram() {
 }
 
 export function ColdStartInitializationDiagram() {
+  const { u, conv } = useUnits();
   const [phaseInTime, setPhaseInTime] = useState([300]);
   const [steadyTolFlow, setSteadyTolFlow] = useState([0.01]);
   const [steadyTolDepth, setSteadyTolDepth] = useState([0.001]);
@@ -1105,7 +1110,7 @@ export function ColdStartInitializationDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-indigo-300">Steady State Depth Tolerance: {(steadyTolDepth[0] * 1000).toFixed(1)}mm</Label>
+            <Label className="text-xs text-indigo-300">Steady State Depth Tolerance: {conv.lengthSmall(steadyTolDepth[0] * 1000).toFixed(1)}{u.lengthSmall}</Label>
             <Slider
               value={steadyTolDepth}
               onValueChange={setSteadyTolDepth}
@@ -1249,6 +1254,7 @@ export function ColdStartInitializationDiagram() {
 }
 
 export function HeadlossJunctionDiagram() {
+  const { u, conv } = useUnits();
   const [pipeAngle, setPipeAngle] = useState([90]);
   const [headlossType, setHeadlossType] = useState<"normal" | "high" | "fixed" | "fhwa">("normal");
   const [flowRate, setFlowRate] = useState([0.5]);
@@ -1328,7 +1334,7 @@ export function HeadlossJunctionDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-orange-300">Flow Rate: {flowRate[0].toFixed(2)} m³/s</Label>
+            <Label className="text-xs text-orange-300">Flow Rate: {conv.flow(flowRate[0]).toFixed(2)} {u.flow}</Label>
             <Slider
               value={flowRate}
               onValueChange={setFlowRate}
@@ -1359,7 +1365,7 @@ export function HeadlossJunctionDiagram() {
               Δh = {ku.toFixed(1)} × {ks.toFixed(3)} × {kv.toFixed(3)} × {velocityHead.toFixed(4)}
             </div>
             <div className="text-lg font-bold text-orange-200" data-testid="text-headloss-result">
-              Headloss: {(headloss * 1000).toFixed(2)} mm
+              Headloss: {conv.lengthSmall(headloss * 1000).toFixed(2)} {u.lengthSmall}
             </div>
             <div className="grid grid-cols-3 gap-2 text-[10px] text-orange-300">
               <div>k<sub>u</sub>: {ku.toFixed(1)}</div>
@@ -1422,7 +1428,7 @@ export function HeadlossJunctionDiagram() {
           
           <div className="mt-4 p-2 rounded bg-slate-800 text-[10px] text-center">
             <div className="text-slate-400">Velocity Head</div>
-            <div className="text-white font-mono">{velocityHead.toFixed(4)} m</div>
+            <div className="text-white font-mono">{conv.length(velocityHead).toFixed(4)} {u.length}</div>
           </div>
         </div>
       </div>
@@ -1431,6 +1437,7 @@ export function HeadlossJunctionDiagram() {
 }
 
 export function HeadlossSurchargeTransitionDiagram() {
+  const { u, conv } = useUnits();
   const [isPlaying, setIsPlaying] = useState(false);
   const [simTime, setSimTime] = useState(0);
   const [headlossType, setHeadlossType] = useState<"normal" | "fixed">("normal");
@@ -1563,7 +1570,7 @@ export function HeadlossSurchargeTransitionDiagram() {
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-rose-300">Headloss:</span>
-              <span className="text-white font-mono font-bold" data-testid="text-headloss-value">{(headloss * 1000).toFixed(1)} mm</span>
+              <span className="text-white font-mono font-bold" data-testid="text-headloss-value">{conv.lengthSmall(headloss * 1000).toFixed(1)} {u.lengthSmall}</span>
             </div>
           </div>
           
@@ -1641,6 +1648,7 @@ export function HeadlossSurchargeTransitionDiagram() {
 }
 
 export function HeadlossInferenceDiagram() {
+  const { u, conv } = useUnits();
   const [pipes, setPipes] = useState([
     { id: 1, angle: 90, diameter: 0.6, isMajor: true },
     { id: 2, angle: 45, diameter: 0.3, isMajor: false },
@@ -1719,7 +1727,7 @@ export function HeadlossInferenceDiagram() {
                 </div>
                 <div>
                   <span className="text-slate-400">Ø: </span>
-                  <span className="text-white">{pipe.diameter}m</span>
+                  <span className="text-white">{conv.length(pipe.diameter).toFixed(1)}{u.length}</span>
                 </div>
                 <div>
                   <span className="text-slate-400">k<sub>u</sub>: </span>
@@ -1766,7 +1774,7 @@ export function HeadlossInferenceDiagram() {
               className="p-2 rounded bg-teal-900/30 border border-teal-700/30 text-[10px] text-teal-300"
             >
               <CheckCircle2 className="h-3 w-3 inline mr-1 text-teal-400" />
-              Inference selected widest pipe (Ø{Math.max(...pipes.map(p => p.diameter))}m) as major branch.
+              Inference selected widest pipe (Ø{conv.length(Math.max(...pipes.map(p => p.diameter))).toFixed(1)}{u.length}) as major branch.
               <p className="mt-1 text-slate-400 italic">Note: Does not account for multiple branches or unequal inverts.</p>
             </motion.div>
           )}
@@ -1830,6 +1838,7 @@ export function HeadlossInferenceDiagram() {
 }
 
 export function InfoSewerSteadyStateEmulationDiagram() {
+  const { u } = useUnits();
   const [peakingFormula, setPeakingFormula] = useState<"federov" | "babbitt" | "harman">("federov");
   const [runDuration, setRunDuration] = useState([30]);
   const [loadType, setLoadType] = useState<"base" | "coverage">("base");
@@ -2075,8 +2084,8 @@ export function InfoSewerSteadyStateEmulationDiagram() {
               <div className="text-sm font-medium mb-3">Sample Network Results Comparison</div>
               <div className="grid grid-cols-4 gap-2 text-xs font-medium mb-2">
                 <div>Link</div>
-                <div>InfoSewer (L/s)</div>
-                <div>ICM (L/s)</div>
+                <div>InfoSewer ({u.flowSmall})</div>
+                <div>ICM ({u.flowSmall})</div>
                 <div>Diff (%)</div>
               </div>
               {sampleResults.map((r, i) => (

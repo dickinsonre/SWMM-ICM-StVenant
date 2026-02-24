@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Zap, Waves, Gauge, Timer, Ruler, Box, Target, Cpu, Play, Pause, RotateCcw, AlertTriangle, CheckCircle } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function InertialTermsDiagram() {
   const [inertiaMode, setInertiaMode] = useState<"keep" | "dampen" | "ignore">("dampen");
@@ -164,6 +165,7 @@ export function InertialTermsDiagram() {
 }
 
 export function NormalFlowCriterionDiagram() {
+  const { u, conv } = useUnits();
   const [criterion, setCriterion] = useState<"slope" | "froude" | "both" | "none">("both");
   const [pipeSlope, setPipeSlope] = useState([0.05]);
   const [flowDepth, setFlowDepth] = useState([0.6]);
@@ -277,7 +279,7 @@ export function NormalFlowCriterionDiagram() {
             {isAnimating ? "Pause" : "Animate"}
           </Button>
           <div className="space-y-1 flex-1">
-            <Label className="text-xs">Flow Depth: {flowDepth[0].toFixed(2)} m</Label>
+            <Label className="text-xs">{`Flow Depth: ${conv.length(flowDepth[0]).toFixed(2)} ${u.length}`}</Label>
             <Slider value={flowDepth} onValueChange={setFlowDepth} min={0.1} max={1.0} step={0.05} />
           </div>
         </div>
@@ -386,6 +388,7 @@ export function SurchargeMethodDeepDiveDiagram() {
 }
 
 export function VariableTimestepDiagram() {
+  const { u, conv } = useUnits();
   const [routingStep, setRoutingStep] = useState([30]);
   const [adjustmentFactor, setAdjustmentFactor] = useState([0.75]);
   const [minStep, setMinStep] = useState([0.5]);
@@ -456,7 +459,7 @@ export function VariableTimestepDiagram() {
                 <div className="w-24 text-sm font-medium">{pipe.name}</div>
                 <div className="flex-1">
                   <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                    <span>L={pipe.length}m, c={pipe.waveSpeed}m/s</span>
+                    <span>L={conv.length(pipe.length).toFixed(0)}{u.length}, c={conv.velocity(pipe.waveSpeed).toFixed(1)}{u.velocity}</span>
                     <span className={isStable ? "text-green-600" : "text-red-600"}>
                       Cr = {courant.toFixed(2)}
                     </span>
@@ -510,6 +513,7 @@ export function VariableTimestepDiagram() {
 }
 
 export function ConduitLengtheningDiagram() {
+  const { u, conv } = useUnits();
   const [actualLength, setActualLength] = useState([15]);
   const [waveSpeed, setWaveSpeed] = useState([8]);
   const [lengtheningStep, setLengtheningStep] = useState([5]);
@@ -530,11 +534,11 @@ export function ConduitLengtheningDiagram() {
       <CardContent className="space-y-6">
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">Actual Length: {actualLength[0]}m</Label>
+            <Label className="text-xs">{`Actual Length: ${conv.length(actualLength[0]).toFixed(0)}${u.length}`}</Label>
             <Slider value={actualLength} onValueChange={setActualLength} min={5} max={100} step={5} />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">Wave Speed: {waveSpeed[0]} m/s</Label>
+            <Label className="text-xs">{`Wave Speed: ${conv.velocity(waveSpeed[0]).toFixed(1)} ${u.velocity}`}</Label>
             <Slider value={waveSpeed} onValueChange={setWaveSpeed} min={2} max={15} step={1} />
           </div>
           <div className="space-y-2">
@@ -552,7 +556,7 @@ export function ConduitLengtheningDiagram() {
                 style={{ width: `${(actualLength[0] / 100) * 100}%` }}
               />
               <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-white">
-                L = {actualLength[0]}m
+                L = {conv.length(actualLength[0]).toFixed(0)}{u.length}
               </div>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
@@ -571,7 +575,7 @@ export function ConduitLengtheningDiagram() {
                 transition={{ duration: 0.5 }}
               />
               <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-white">
-                L = {virtualLength.toFixed(1)}m
+                L = {conv.length(virtualLength).toFixed(1)}{u.length}
               </div>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
@@ -588,7 +592,7 @@ export function ConduitLengtheningDiagram() {
           <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-300 text-sm">
             <AlertTriangle className="w-4 h-4 inline mr-2 text-amber-600" />
             <strong>Lengthening Applied:</strong> Wave travel time ({waveTravelTime.toFixed(2)}s) &lt; timestep ({lengtheningStep[0]}s). 
-            Pipe virtually stretched to {virtualLength.toFixed(1)}m ({lengtheningRatio}% of actual).
+            Pipe virtually stretched to {conv.length(virtualLength).toFixed(1)}{u.length} ({lengtheningRatio}% of actual).
           </div>
         )}
         
@@ -603,6 +607,7 @@ export function ConduitLengtheningDiagram() {
 }
 
 export function MinNodalSurfaceAreaDiagram() {
+  const { u, conv } = useUnits();
   const [surfaceArea, setSurfaceArea] = useState([12.6]);
   const [inflowRate, setInflowRate] = useState([0.5]);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -638,11 +643,11 @@ export function MinNodalSurfaceAreaDiagram() {
       <CardContent className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">Surface Area: {surfaceArea[0].toFixed(1)} ft² (Default: 12.6)</Label>
+            <Label className="text-xs">{`Surface Area: ${conv.area(surfaceArea[0]).toFixed(1)} ${u.area} (Default: ${conv.area(12.6).toFixed(1)})`}</Label>
             <Slider value={surfaceArea} onValueChange={setSurfaceArea} min={1} max={50} step={1} />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">Inflow Rate: {inflowRate[0].toFixed(2)} m³/s</Label>
+            <Label className="text-xs">{`Inflow Rate: ${conv.flow(inflowRate[0]).toFixed(2)} ${u.flow}`}</Label>
             <Slider value={inflowRate} onValueChange={setInflowRate} min={0.1} max={2.0} step={0.1} />
           </div>
         </div>
@@ -673,12 +678,12 @@ export function MinNodalSurfaceAreaDiagram() {
             )}
             
             <text x="200" y="25" className="text-[11px] fill-slate-600" textAnchor="middle">
-              Q_in = {inflowRate[0].toFixed(2)} m³/s
+              {`Q_in = ${conv.flow(inflowRate[0]).toFixed(2)} ${u.flow}`}
             </text>
             
             <rect x="20" y="80" width="100" height="50" fill="white" fillOpacity="0.95" rx="5" />
             <text x="30" y="100" className="text-[10px] fill-slate-700 font-mono">dH/dt = Q/A</text>
-            <text x="30" y="118" className="text-[10px] fill-slate-600">= {dHdt.toFixed(3)} m/s</text>
+            <text x="30" y="118" className="text-[10px] fill-slate-600">{`= ${conv.velocity(dHdt).toFixed(3)} ${u.velocity}`}</text>
             
             <rect x="280" y="80" width="100" height="50" fill="white" fillOpacity="0.95" rx="5" />
             <text x="290" y="100" className="text-[10px] fill-slate-700">Water Level</text>
@@ -701,12 +706,12 @@ export function MinNodalSurfaceAreaDiagram() {
         <div className={`p-3 rounded-lg border-2 ${surfaceArea[0] < 5 ? "border-red-500 bg-red-50 dark:bg-red-900/20" : "border-green-500 bg-green-50 dark:bg-green-900/20"}`}>
           {surfaceArea[0] < 5 ? (
             <p className="text-sm"><AlertTriangle className="w-4 h-4 inline mr-1 text-red-600" />
-              <strong className="text-red-600">Small area:</strong> Water level changes very rapidly (dH/dt = {dHdt.toFixed(3)} m/s). 
+              <strong className="text-red-600">Small area:</strong> Water level changes very rapidly (dH/dt = {conv.velocity(dHdt).toFixed(3)} {u.velocity}). 
               This can cause oscillations and instability.
             </p>
           ) : (
             <p className="text-sm"><CheckCircle className="w-4 h-4 inline mr-1 text-green-600" />
-              <strong className="text-green-600">Adequate area:</strong> Water level changes gradually (dH/dt = {dHdt.toFixed(3)} m/s). 
+              <strong className="text-green-600">Adequate area:</strong> Water level changes gradually (dH/dt = {conv.velocity(dHdt).toFixed(3)} {u.velocity}). 
               This mimics the "swirl and storage" effect in real manholes.
             </p>
           )}
@@ -717,6 +722,7 @@ export function MinNodalSurfaceAreaDiagram() {
 }
 
 export function ConvergenceTolerancesDiagram() {
+  const { u, conv } = useUnits();
   const [headTolerance, setHeadTolerance] = useState([0.005]);
   const [maxTrials, setMaxTrials] = useState([8]);
   const [isSolving, setIsSolving] = useState(false);
@@ -766,7 +772,7 @@ export function ConvergenceTolerancesDiagram() {
       <CardContent className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">Head Tolerance: {headTolerance[0].toFixed(4)} m</Label>
+            <Label className="text-xs">{`Head Tolerance: ${conv.length(headTolerance[0]).toFixed(4)} ${u.length}`}</Label>
             <Slider value={headTolerance} onValueChange={setHeadTolerance} min={0.001} max={0.05} step={0.001} />
           </div>
           <div className="space-y-2">

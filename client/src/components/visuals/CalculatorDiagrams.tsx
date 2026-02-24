@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useUnits } from "@/contexts/UnitsContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export function CFLStabilityCalculator() {
+  const { u, conv } = useUnits();
   const [conduitLength, setConduitLength] = useState(500);
   const [flowVelocity, setFlowVelocity] = useState(8);
   const [waveCelerity, setWaveCelerity] = useState(12);
@@ -54,7 +56,7 @@ export function CFLStabilityCalculator() {
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Conduit Length (ft)</Label>
+                <Label className="text-sm">{`Conduit Length (${u.length})`}</Label>
                 <Input 
                   type="number" 
                   value={conduitLength} 
@@ -74,7 +76,7 @@ export function CFLStabilityCalculator() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Flow Velocity (ft/s)</Label>
+                <Label className="text-sm">{`Flow Velocity (${u.velocity})`}</Label>
                 <Input 
                   type="number" 
                   value={flowVelocity} 
@@ -94,7 +96,7 @@ export function CFLStabilityCalculator() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Wave Celerity (ft/s)</Label>
+                <Label className="text-sm">{`Wave Celerity (${u.velocity})`}</Label>
                 <Input 
                   type="number" 
                   value={waveCelerity} 
@@ -189,6 +191,7 @@ export function CFLStabilityCalculator() {
 }
 
 export function PreissmannSlotCalculator() {
+  const { u, conv } = useUnits();
   const [pipeDiameter, setPipeDiameter] = useState(48);
   const [slotWidthFactor, setSlotWidthFactor] = useState(1);
 
@@ -220,7 +223,7 @@ export function PreissmannSlotCalculator() {
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Pipe Diameter (inches)</Label>
+                <Label className="text-sm">{`Pipe Diameter (${u.diameter})`}</Label>
                 <Input 
                   type="number" 
                   value={pipeDiameter} 
@@ -283,11 +286,11 @@ export function PreissmannSlotCalculator() {
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
                   <div className="text-xs text-muted-foreground">Slot Width</div>
-                  <div className="text-2xl font-bold text-primary" data-testid="text-slot-width">{slotWidth.toFixed(2)}"</div>
+                  <div className="text-2xl font-bold text-primary" data-testid="text-slot-width">{conv.diameter(slotWidth).toFixed(2)} {u.diameter}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Wave Speed</div>
-                  <div className="text-2xl font-bold text-primary" data-testid="text-wave-speed">{pressurizedWaveSpeed.toFixed(0)} ft/s</div>
+                  <div className="text-2xl font-bold text-primary" data-testid="text-wave-speed">{conv.velocity(pressurizedWaveSpeed).toFixed(0)} {u.velocity}</div>
                 </div>
               </div>
             </div>
@@ -321,6 +324,7 @@ export function PreissmannSlotCalculator() {
 }
 
 export function ManningsFlowCalculator() {
+  const { u, conv } = useUnits();
   const [pipeDiameter, setPipeDiameter] = useState(24);
   const [slope, setSlope] = useState(0.005);
   const [roughness, setRoughness] = useState(0.013);
@@ -364,7 +368,7 @@ export function ManningsFlowCalculator() {
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Pipe Diameter (in)</Label>
+                <Label className="text-sm">{`Pipe Diameter (${u.diameter})`}</Label>
                 <Input 
                   type="number" 
                   value={pipeDiameter} 
@@ -384,7 +388,7 @@ export function ManningsFlowCalculator() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Slope (ft/ft)</Label>
+                <Label className="text-sm">{`Slope (${u.slope})`}</Label>
                 <Input 
                   type="number" 
                   value={slope} 
@@ -444,17 +448,17 @@ export function ManningsFlowCalculator() {
               <div className="p-3 rounded-lg border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20 text-center">
                 <div className="text-xs text-blue-600 font-medium mb-1">SWMM5</div>
                 <div className="space-y-1">
-                  <div><span className="text-xs text-muted-foreground">Area:</span> <span className="font-mono">{calculations.area.toFixed(2)} ft²</span></div>
-                  <div><span className="text-xs text-muted-foreground">R<sub>h</sub>:</span> <span className="font-mono">{calculations.hydraulicRadius.toFixed(3)} ft</span></div>
-                  <div className="text-lg font-bold text-blue-600" data-testid="text-q-swmm">Q: {calculations.Q_swmm.toFixed(2)} cfs</div>
+                  <div><span className="text-xs text-muted-foreground">Area:</span> <span className="font-mono">{conv.area(calculations.area).toFixed(2)} {u.area}</span></div>
+                  <div><span className="text-xs text-muted-foreground">R<sub>h</sub>:</span> <span className="font-mono">{conv.length(calculations.hydraulicRadius).toFixed(3)} {u.length}</span></div>
+                  <div className="text-lg font-bold text-blue-600" data-testid="text-q-swmm">Q: {conv.flow(calculations.Q_swmm).toFixed(2)} {u.flow}</div>
                 </div>
               </div>
               <div className="p-3 rounded-lg border-2 border-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 text-center">
                 <div className="text-xs text-emerald-600 font-medium mb-1">ICM</div>
                 <div className="space-y-1">
-                  <div><span className="text-xs text-muted-foreground">Area:</span> <span className="font-mono">{(calculations.area * 1.007).toFixed(2)} ft²</span></div>
-                  <div><span className="text-xs text-muted-foreground">R<sub>h</sub>:</span> <span className="font-mono">{calculations.hydraulicRadius.toFixed(3)} ft</span></div>
-                  <div className="text-lg font-bold text-emerald-600" data-testid="text-q-icm">Q: {calculations.Q_icm.toFixed(2)} cfs</div>
+                  <div><span className="text-xs text-muted-foreground">Area:</span> <span className="font-mono">{conv.area(calculations.area * 1.007).toFixed(2)} {u.area}</span></div>
+                  <div><span className="text-xs text-muted-foreground">R<sub>h</sub>:</span> <span className="font-mono">{conv.length(calculations.hydraulicRadius).toFixed(3)} {u.length}</span></div>
+                  <div className="text-lg font-bold text-emerald-600" data-testid="text-q-icm">Q: {conv.flow(calculations.Q_icm).toFixed(2)} {u.flow}</div>
                 </div>
               </div>
             </div>
@@ -482,6 +486,7 @@ export function ManningsFlowCalculator() {
 }
 
 export function TimeStepEfficiencyEstimator() {
+  const { u, conv } = useUnits();
   const [networkSize, setNetworkSize] = useState(500);
   const [simPeriod, setSimPeriod] = useState(24);
   const [avgConduitLength, setAvgConduitLength] = useState(300);
@@ -564,7 +569,7 @@ export function TimeStepEfficiencyEstimator() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm">Avg Conduit Length (ft)</Label>
+                <Label className="text-sm">{`Avg Conduit Length (${u.length})`}</Label>
                 <Input 
                   type="number" 
                   value={avgConduitLength} 
@@ -748,6 +753,7 @@ export function FroudeNumberDiagram() {
 }
 
 export function ComputationalPointsDiagram() {
+  const { u, conv } = useUnits();
   const [conduitLength, setConduitLength] = useState(1000);
 
   const icmSegments = useMemo(() => {
@@ -768,7 +774,7 @@ export function ComputationalPointsDiagram() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm">Conduit Length (ft)</Label>
+            <Label className="text-sm">{`Conduit Length (${u.length})`}</Label>
             <Input 
               type="number" 
               value={conduitLength} 
@@ -828,7 +834,7 @@ export function ComputationalPointsDiagram() {
 
         <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
           <p><strong>SWMM5:</strong> Single computational element per conduit - uses average properties</p>
-          <p><strong>ICM:</strong> Multiple segments (typically 1 per 150-200 ft) - captures flow variations</p>
+          <p><strong>ICM:</strong> Multiple segments (typically 1 per {`${conv.length(150).toFixed(0)}-${conv.length(200).toFixed(0)} ${u.length}`}) - captures flow variations</p>
         </div>
       </CardContent>
     </Card>
@@ -1034,6 +1040,7 @@ export function SurchargeAlgorithmDiagram() {
 }
 
 export function SurfaceFloodingDiagram() {
+  const { u, conv } = useUnits();
   const [isAnimating, setIsAnimating] = useState(false);
   const [floodLevel, setFloodLevel] = useState(0);
 
@@ -1098,7 +1105,7 @@ export function SurfaceFloodingDiagram() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  Vol: {(floodLevel * 15).toFixed(0)} ft³
+                  {`Vol: ${conv.volume(floodLevel * 15).toFixed(0)} ${u.volume}`}
                 </motion.text>
               )}
             </svg>
@@ -1166,7 +1173,7 @@ export function SurfaceFloodingDiagram() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  Vol: {(floodLevel * 15).toFixed(0)} ft³
+                  {`Vol: ${conv.volume(floodLevel * 15).toFixed(0)} ${u.volume}`}
                 </motion.text>
               )}
             </svg>

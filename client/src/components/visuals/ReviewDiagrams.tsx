@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useUnits } from "@/contexts/UnitsContext";
 import { 
   AlertTriangle, 
   CheckCircle2, 
@@ -139,6 +140,7 @@ export function ICMSWMMEngineComparison() {
 }
 
 export function LiveNetworkComparison() {
+  const { u, conv } = useUnits();
   const [isRunning, setIsRunning] = useState(false);
   const [timeStep, setTimeStep] = useState(0);
   const [inflowPeak, setInflowPeak] = useState(50);
@@ -267,7 +269,7 @@ export function LiveNetworkComparison() {
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Inflow Peak (cfs)</span>
+              <span className="text-sm font-medium">Inflow Peak ({u.flow})</span>
               <Badge variant="outline">{inflowPeak}</Badge>
             </div>
             <Slider 
@@ -321,7 +323,7 @@ export function LiveNetworkComparison() {
               <text x="125" y="78" textAnchor="middle" className="text-[7px] fill-gray-500">Time</text>
             </svg>
             <div className="flex justify-between text-xs mt-1">
-              <span>Q: {swmmData.length > 0 ? swmmData[swmmData.length - 1].toFixed(1) : "0.0"} cfs</span>
+              <span>Q: {swmmData.length > 0 ? conv.flow(swmmData[swmmData.length - 1]).toFixed(1) : "0.0"} {u.flow}</span>
               <span className="text-amber-600">Error: {continuityError.swmm}%</span>
             </div>
           </div>
@@ -343,7 +345,7 @@ export function LiveNetworkComparison() {
               <text x="125" y="78" textAnchor="middle" className="text-[7px] fill-gray-500">Time</text>
             </svg>
             <div className="flex justify-between text-xs mt-1">
-              <span>Q: {icmData.length > 0 ? icmData[icmData.length - 1].toFixed(1) : "0.0"} cfs</span>
+              <span>Q: {icmData.length > 0 ? conv.flow(icmData[icmData.length - 1]).toFixed(1) : "0.0"} {u.flow}</span>
               <span className="text-green-600">Error: {continuityError.icm}%</span>
             </div>
           </div>
@@ -364,6 +366,7 @@ export function LiveNetworkComparison() {
 }
 
 export function ForceMainComparison() {
+  const { u, conv } = useUnits();
   const [headAboveCrown, setHeadAboveCrown] = useState(5);
   const [pipeVelocity, setPipeVelocity] = useState(4);
 
@@ -468,15 +471,15 @@ export function ForceMainComparison() {
         <div className="grid grid-cols-3 gap-3 text-center text-xs">
           <div className="p-2 rounded bg-blue-50">
             <p className="text-muted-foreground">Manning's Q</p>
-            <p className="font-bold text-blue-700">{calculations.Q_manning.toFixed(2)} cfs</p>
+            <p className="font-bold text-blue-700">{conv.flow(calculations.Q_manning).toFixed(2)} {u.flow}</p>
           </div>
           <div className="p-2 rounded bg-purple-50">
             <p className="text-muted-foreground">Hazen-Williams Q</p>
-            <p className="font-bold text-purple-700">{calculations.Q_hw.toFixed(2)} cfs</p>
+            <p className="font-bold text-purple-700">{conv.flow(calculations.Q_hw).toFixed(2)} {u.flow}</p>
           </div>
           <div className="p-2 rounded bg-amber-50">
             <p className="text-muted-foreground">Darcy-Weisbach Q</p>
-            <p className="font-bold text-amber-700">{calculations.Q_dw.toFixed(2)} cfs</p>
+            <p className="font-bold text-amber-700">{conv.flow(calculations.Q_dw).toFixed(2)} {u.flow}</p>
           </div>
         </div>
       </CardContent>
@@ -485,6 +488,7 @@ export function ForceMainComparison() {
 }
 
 export function ConduitLengthSensitivity() {
+  const { u, conv } = useUnits();
   const [conduitLength, setConduitLength] = useState(2000);
   const [isAnimating, setIsAnimating] = useState(false);
   const [wavePosition, setWavePosition] = useState(0);
@@ -603,7 +607,7 @@ export function ConduitLengthSensitivity() {
         </div>
 
         <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800">
-          <span className="font-medium">Practical tip:</span> Splitting a {conduitLength.toLocaleString()}-ft SWMM5 conduit into {icmElements} segments of ~{Math.round(conduitLength / icmElements)} ft each would match ICM's resolution — but at higher computational cost.
+          <span className="font-medium">Practical tip:</span> Splitting a {conv.length(conduitLength).toLocaleString()}-{u.length} SWMM5 conduit into {icmElements} segments of ~{Math.round(conv.length(conduitLength / icmElements))} {u.length} each would match ICM's resolution — but at higher computational cost.
         </div>
       </CardContent>
     </Card>

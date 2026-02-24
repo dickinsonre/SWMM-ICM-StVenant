@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function LIDLayerStackAnimation() {
+  const { u, conv } = useUnits();
   const [rainIntensity, setRainIntensity] = useState([1]);
   const [animOffset, setAnimOffset] = useState(0);
   const [elapsed, setElapsed] = useState(0);
@@ -88,7 +90,7 @@ export function LIDLayerStackAnimation() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium" data-testid="label-rain-intensity-lid">Rain Intensity: {rain.toFixed(1)} in/hr</label>
+            <label className="text-sm font-medium" data-testid="label-rain-intensity-lid">Rain Intensity: {conv.rainfall(rain).toFixed(1)} {u.rainfall}</label>
             <Badge variant={phase === "Overflow" ? "destructive" : phase === "Draining" ? "default" : "outline"} data-testid="badge-lid-phase">
               {phase}
             </Badge>
@@ -126,7 +128,7 @@ export function LIDLayerStackAnimation() {
             />
           )}
           <text x={layerX + layerW + 5} y={surfaceY + 15} fontSize="7" fill="#4a7c4f">Surface Layer</text>
-          <text x={layerX + layerW + 5} y={surfaceY + 25} fontSize="6" fill="#94a3b8">Berm: 6in, n=0.1</text>
+          <text x={layerX + layerW + 5} y={surfaceY + 25} fontSize="6" fill="#94a3b8">Berm: {conv.lengthSmall(6).toFixed(0)}{u.lengthSmall}, n=0.1</text>
           {isOverflow && (
             <g>
               <line x1={layerX + layerW} y1={surfaceY + 10} x2={layerX + layerW + 30} y2={surfaceY + 20} stroke="#ef4444" strokeWidth="2" />
@@ -139,8 +141,8 @@ export function LIDLayerStackAnimation() {
             <circle key={d.key} cx={d.x} cy={d.y} r="2" fill="#3b82f6" opacity="0.6" />
           ))}
           <text x={layerX + layerW + 5} y={soilY + 15} fontSize="7" fill="#8B7355">Soil Layer</text>
-          <text x={layerX + layerW + 5} y={soilY + 25} fontSize="6" fill="#94a3b8">18in, φ=0.5</text>
-          <text x={layerX + layerW + 5} y={soilY + 35} fontSize="6" fill="#94a3b8">K=0.5 in/hr</text>
+          <text x={layerX + layerW + 5} y={soilY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(18).toFixed(0)}{u.lengthSmall}, φ=0.5</text>
+          <text x={layerX + layerW + 5} y={soilY + 35} fontSize="6" fill="#94a3b8">K={conv.rainfall(0.5).toFixed(1)} {u.rainfall}</text>
 
           <rect x={layerX} y={storageY} width={layerW} height={storageH} fill="#d4c5a9" stroke="#a0926b" strokeWidth="1.5" />
           {[0, 1, 2, 3, 4, 5, 6, 7].map((i) =>
@@ -166,7 +168,7 @@ export function LIDLayerStackAnimation() {
             />
           )}
           <text x={layerX + layerW + 5} y={storageY + 15} fontSize="7" fill="#a0926b">Storage Layer</text>
-          <text x={layerX + layerW + 5} y={storageY + 25} fontSize="6" fill="#94a3b8">12in, VR=0.75</text>
+          <text x={layerX + layerW + 5} y={storageY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(12).toFixed(0)}{u.lengthSmall}, VR=0.75</text>
 
           <line x1={layerX + 1} y1={storageY + storageH - (drainOffset / storageThickness) * storageH} x2={layerX + layerW - 1} y2={storageY + storageH - (drainOffset / storageThickness) * storageH} stroke="#f97316" strokeWidth="1" strokeDasharray="3,2" />
           <text x={layerX - 3} y={storageY + storageH - (drainOffset / storageThickness) * storageH + 3} fontSize="5" fill="#f97316" textAnchor="end">Drain offset</text>
@@ -182,7 +184,7 @@ export function LIDLayerStackAnimation() {
             </g>
           )}
           <text x={layerX + layerW + 5} y={drainY + 12} fontSize="7" fill="#6b7280">Underdrain</text>
-          <text x={layerX + layerW + 5} y={drainY + 22} fontSize="6" fill="#94a3b8">C=0.5, offset=6in</text>
+          <text x={layerX + layerW + 5} y={drainY + 22} fontSize="6" fill="#94a3b8">C=0.5, offset={conv.lengthSmall(6).toFixed(0)}{u.lengthSmall}</text>
 
           <text x={layerX - 5} y={surfaceY + surfaceH / 2} textAnchor="end" fontSize="6" fill="#64748b">↓ Rain</text>
           <text x={layerX - 5} y={soilY + soilH / 2} textAnchor="end" fontSize="6" fill="#64748b">↓ Infilt.</text>
@@ -215,15 +217,15 @@ export function LIDLayerStackAnimation() {
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div data-testid="text-lid-infilt-rate">
               <span className="text-muted-foreground">Infiltration:</span>{" "}
-              <span className="font-bold">{infiltRate.toFixed(2)} in/hr</span>
+              <span className="font-bold">{conv.rainfall(infiltRate).toFixed(2)} {u.rainfall}</span>
             </div>
             <div data-testid="text-lid-drain-flow">
               <span className="text-muted-foreground">Drain Flow:</span>{" "}
-              <span className="font-bold">{drainFlow.toFixed(2)} in/hr</span>
+              <span className="font-bold">{conv.rainfall(drainFlow).toFixed(2)} {u.rainfall}</span>
             </div>
             <div data-testid="text-lid-excess">
               <span className="text-muted-foreground">Excess Rain:</span>{" "}
-              <span className="font-bold">{excessRain.toFixed(2)} in/hr</span>
+              <span className="font-bold">{conv.rainfall(excessRain).toFixed(2)} {u.rainfall}</span>
             </div>
           </div>
         </div>
@@ -240,6 +242,7 @@ export function LIDLayerStackAnimation() {
 }
 
 export function NonlinearReservoirAnimation() {
+  const { u, conv } = useUnits();
   const [rainIntensity, setRainIntensity] = useState([2]);
   const [animOffset, setAnimOffset] = useState(0);
   const [simTime, setSimTime] = useState(0);
@@ -343,7 +346,7 @@ export function NonlinearReservoirAnimation() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium" data-testid="label-rain-intensity-nlr">Rain Intensity: {rain.toFixed(1)} in/hr</label>
+            <label className="text-sm font-medium" data-testid="label-rain-intensity-nlr">Rain Intensity: {conv.rainfall(rain).toFixed(1)} {u.rainfall}</label>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={startSimulation} data-testid="button-run-nlr">
                 {isRunning ? "Restart" : "Run"}
@@ -405,7 +408,7 @@ export function NonlinearReservoirAnimation() {
           )}
 
           <line x1={surfaceStartX} y1={surfaceEndY + 15} x2={surfaceEndX} y2={surfaceEndY + 15} stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
-          <text x={(surfaceStartX + surfaceEndX) / 2} y={surfaceEndY + 28} textAnchor="middle" fontSize="7" fill="#64748b">W = {W} ft</text>
+          <text x={(surfaceStartX + surfaceEndX) / 2} y={surfaceEndY + 28} textAnchor="middle" fontSize="7" fill="#64748b">W = {conv.length(W).toFixed(0)} {u.length}</text>
 
           {Q_cfs > 0 && (
             <g>
@@ -429,7 +432,7 @@ export function NonlinearReservoirAnimation() {
           <text x={150} y={surfaceStartY + 8} fontSize="6" fill="#8B7355">ds (depression storage)</text>
 
           <text x="200" y={250} textAnchor="middle" fontSize="7" fill="#64748b">
-            S = {(S * 100).toFixed(1)}% slope | n = {n} | ds = {ds} in
+            S = {(S * 100).toFixed(1)}% slope | n = {n} | ds = {conv.lengthSmall(ds).toFixed(2)} {u.lengthSmall}
           </text>
         </svg>
 
@@ -443,19 +446,19 @@ export function NonlinearReservoirAnimation() {
           <div className="grid grid-cols-4 gap-2 text-xs">
             <div data-testid="text-nlr-depth">
               <span className="text-muted-foreground">Depth d:</span>{" "}
-              <span className="font-bold">{depth.toFixed(4)} in</span>
+              <span className="font-bold">{conv.lengthSmall(depth).toFixed(4)} {u.lengthSmall}</span>
             </div>
             <div data-testid="text-nlr-ds">
               <span className="text-muted-foreground">ds:</span>{" "}
-              <span className="font-bold">{ds} in</span>
+              <span className="font-bold">{conv.lengthSmall(ds).toFixed(2)} {u.lengthSmall}</span>
             </div>
             <div data-testid="text-nlr-runoff">
               <span className="text-muted-foreground">Runoff Q:</span>{" "}
-              <span className="font-bold">{Q_cfs.toFixed(4)} cfs</span>
+              <span className="font-bold">{conv.flow(Q_cfs).toFixed(4)} {u.flow}</span>
             </div>
             <div data-testid="text-nlr-infilt">
               <span className="text-muted-foreground">Infiltration:</span>{" "}
-              <span className="font-bold">{fInfilt.toFixed(2)} in/hr</span>
+              <span className="font-bold">{conv.rainfall(fInfilt).toFixed(2)} {u.rainfall}</span>
             </div>
           </div>
         </div>
@@ -472,6 +475,7 @@ export function NonlinearReservoirAnimation() {
 }
 
 export function WidthSensitivityAnimation() {
+  const { u, conv } = useUnits();
   const [widthVal, setWidthVal] = useState([300]);
   const [animOffset, setAnimOffset] = useState(0);
 
@@ -531,7 +535,7 @@ export function WidthSensitivityAnimation() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium" data-testid="label-width-slider">Width: {width} ft</label>
+            <label className="text-sm font-medium" data-testid="label-width-slider">Width: {conv.length(width).toFixed(0)} {u.length}</label>
             <span className="text-xs text-muted-foreground">Area fixed at {area} acres</span>
           </div>
           <Slider value={widthVal} onValueChange={setWidthVal} min={50} max={1000} step={10} data-testid="slider-width" />
@@ -555,7 +559,7 @@ export function WidthSensitivityAnimation() {
             );
           })}
           <text x={chartX - 20} y={chartY + chartH / 2} textAnchor="middle" fontSize="7" fill="#64748b" transform={`rotate(-90, ${chartX - 20}, ${chartY + chartH / 2})`}>
-            Q (cfs)
+            Q ({u.flow})
           </text>
 
           {[0, 20, 40, 60, 80, 100].map((t, i) => {
@@ -592,7 +596,7 @@ export function WidthSensitivityAnimation() {
                 <line x1={peakX} y1={peakY} x2={peakX} y2={chartY + chartH} stroke="#ef4444" strokeWidth="0.8" strokeDasharray="3,2" />
                 <circle cx={peakX} cy={peakY} r="3" fill="#ef4444" />
                 <text x={peakX + 5} y={peakY - 5} fontSize="6" fill="#ef4444" fontWeight="bold">
-                  Qp={Qp.toFixed(1)} cfs
+                  Qp={conv.flow(Qp).toFixed(1)} {u.flow}
                 </text>
                 <text x={peakX} y={chartY + chartH + 22} textAnchor="middle" fontSize="6" fill="#ef4444">
                   Tp={Tp.toFixed(0)} min
@@ -630,7 +634,7 @@ export function WidthSensitivityAnimation() {
             fontSize="6"
             fill="#22c55e"
           >
-            W = {width} ft
+            W = {conv.length(width).toFixed(0)} {u.length}
           </text>
 
           <line
@@ -647,22 +651,22 @@ export function WidthSensitivityAnimation() {
             fontSize="6"
             fill="#64748b"
           >
-            L = {flowLength.toFixed(0)} ft
+            L = {conv.length(flowLength).toFixed(0)} {u.length}
           </text>
 
           <rect x={275} y={shapeY} width={115} height={75} fill="rgba(59,130,246,0.05)" stroke="#94a3b8" strokeWidth="0.5" rx="3" />
           <text x={332} y={shapeY + 14} textAnchor="middle" fontSize="7" fill="#64748b" fontWeight="bold">Results</text>
           <text x={280} y={shapeY + 28} fontSize="7" fill="#64748b" data-testid="text-peak-q">
-            Peak Q: <tspan fontWeight="bold" fill="#3b82f6">{Qp.toFixed(1)} cfs</tspan>
+            Peak Q: <tspan fontWeight="bold" fill="#3b82f6">{conv.flow(Qp).toFixed(1)} {u.flow}</tspan>
           </text>
           <text x={280} y={shapeY + 40} fontSize="7" fill="#64748b" data-testid="text-time-to-peak">
             Time to Peak: <tspan fontWeight="bold" fill="#ef4444">{Tp.toFixed(0)} min</tspan>
           </text>
           <text x={280} y={shapeY + 52} fontSize="7" fill="#64748b" data-testid="text-flow-length">
-            Flow Length: <tspan fontWeight="bold">{flowLength.toFixed(0)} ft</tspan>
+            Flow Length: <tspan fontWeight="bold">{conv.length(flowLength).toFixed(0)} {u.length}</tspan>
           </text>
           <text x={280} y={shapeY + 64} fontSize="7" fill="#64748b" data-testid="text-width-val">
-            Width: <tspan fontWeight="bold">{width} ft</tspan>
+            Width: <tspan fontWeight="bold">{conv.length(width).toFixed(0)} {u.length}</tspan>
           </text>
         </svg>
 

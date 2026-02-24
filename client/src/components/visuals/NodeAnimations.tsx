@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function BackwaterPropagation() {
   const [tideLevel, setTideLevel] = useState([0]);
@@ -399,6 +400,7 @@ export function OneDTwoDCoupling() {
 }
 
 export function ManholeStorageVolume() {
+  const { u, conv } = useUnits();
   const [waterDepth, setWaterDepth] = useState([0]);
   const depth = waterDepth[0];
 
@@ -453,8 +455,8 @@ export function ManholeStorageVolume() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Water Depth: {depth.toFixed(1)} m</label>
-            <span className="text-xs text-muted-foreground">Ground at 4m</span>
+            <label className="text-sm font-medium">Water Depth: {conv.length(depth).toFixed(1)} {u.length}</label>
+            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)}{u.length}</span>
           </div>
           <Slider
             value={waterDepth}
@@ -511,15 +513,15 @@ export function ManholeStorageVolume() {
                 </g>
               )}
               <line x1="10" y1={groundYpx} x2={svgW - 10} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL (4m)</text>
+              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)}{u.length})</text>
               <text x={svgW / 2} y={invertYpx + 15} textAnchor="middle" fontSize="8" fill="#64748b">
-                Ø {swmmDiameter}m uniform
+                Ø {conv.length(swmmDiameter).toFixed(1)}{u.length} uniform
               </text>
             </svg>
             <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
               <div className="text-xs text-muted-foreground">Volume</div>
               <div className="text-lg font-bold text-blue-600" data-testid="text-swmm-volume">
-                {swmmVolume.toFixed(3)} m³
+                {conv.volume(swmmVolume).toFixed(3)} {u.volume}
               </div>
               {isFlooded && (
                 <Badge variant="destructive" className="mt-1 text-[10px]" data-testid="badge-swmm-flood">
@@ -562,7 +564,7 @@ export function ManholeStorageVolume() {
                 );
               })()}
               <line x1="10" y1={groundYpx} x2={svgW - 10} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL (4m)</text>
+              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)}{u.length})</text>
               <text x={svgW / 2} y={invertYpx + 15} textAnchor="middle" fontSize="8" fill="#64748b">
                 Tapered (depth-area table)
               </text>
@@ -570,7 +572,7 @@ export function ManholeStorageVolume() {
             <div className="text-center p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-200 dark:border-emerald-800">
               <div className="text-xs text-muted-foreground">Volume</div>
               <div className="text-lg font-bold text-emerald-600" data-testid="text-icm-volume">
-                {icmVolume.toFixed(3)} m³
+                {conv.volume(icmVolume).toFixed(3)} {u.volume}
               </div>
               {isFlooded && (
                 <Badge variant="destructive" className="mt-1 text-[10px]" data-testid="badge-icm-flood">
@@ -597,6 +599,7 @@ export function ManholeStorageVolume() {
 type FloodType = "lost" | "ponded" | "stored" | "2d";
 
 export function FloodTypeComparison() {
+  const { u, conv } = useUnits();
   const [floodType, setFloodType] = useState<FloodType>("lost");
   const [waterDepth, setWaterDepth] = useState([0]);
   const depth = waterDepth[0];
@@ -645,7 +648,7 @@ export function FloodTypeComparison() {
         strokeWidth="2"
       />
       <line x1="20" y1={groundYpx} x2={svgW - 20} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-      <text x={svgW - 18} y={groundYpx - 4} fontSize="9" fill="#22c55e" textAnchor="end">Ground (4m)</text>
+      <text x={svgW - 18} y={groundYpx - 4} fontSize="9" fill="#22c55e" textAnchor="end">Ground ({conv.length(4).toFixed(0)}{u.length})</text>
       <line x1="20" y1={invertYpx} x2={svgW - 20} y2={invertYpx} stroke="#94a3b8" strokeWidth="1" />
       <text x={svgW - 18} y={invertYpx - 4} fontSize="8" fill="#94a3b8" textAnchor="end">Invert</text>
     </g>
@@ -805,8 +808,8 @@ export function FloodTypeComparison() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Water Depth: {depth.toFixed(1)} m</label>
-            <span className="text-xs text-muted-foreground">Ground at 4m</span>
+            <label className="text-sm font-medium">Water Depth: {conv.length(depth).toFixed(1)} {u.length}</label>
+            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)}{u.length}</span>
           </div>
           <Slider
             value={waterDepth}
@@ -831,7 +834,7 @@ export function FloodTypeComparison() {
               </motion.g>
             </AnimatePresence>
             <text x={svgW / 2} y={svgH - 10} textAnchor="middle" fontSize="9" fill="#64748b">
-              Depth: {depth.toFixed(1)}m | {isAboveGround ? `Excess: ${excessDepth.toFixed(1)}m` : "Below ground"}
+              Depth: {conv.length(depth).toFixed(1)}{u.length} | {isAboveGround ? `Excess: ${conv.length(excessDepth).toFixed(1)}${u.length}` : "Below ground"}
             </text>
           </svg>
         </div>

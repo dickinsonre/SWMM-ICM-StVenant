@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 type MethodFilter = "all" | "steady" | "kinwave" | "dynwave";
 

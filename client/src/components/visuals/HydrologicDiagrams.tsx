@@ -25,8 +25,10 @@ import {
   ArrowRight,
   Timer
 } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function RunoffProcessDiagram() {
+  const { u, conv } = useUnits();
   const [rainfallIntensity, setRainfallIntensity] = useState([1.0]);
   const [depressionStorage, setDepressionStorage] = useState([0.1]);
   const [maxInfiltration, setMaxInfiltration] = useState([3.0]);
@@ -167,7 +169,7 @@ export function RunoffProcessDiagram() {
               )}
               
               <text x="10" y="178" className="text-[7px] fill-muted-foreground">
-                t = {time.toFixed(1)}s | Infil = {currentInfil.toFixed(2)} in/hr | Runoff = {runoffRate.toFixed(2)} in/hr
+                t = {time.toFixed(1)}s | Infil = {conv.rainfall(currentInfil).toFixed(2)} {u.rainfall} | Runoff = {conv.rainfall(runoffRate).toFixed(2)} {u.rainfall}
               </text>
             </svg>
             
@@ -208,17 +210,17 @@ export function RunoffProcessDiagram() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-sm">Rainfall: <span className="font-mono text-primary">{rainfall.toFixed(1)} in/hr</span></Label>
+              <Label className="text-sm">Rainfall: <span className="font-mono text-primary">{conv.rainfall(rainfall).toFixed(1)} {u.rainfall}</span></Label>
               <Slider value={rainfallIntensity} onValueChange={setRainfallIntensity} min={0.5} max={3.0} step={0.1} data-testid="slider-rainfall" />
             </div>
             
             <div className="space-y-2">
-              <Label className="text-sm">Depression Storage: <span className="font-mono text-primary">{depStorage.toFixed(2)} in</span></Label>
+              <Label className="text-sm">Depression Storage: <span className="font-mono text-primary">{conv.lengthSmall(depStorage).toFixed(2)} {u.lengthSmall}</span></Label>
               <Slider value={depressionStorage} onValueChange={setDepressionStorage} min={0.01} max={0.3} step={0.01} data-testid="slider-depression" />
             </div>
             
             <div className="space-y-2">
-              <Label className="text-sm">Max Infiltration: <span className="font-mono text-primary">{maxInfil.toFixed(1)} in/hr</span></Label>
+              <Label className="text-sm">Max Infiltration: <span className="font-mono text-primary">{conv.rainfall(maxInfil).toFixed(1)} {u.rainfall}</span></Label>
               <Slider value={maxInfiltration} onValueChange={setMaxInfiltration} min={0.5} max={5.0} step={0.1} data-testid="slider-infiltration" />
             </div>
           </div>

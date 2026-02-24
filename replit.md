@@ -143,3 +143,7 @@ The database schema currently includes a users table, though the primary applica
   - **PerformanceDiagrams**: Loop Detection, Boundary Influence, Performance Scaling, Warning Messages, Solver Evolution Timeline, Saint-Venant Equations Side-by-Side
 - Added 3 new categories: Boundary Conditions, Real-World Scenarios, Performance & Topology
 - Total diagram count: 117 across 16 categories
+- Added **Units Toggle** (USA/SI) — global context switches all diagrams between imperial (ft, cfs, in) and metric (m, m³/s, mm) units
+  - Created `UnitsContext.tsx` with provider, hook, unit labels, and conversion functions
+  - Updated all 27 visual component files to use dynamic unit labels and conversion functions
+  - Internal calculations stay in original units; only display values are converted

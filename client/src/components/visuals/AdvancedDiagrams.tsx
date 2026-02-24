@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useUnits } from "@/contexts/UnitsContext";
 import { 
   Activity, 
   Droplets, 
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 
 export function ConvergenceSnapshotsDiagram() {
+  const { u, conv } = useUnits();
   const [iteration, setIteration] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [converged, setConverged] = useState(false);
@@ -127,13 +129,13 @@ export function ConvergenceSnapshotsDiagram() {
                 <text x="35" y="30" className="text-[10px] fill-purple-400 font-mono" data-testid="text-convergence-h">
                   {currentState.H === "NaN" ? "?" : Number(currentState.H).toFixed(2)}
                 </text>
-                <text x="60" y="30" className="text-[6px] fill-muted-foreground">m</text>
+                <text x="60" y="30" className="text-[6px] fill-muted-foreground">{u.length}</text>
                 
                 <text x="80" y="30" className="text-[8px] fill-muted-foreground">Q1 =</text>
                 <text x="105" y="30" className="text-[10px] fill-blue-400 font-mono" data-testid="text-convergence-q1">
                   {currentState.Q1 === "NaN" ? "?" : Number(currentState.Q1).toFixed(3)}
                 </text>
-                <text x="130" y="30" className="text-[6px] fill-muted-foreground">m³/s</text>
+                <text x="130" y="30" className="text-[6px] fill-muted-foreground">{u.flow}</text>
                 
                 <text x="145" y="30" className="text-[8px] fill-muted-foreground">Q2 =</text>
                 <text x="168" y="30" className="text-[10px] fill-emerald-400 font-mono" data-testid="text-convergence-q2">
@@ -211,6 +213,7 @@ export function ConvergenceSnapshotsDiagram() {
 }
 
 export function MassBalanceErrorDiagram() {
+  const { u, conv } = useUnits();
   const [tolerance, setTolerance] = useState([0.001]);
   const [routeStep, setRouteStep] = useState([30]);
   const [dryDepth, setDryDepth] = useState([0.001]);
@@ -389,7 +392,7 @@ export function MassBalanceErrorDiagram() {
               </div>
               
               <div className="space-y-2">
-                <Label className="text-sm">Dry Depth: <span className="font-mono text-primary">{(dry * 1000).toFixed(1)} mm</span></Label>
+                <Label className="text-sm">Dry Depth: <span className="font-mono text-primary">{conv.lengthSmall(dry * 1000).toFixed(1)} {u.lengthSmall}</span></Label>
                 <Slider
                   value={dryDepth}
                   onValueChange={setDryDepth}

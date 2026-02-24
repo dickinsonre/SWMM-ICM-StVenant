@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function DiscretizationDiagram() {
   return (
@@ -86,6 +87,7 @@ export function DiscretizationDiagram() {
 }
 
 export function PreissmannSlotDiagram() {
+  const { u, conv } = useUnits();
   const [waterLevel, setWaterLevel] = useState([50]);
   const level = waterLevel[0];
   const pipeHeight = 100;
@@ -139,7 +141,7 @@ export function PreissmannSlotDiagram() {
                 data-testid="text-wave-speed"
                 aria-labelledby="wave-speed-label"
               >
-                {waveSpeed} m/s
+                {conv.velocity(parseFloat(waveSpeed)).toFixed(1)} {u.velocity}
               </div>
             </div>
             
@@ -207,6 +209,7 @@ export function PreissmannSlotDiagram() {
 }
 
 export function WavePropagationDiagram() {
+  const { u, conv } = useUnits();
   const [isRunning, setIsRunning] = useState(false);
   const [wavePosition, setWavePosition] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -294,7 +297,7 @@ export function WavePropagationDiagram() {
 
               {/* Q label */}
               <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-mono text-blue-600" data-testid="text-swmm-flow">
-                Q = {wavePosition > 20 ? '1.5' : '0.0'} m³/s (entire link)
+                Q = {wavePosition > 20 ? conv.flow(1.5).toFixed(1) : '0.0'} {u.flow} (entire link)
               </div>
             </div>
             <p className="text-[10px] text-muted-foreground">
@@ -547,6 +550,7 @@ export function DryNetworkDiagram() {
 }
 
 export function NodeAreaDiagram() {
+  const { u, conv } = useUnits();
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
   const [mode, setMode] = useState<"swmm" | "icm">("swmm");
 
@@ -588,7 +592,7 @@ export function NodeAreaDiagram() {
                   onBlur={() => setHoveredSegment(null)}
                   tabIndex={0}
                   role="button"
-                  aria-label="Link C-10, Flow 0.85 cubic meters per second"
+                  aria-label={`Link C-10, Flow ${conv.flow(0.85).toFixed(2)} ${u.flow}`}
                 />
               </>
             )}
@@ -607,7 +611,7 @@ export function NodeAreaDiagram() {
                       onBlur={() => setHoveredSegment(null)}
                       tabIndex={0}
                       role="button"
-                      aria-label={`Segment ${i + 1} of 5, Head ${(12.5 - i * 0.15).toFixed(2)} meters, Flow ${(0.82 + i * 0.01).toFixed(2)} cubic meters per second`}
+                      aria-label={`Segment ${i + 1} of 5, Head ${conv.length(12.5 - i * 0.15).toFixed(2)} ${u.length}, Flow ${conv.flow(0.82 + i * 0.01).toFixed(2)} ${u.flow}`}
                     />
                     <circle 
                       cx={78 + i * 36} cy="60" r="4" 
@@ -632,7 +636,7 @@ export function NodeAreaDiagram() {
               onBlur={() => setHoveredSegment(null)}
               tabIndex={0}
               role="button"
-              aria-label="Node J-01, Head 12.7 meters"
+              aria-label={`Node J-01, Head ${conv.length(12.7).toFixed(1)} ${u.length}`}
             />
             <text x="40" y="64" textAnchor="middle" className="text-[8px] fill-current font-mono pointer-events-none">J-01</text>
 
@@ -649,7 +653,7 @@ export function NodeAreaDiagram() {
               onBlur={() => setHoveredSegment(null)}
               tabIndex={0}
               role="button"
-              aria-label="Node J-02, Head 11.9 meters"
+              aria-label={`Node J-02, Head ${conv.length(11.9).toFixed(1)} ${u.length}`}
             />
             <text x="260" y="64" textAnchor="middle" className="text-[8px] fill-current font-mono pointer-events-none">J-02</text>
           </svg>
@@ -665,8 +669,8 @@ export function NodeAreaDiagram() {
                 <div>
                   <div className="font-semibold">Node J-01</div>
                   <div className="text-muted-foreground mt-1">
-                    <div>Head (H) = 12.7 m</div>
-                    {mode === "icm" && <div>Inflow = 0.5 m³/s</div>}
+                    <div>Head (H) = {conv.length(12.7).toFixed(1)} {u.length}</div>
+                    {mode === "icm" && <div>Inflow = {conv.flow(0.5).toFixed(2)} {u.flow}</div>}
                   </div>
                 </div>
               )}
@@ -674,8 +678,8 @@ export function NodeAreaDiagram() {
                 <div>
                   <div className="font-semibold">Node J-02</div>
                   <div className="text-muted-foreground mt-1">
-                    <div>Head (H) = 11.9 m</div>
-                    {mode === "icm" && <div>Outflow = 0.85 m³/s</div>}
+                    <div>Head (H) = {conv.length(11.9).toFixed(1)} {u.length}</div>
+                    {mode === "icm" && <div>Outflow = {conv.flow(0.85).toFixed(2)} {u.flow}</div>}
                   </div>
                 </div>
               )}
@@ -683,7 +687,7 @@ export function NodeAreaDiagram() {
                 <div>
                   <div className="font-semibold">Link C-10</div>
                   <div className="text-muted-foreground mt-1">
-                    <div>Flow (Q) = 0.85 m³/s</div>
+                    <div>Flow (Q) = {conv.flow(0.85).toFixed(2)} {u.flow}</div>
                     <div className="text-[10px] italic mt-1">Same for entire link</div>
                   </div>
                 </div>
@@ -692,8 +696,8 @@ export function NodeAreaDiagram() {
                 <div>
                   <div className="font-semibold">Segment {parseInt(hoveredSegment.slice(3)) + 1}/5</div>
                   <div className="text-muted-foreground mt-1">
-                    <div>Head (H) = {(12.5 - parseInt(hoveredSegment.slice(3)) * 0.15).toFixed(2)} m</div>
-                    <div>Flow (Q) = {(0.82 + parseInt(hoveredSegment.slice(3)) * 0.01).toFixed(2)} m³/s</div>
+                    <div>Head (H) = {conv.length(12.5 - parseInt(hoveredSegment.slice(3)) * 0.15).toFixed(2)} {u.length}</div>
+                    <div>Flow (Q) = {conv.flow(0.82 + parseInt(hoveredSegment.slice(3)) * 0.01).toFixed(2)} {u.flow}</div>
                   </div>
                 </div>
               )}

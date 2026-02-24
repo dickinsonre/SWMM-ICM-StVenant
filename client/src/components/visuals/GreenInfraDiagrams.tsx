@@ -7,10 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Droplets, Layers, Network, CircleDot, ArrowDown, ArrowRight } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 type LIDPractice = "greenroof" | "permeable" | "bioretention" | "trench";
 
 export function LIDvsSUDSDiagram() {
+  const { u, conv } = useUnits();
   const [practice, setPractice] = useState<LIDPractice>("greenroof");
   const [isAnimating, setIsAnimating] = useState(false);
   const [time, setTime] = useState(0);
@@ -120,7 +122,7 @@ export function LIDvsSUDSDiagram() {
             </SelectContent>
           </Select>
           <Badge variant="outline">t = {time}s</Badge>
-          <Badge>Rain: {getRainfall(time).toFixed(0)} mm/hr</Badge>
+          <Badge>Rain: {getRainfall(time).toFixed(0)} {u.rainfall}</Badge>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
@@ -163,12 +165,12 @@ export function LIDvsSUDSDiagram() {
                 <span className="w-12 text-right">{swmmParams.surfaceRoughness[0]}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-36">Soil Thickness (mm):</span>
+                <span className="w-36">Soil Thickness ({u.lengthSmall}):</span>
                 <Slider value={swmmParams.soilThickness} onValueChange={v => setSwmmParams(p => ({...p, soilThickness: v}))} min={50} max={500} step={10} className="flex-1" data-testid="slider-swmm-thickness" />
                 <span className="w-12 text-right">{swmmParams.soilThickness[0]}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-36">Conductivity (mm/hr):</span>
+                <span className="w-36">Conductivity ({u.rainfall}):</span>
                 <Slider value={swmmParams.soilConductivity} onValueChange={v => setSwmmParams(p => ({...p, soilConductivity: v}))} min={1} max={50} step={1} className="flex-1" data-testid="slider-swmm-conductivity" />
                 <span className="w-12 text-right">{swmmParams.soilConductivity[0]}</span>
               </div>
@@ -223,22 +225,22 @@ export function LIDvsSUDSDiagram() {
 
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <span className="w-36">Subcatch Area (m²):</span>
+                <span className="w-36">Subcatch Area ({u.area}):</span>
                 <Slider value={icmParams.subcatchArea} onValueChange={v => setIcmParams(p => ({...p, subcatchArea: v}))} min={10} max={500} step={10} className="flex-1" data-testid="slider-icm-area" />
                 <span className="w-12 text-right">{icmParams.subcatchArea[0]}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-36">Storage Depth (m):</span>
+                <span className="w-36">Storage Depth ({u.length}):</span>
                 <Slider value={icmParams.storageDepth} onValueChange={v => setIcmParams(p => ({...p, storageDepth: v}))} min={0.1} max={1} step={0.05} className="flex-1" data-testid="slider-icm-depth" />
                 <span className="w-12 text-right">{icmParams.storageDepth[0]}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-36">Orifice Size (mm):</span>
+                <span className="w-36">Orifice Size ({u.diameter}):</span>
                 <Slider value={icmParams.orificeSize} onValueChange={v => setIcmParams(p => ({...p, orificeSize: v}))} min={10} max={200} step={5} className="flex-1" data-testid="slider-icm-orifice" />
                 <span className="w-12 text-right">{icmParams.orificeSize[0]}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-36">Soakaway Rate (mm/hr):</span>
+                <span className="w-36">Soakaway Rate ({u.rainfall}):</span>
                 <Slider value={icmParams.soakawayRate} onValueChange={v => setIcmParams(p => ({...p, soakawayRate: v}))} min={0} max={50} step={1} className="flex-1" data-testid="slider-icm-soakaway" />
                 <span className="w-12 text-right">{icmParams.soakawayRate[0]}</span>
               </div>

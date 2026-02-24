@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { useUnits } from "@/contexts/UnitsContext";
 import { 
   HelpCircle, 
   Zap, 

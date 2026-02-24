@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Clock, Waves, Ruler, Droplets, Play, Pause, RotateCcw, AlertTriangle, CheckCircle, XCircle, Zap } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function WaveTravelVsTimestepDiagram() {
+  const { u, conv } = useUnits();
   const [timestep, setTimestep] = useState([5]);
   const [solverType, setSolverType] = useState<"swmm" | "icm">("swmm");
   const [isAnimating, setIsAnimating] = useState(false);
@@ -62,11 +64,11 @@ export function WaveTravelVsTimestepDiagram() {
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
               <div className="text-muted-foreground">Pipe Length</div>
-              <div className="font-mono font-bold">{pipeLength} m</div>
+              <div className="font-mono font-bold">{conv.length(pipeLength).toFixed(0)} {u.length}</div>
             </div>
             <div>
               <div className="text-muted-foreground">Wave Celerity</div>
-              <div className="font-mono font-bold">{celerity} m/s</div>
+              <div className="font-mono font-bold">{conv.velocity(celerity).toFixed(1)} {u.velocity}</div>
             </div>
             <div>
               <div className="text-muted-foreground">Travel Time</div>
@@ -380,6 +382,7 @@ export function AdaptiveTimestepSimulatorDiagram() {
 }
 
 export function ConduitLengtheningCheatCodeDiagram() {
+  const { u, conv } = useUnits();
   const [lengtheningStep, setLengtheningStep] = useState([5]);
   
   const realLength = 30;
@@ -413,13 +416,13 @@ export function ConduitLengtheningCheatCodeDiagram() {
             </h4>
             <div className="relative h-12 bg-blue-200 dark:bg-blue-800 rounded mb-3">
               <div className="absolute inset-0 flex items-center justify-center text-sm font-mono text-blue-800 dark:text-blue-200">
-                L = {realLength} m
+                L = {conv.length(realLength).toFixed(0)} {u.length}
               </div>
             </div>
             <div className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Wave Speed:</span>
-                <span className="font-mono">{waveSpeed} m/s</span>
+                <span className="font-mono">{conv.velocity(waveSpeed).toFixed(0)} {u.velocity}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Travel Time:</span>
@@ -440,14 +443,14 @@ export function ConduitLengtheningCheatCodeDiagram() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="absolute inset-0 flex items-center justify-center text-sm font-mono">
-                  L = {virtualLength.toFixed(0)} m
+                  L = {conv.length(virtualLength).toFixed(0)} {u.length}
                 </div>
               </motion.div>
             </div>
             <div className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Effective c:</span>
-                <span className="font-mono">{needsLengthening ? effectiveWaveSpeed.toFixed(1) : waveSpeed} m/s</span>
+                <span className="font-mono">{conv.velocity(needsLengthening ? effectiveWaveSpeed : waveSpeed).toFixed(1)} {u.velocity}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Ratio:</span>

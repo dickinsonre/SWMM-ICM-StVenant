@@ -7,15 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Settings2, Workflow, Timer, ToggleLeft, Activity, Play, Pause, RotateCcw, Zap, ArrowRight, Check, X } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function ControlLogicBuilderDiagram() {
+  const { u, conv } = useUnits();
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   
   const icmComponents = [
     { id: "regulator", label: "Regulator", desc: "Pump P1", color: "bg-blue-500" },
-    { id: "range_hi", label: "Range", desc: "Level > 5.5m", color: "bg-amber-500" },
-    { id: "range_lo", label: "Range", desc: "Level < 4.5m", color: "bg-amber-500" },
-    { id: "pid", label: "PID Controller", desc: "SP: 5.0m", color: "bg-purple-500" },
+    { id: "range_hi", label: "Range", desc: `Level > ${conv.length(5.5).toFixed(1)}${u.length}`, color: "bg-amber-500" },
+    { id: "range_lo", label: "Range", desc: `Level < ${conv.length(4.5).toFixed(1)}${u.length}`, color: "bg-amber-500" },
+    { id: "pid", label: "PID Controller", desc: `SP: ${conv.length(5.0).toFixed(1)}${u.length}`, color: "bg-purple-500" },
     { id: "rule", label: "Rule", desc: "→ Pump Setting", color: "bg-green-500" },
   ];
   
@@ -44,7 +46,7 @@ PRIORITY 2`;
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="p-3 bg-muted/50 rounded-lg text-sm">
-          <strong>Scenario:</strong> Maintain Tank 1 water level between 4.5m and 5.5m by modulating Pump 1.
+          <strong>Scenario:</strong> Maintain Tank 1 water level between {conv.length(4.5).toFixed(1)}{u.length} and {conv.length(5.5).toFixed(1)}{u.length} by modulating Pump 1.
         </div>
         
         <div className="grid grid-cols-2 gap-4">
@@ -135,6 +137,7 @@ PRIORITY 2`;
 }
 
 export function ExecutionTimelineDiagram() {
+  const { u } = useUnits();
   const [isAnimating, setIsAnimating] = useState(false);
   const [step, setStep] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -185,7 +188,7 @@ export function ExecutionTimelineDiagram() {
         <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Simulation Time: t = 1000s</span>
-            <Badge variant="outline">Tank Level: 5.2m</Badge>
+            <Badge variant="outline">Tank Level: {conv.length(5.2).toFixed(1)}{u.length}</Badge>
           </div>
           <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-2">
             <motion.div 
@@ -301,6 +304,7 @@ export function ExecutionTimelineDiagram() {
 }
 
 export function ControllerTypesDiagram() {
+  const { u } = useUnits();
   const [controlMode, setControlMode] = useState<"onoff" | "pid" | "inc">("onoff");
   const [pGain, setPGain] = useState([1.0]);
   const [iGain, setIGain] = useState([0.1]);
@@ -406,13 +410,13 @@ export function ControllerTypesDiagram() {
         
         <div className="space-y-4">
           <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
-            <div className="text-xs text-muted-foreground mb-2">Tank Level (m)</div>
+            <div className="text-xs text-muted-foreground mb-2">Tank Level ({u.length})</div>
             <svg viewBox="0 0 400 80" className="w-full h-20">
               <line x1="30" y1="70" x2="380" y2="70" stroke="#94a3b8" strokeWidth="1" />
               <line x1="30" y1="10" x2="30" y2="70" stroke="#94a3b8" strokeWidth="1" />
               
               <line x1="30" y1="40" x2="380" y2="40" stroke="#22c55e" strokeWidth="1" strokeDasharray="4,4" />
-              <text x="385" y="43" className="text-[8px] fill-green-600">SP: 5.0m</text>
+              <text x="385" y="43" className="text-[8px] fill-green-600">SP: 5.0{u.length}</text>
               
               <line x1="30" y1="20" x2="380" y2="20" stroke="#ef4444" strokeWidth="1" strokeDasharray="2,2" opacity="0.5" />
               <line x1="30" y1="60" x2="380" y2="60" stroke="#ef4444" strokeWidth="1" strokeDasharray="2,2" opacity="0.5" />

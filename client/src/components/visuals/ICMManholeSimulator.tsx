@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer, Area, AreaChart, Line, ComposedChart } from "recharts";
+import { useUnits } from "@/contexts/UnitsContext";
 
 interface ManholeGeometry {
   totalDepth: number;
@@ -120,6 +121,7 @@ function riseRate(vol: number, geo: ManholeGeometry, netInflow: number): number 
 }
 
 export function ICMManholeSimulator() {
+  const { u, conv, unitSystem, setUnitSystem } = useUnits();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timeRef = useRef<number>(0);
 
@@ -141,7 +143,6 @@ export function ICMManholeSimulator() {
   const [simTime, setSimTime] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showLabels, setShowLabels] = useState(true);
-  const [units, setUnits] = useState("metric");
   const [currentOutflow, setCurrentOutflow] = useState(0);
 
   const geo = useMemo(
@@ -164,20 +165,20 @@ export function ICMManholeSimulator() {
   const gateColor = !gateOpen ? COLORS.gateClosed : gatePosition >= 0.95 ? COLORS.gateOpen : COLORS.gatePartial;
 
   const convert = useCallback((val: number, type: string): string => {
-    if (units === "imperial") {
-      if (type === "length") return (val * 3.281).toFixed(2) + " ft";
-      if (type === "dia") return (val * 39.37).toFixed(0) + " in";
-      if (type === "vol") return (val * 35.315).toFixed(2) + " ft³";
-      if (type === "flow") return (val * 35.315).toFixed(3) + " cfs";
-      if (type === "rate") return (val * 3.281 * 60).toFixed(1) + " ft/min";
+    if (unitSystem === "USA") {
+      if (type === "length") return (val * 3.281).toFixed(2) + " " + u.length;
+      if (type === "dia") return (val * 39.37).toFixed(0) + " " + u.diameter;
+      if (type === "vol") return (val * 35.315).toFixed(2) + " " + u.volume;
+      if (type === "flow") return (val * 35.315).toFixed(3) + " " + u.flow;
+      if (type === "rate") return (val * 3.281 * 60).toFixed(1) + " " + u.length + "/min";
     }
-    if (type === "length") return val.toFixed(2) + " m";
-    if (type === "dia") return (val * 1000).toFixed(0) + " mm";
-    if (type === "vol") return val.toFixed(3) + " m³";
-    if (type === "flow") return val.toFixed(3) + " m³/s";
-    if (type === "rate") return (val * 60).toFixed(2) + " m/min";
+    if (type === "length") return val.toFixed(2) + " " + u.length;
+    if (type === "dia") return (val * 1000).toFixed(0) + " " + u.diameter;
+    if (type === "vol") return val.toFixed(3) + " " + u.volume;
+    if (type === "flow") return val.toFixed(3) + " " + u.flow;
+    if (type === "rate") return (val * 60).toFixed(2) + " " + u.length + "/min";
     return val.toFixed(2);
-  }, [units]);
+  }, [unitSystem, u]);
 
   useEffect(() => {
     if (!isAnimating) return;
@@ -609,7 +610,7 @@ export function ICMManholeSimulator() {
     frame = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frame);
   }, [waterElev, shaftDia, chamberDia, shaftDepth, chamberDepth, inletDia, outletDia, outletOffset,
-      showLabels, isFlooding, floodDepth, geo, convert, units, zone, isAnimating, inflowRate,
+      showLabels, isFlooding, floodDepth, geo, convert, unitSystem, zone, isAnimating, inflowRate,
       accumulatedVolume, waterDepthAboveInvert, currentOutflow, gateOpen, gatePosition, gateLabel, gateColor, outletInvert]);
 
   const reset = () => {
@@ -662,26 +663,26 @@ export function ICMManholeSimulator() {
           <div className="w-full xl:w-60 space-y-2">
             <div className="rounded-xl p-2.5" style={{ background: COLORS.panel, border: `1px solid ${COLORS.panelBorder}` }}>
               <h3 className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: COLORS.accent }}>Manhole</h3>
-              <Slider label="Shaft Ø" value={shaftDia} onChange={(v: number) => setShaftDia(Math.min(v, chamberDia))} min={0.3} max={2.0} step={0.05} suffix=" m" color={COLORS.shaftColor} disabled={isAnimating} />
-              <Slider label="Chamber Ø" value={chamberDia} onChange={(v: number) => { setChamberDia(v); if (shaftDia > v) setShaftDia(v); }} min={0.5} max={3.0} step={0.05} suffix=" m" color={COLORS.chamberColor} disabled={isAnimating} />
-              <Slider label="Shaft Depth" value={shaftDepth} onChange={setShaftDepth} min={0.5} max={4.0} step={0.1} suffix=" m" disabled={isAnimating} />
-              <Slider label="Chamber Depth" value={chamberDepth} onChange={setChamberDepth} min={0.5} max={3.0} step={0.1} suffix=" m" disabled={isAnimating} />
+              <Slider label="Shaft Ø" value={shaftDia} onChange={(v: number) => setShaftDia(Math.min(v, chamberDia))} min={0.3} max={2.0} step={0.05} suffix={` ${u.length}`} color={COLORS.shaftColor} disabled={isAnimating} />
+              <Slider label="Chamber Ø" value={chamberDia} onChange={(v: number) => { setChamberDia(v); if (shaftDia > v) setShaftDia(v); }} min={0.5} max={3.0} step={0.05} suffix={` ${u.length}`} color={COLORS.chamberColor} disabled={isAnimating} />
+              <Slider label="Shaft Depth" value={shaftDepth} onChange={setShaftDepth} min={0.5} max={4.0} step={0.1} suffix={` ${u.length}`} disabled={isAnimating} />
+              <Slider label="Chamber Depth" value={chamberDepth} onChange={setChamberDepth} min={0.5} max={3.0} step={0.1} suffix={` ${u.length}`} disabled={isAnimating} />
             </div>
 
             <div className="rounded-xl p-2.5" style={{ background: COLORS.panel, border: `1px solid ${COLORS.panelBorder}` }}>
               <h3 className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: COLORS.accent }}>
                 ← Inlet Pipe
               </h3>
-              <Slider label="Pipe Ø" value={inletDia} onChange={setInletDia} min={0.1} max={1.2} step={0.05} suffix=" m" color={COLORS.accent} disabled={isAnimating} />
-              <Slider label="Inflow Rate" value={inflowRate} onChange={setInflowRate} min={0.001} max={0.1} step={0.001} suffix=" m³/s" color={COLORS.accent} />
+              <Slider label="Pipe Ø" value={inletDia} onChange={setInletDia} min={0.1} max={1.2} step={0.05} suffix={` ${u.length}`} color={COLORS.accent} disabled={isAnimating} />
+              <Slider label="Inflow Rate" value={inflowRate} onChange={setInflowRate} min={0.001} max={0.1} step={0.001} suffix={` ${u.flow}`} color={COLORS.accent} />
             </div>
 
             <div className="rounded-xl p-2.5" style={{ background: COLORS.panel, border: `1px solid ${COLORS.panelBorder}` }}>
               <h3 className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: COLORS.outletColor }}>
                 Outlet Pipe →
               </h3>
-              <Slider label="Pipe Ø" value={outletDia} onChange={setOutletDia} min={0.1} max={1.5} step={0.05} suffix=" m" color={COLORS.outletColor} disabled={isAnimating} />
-              <Slider label="Invert Offset" value={outletOffset} onChange={setOutletOffset} min={0} max={chamberDepth * 0.8} step={0.05} suffix=" m" color={COLORS.outletColor} disabled={isAnimating} />
+              <Slider label="Pipe Ø" value={outletDia} onChange={setOutletDia} min={0.1} max={1.5} step={0.05} suffix={` ${u.length}`} color={COLORS.outletColor} disabled={isAnimating} />
+              <Slider label="Invert Offset" value={outletOffset} onChange={setOutletOffset} min={0} max={chamberDepth * 0.8} step={0.05} suffix={` ${u.length}`} color={COLORS.outletColor} disabled={isAnimating} />
 
               <div className="mt-1 pt-1.5 border-t" style={{ borderColor: COLORS.panelBorder }}>
                 <div className="flex items-center justify-between mb-1.5">
@@ -717,9 +718,9 @@ export function ICMManholeSimulator() {
                 </button>
               </div>
               <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${COLORS.panelBorder}` }}>
-                {(["metric", "imperial"] as const).map(u => (
-                  <button key={u} onClick={() => setUnits(u)} className="px-2 py-0.5 text-xs font-bold" style={{ background: units === u ? COLORS.accent : "transparent", color: units === u ? COLORS.bg : COLORS.textDim }}>
-                    {u === "metric" ? "SI" : "US"}
+                {(["SI", "USA"] as const).map(sys => (
+                  <button key={sys} onClick={() => setUnitSystem(sys)} className="px-2 py-0.5 text-xs font-bold" style={{ background: unitSystem === sys ? COLORS.accent : "transparent", color: unitSystem === sys ? COLORS.bg : COLORS.textDim }}>
+                    {sys === "SI" ? "SI" : "US"}
                   </button>
                 ))}
               </div>
@@ -794,9 +795,9 @@ export function ICMManholeSimulator() {
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="time" tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: "Time (s)", position: "bottom", fill: COLORS.textDim, fontSize: 9 }} />
-                    <YAxis tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: "Elev (m)", angle: -90, position: "insideLeft", fill: COLORS.textDim, fontSize: 9 }} domain={['auto', 'auto']} />
+                    <YAxis tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: `Elev (${u.length})`, angle: -90, position: "insideLeft", fill: COLORS.textDim, fontSize: 9 }} domain={['auto', 'auto']} />
                     <Tooltip contentStyle={{ background: COLORS.panel, border: `1px solid ${COLORS.panelBorder}`, borderRadius: 6, fontSize: 10 }}
-                      formatter={(val: number) => [val.toFixed(3) + " m", "WL Elev"]} />
+                      formatter={(val: number) => [val.toFixed(3) + " " + u.length, "WL Elev"]} />
                     <ReferenceLine y={GROUND_LEVEL} stroke={COLORS.danger} strokeDasharray="4 4" label={{ value: "GL", fill: COLORS.danger, fontSize: 8, position: "right" }} />
                     <ReferenceLine y={geo.chamberTop} stroke={COLORS.chamberColor} strokeDasharray="3 3" label={{ value: "Ch Top", fill: COLORS.chamberColor, fontSize: 8, position: "right" }} />
                     <Area type="monotone" dataKey="elevation" stroke={COLORS.accent} fill="url(#wg)" strokeWidth={2} dot={false} />
@@ -806,9 +807,9 @@ export function ICMManholeSimulator() {
                 <ResponsiveContainer width="100%" height={100}>
                   <ComposedChart data={history} margin={{ top: 5, right: 10, bottom: 15, left: 10 }}>
                     <XAxis dataKey="time" tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: "Time (s)", position: "bottom", fill: COLORS.textDim, fontSize: 9 }} />
-                    <YAxis tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: "Q (L/s)", angle: -90, position: "insideLeft", fill: COLORS.textDim, fontSize: 9 }} domain={[0, 'auto']} />
+                    <YAxis tick={{ fill: COLORS.textDim, fontSize: 9 }} label={{ value: `Q (${u.flowSmall})`, angle: -90, position: "insideLeft", fill: COLORS.textDim, fontSize: 9 }} domain={[0, 'auto']} />
                     <Tooltip contentStyle={{ background: COLORS.panel, border: `1px solid ${COLORS.panelBorder}`, borderRadius: 6, fontSize: 10 }}
-                      formatter={(val: number, name: string) => [val.toFixed(1) + " L/s", name === "inflow" ? "Inflow" : "Outflow"]} />
+                      formatter={(val: number, name: string) => [val.toFixed(1) + " " + u.flowSmall, name === "inflow" ? "Inflow" : "Outflow"]} />
                     <Line type="monotone" dataKey="inflow" stroke={COLORS.accent} strokeWidth={1.5} dot={false} name="inflow" />
                     <Line type="monotone" dataKey="outflow" stroke={COLORS.outletColor} strokeWidth={1.5} dot={false} name="outflow" />
                   </ComposedChart>
@@ -827,8 +828,8 @@ export function ICMManholeSimulator() {
               <div className="p-2 rounded-lg" style={{ background: "rgba(0,180,216,0.05)" }}>
                 <strong style={{ color: COLORS.accent }}>Water Level Rise:</strong><br />
                 dh/dt = Q_net / A(h)<br />
-                Chamber: A = {geo.chamberArea.toFixed(3)} m²<br />
-                Shaft: A = {geo.shaftArea.toFixed(3)} m²<br />
+                Chamber: A = {conv.area(geo.chamberArea).toFixed(3)} {u.area}<br />
+                Shaft: A = {conv.area(geo.shaftArea).toFixed(3)} {u.area}<br />
                 Ratio: <strong style={{ color: COLORS.warning }}>{areaRatio}× faster in shaft</strong>
               </div>
               <div className="p-2 rounded-lg" style={{ background: "rgba(16,185,129,0.05)" }}>

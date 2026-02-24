@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 type OutfallType = "FREE" | "NORMAL" | "FIXED" | "TIDAL" | "TIMESERIES";
 
@@ -278,6 +279,7 @@ export function OutfallTypesAnimation() {
 type InflowMode = "DIRECT" | "DWF" | "RDII" | "ALL";
 
 export function InflowTypesAnimation() {
+  const { u, conv } = useUnits();
   const [inflowMode, setInflowMode] = useState<InflowMode>("ALL");
   const [rainIntensity, setRainIntensity] = useState([30]);
   const [dwfBase, setDwfBase] = useState([50]);
@@ -463,17 +465,17 @@ export function InflowTypesAnimation() {
           })}
 
           <text x={nodeX + 65} y={nodeY + 25} textAnchor="middle" fontSize="7" fill="#64748b">
-            Q = {totalQ.toFixed(1)} L/s
+            Q = {conv.flowSmall(totalQ).toFixed(1)} {u.flowSmall}
           </text>
         </svg>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-rain-intensity">Rain Intensity: {rain} mm/hr</label>
+            <label className="text-xs font-medium" data-testid="label-rain-intensity">Rain Intensity: {conv.rainfall(rain).toFixed(0)} {u.rainfall}</label>
             <Slider value={rainIntensity} onValueChange={setRainIntensity} min={0} max={100} step={1} data-testid="slider-rain-intensity" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-dwf-base">DWF Base Flow: {dwfBaseVal} L/s</label>
+            <label className="text-xs font-medium" data-testid="label-dwf-base">DWF Base Flow: {conv.flowSmall(dwfBaseVal).toFixed(0)} {u.flowSmall}</label>
             <Slider value={dwfBase} onValueChange={setDwfBase} min={10} max={150} step={5} data-testid="slider-dwf-base" />
           </div>
         </div>
@@ -482,19 +484,19 @@ export function InflowTypesAnimation() {
           <div className="grid grid-cols-4 gap-2 text-xs">
             <div data-testid="text-direct-q">
               <span className="text-muted-foreground">Direct:</span>{" "}
-              <span className="font-bold text-amber-600">{directQ.toFixed(1)} L/s</span>
+              <span className="font-bold text-amber-600">{conv.flowSmall(directQ).toFixed(1)} {u.flowSmall}</span>
             </div>
             <div data-testid="text-dwf-q">
               <span className="text-muted-foreground">DWF:</span>{" "}
-              <span className="font-bold text-purple-600">{dwfQ.toFixed(1)} L/s</span>
+              <span className="font-bold text-purple-600">{conv.flowSmall(dwfQ).toFixed(1)} {u.flowSmall}</span>
             </div>
             <div data-testid="text-rdii-q">
               <span className="text-muted-foreground">RDII:</span>{" "}
-              <span className="font-bold text-emerald-600">{rdiiQ.toFixed(1)} L/s</span>
+              <span className="font-bold text-emerald-600">{conv.flowSmall(rdiiQ).toFixed(1)} {u.flowSmall}</span>
             </div>
             <div data-testid="text-total-q">
               <span className="text-muted-foreground">Total:</span>{" "}
-              <span className="font-bold text-red-600">{totalQ.toFixed(1)} L/s</span>
+              <span className="font-bold text-red-600">{conv.flowSmall(totalQ).toFixed(1)} {u.flowSmall}</span>
             </div>
           </div>
         </div>
@@ -511,6 +513,7 @@ export function InflowTypesAnimation() {
 }
 
 export function TreatmentAtNodesAnimation() {
+  const { u, conv } = useUnits();
   const [inflowRate, setInflowRate] = useState([20]);
   const [inflowTSS, setInflowTSS] = useState([150]);
   const [animOffset, setAnimOffset] = useState(0);
@@ -631,7 +634,7 @@ export function TreatmentAtNodesAnimation() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-inflow-rate">Inflow Rate: {Q} L/s</label>
+            <label className="text-xs font-medium" data-testid="label-inflow-rate">Inflow Rate: {conv.flowSmall(Q).toFixed(0)} {u.flowSmall}</label>
             <Slider value={inflowRate} onValueChange={setInflowRate} min={1} max={100} step={1} data-testid="slider-inflow-rate" />
           </div>
           <div className="space-y-1">

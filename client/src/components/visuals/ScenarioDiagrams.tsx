@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function CSOModelingAnimation() {
   const [rainIntensity, setRainIntensity] = useState([50]);
@@ -164,6 +165,7 @@ export function CSOModelingAnimation() {
 }
 
 export function DetentionPondAnimation() {
+  const { u, conv } = useUnits();
   const [stormSize, setStormSize] = useState<"2-yr" | "10-yr" | "25-yr" | "100-yr">("10-yr");
   const [withPond, setWithPond] = useState(true);
   const [time, setTime] = useState(0);
@@ -249,7 +251,7 @@ export function DetentionPondAnimation() {
           <text x="15" y="123" textAnchor="end" fontSize="6" fill="#94a3b8">0</text>
           <text x="15" y="83" textAnchor="end" fontSize="6" fill="#94a3b8">{(params.peakIn * 0.44).toFixed(0)}</text>
           <text x="15" y="43" textAnchor="end" fontSize="6" fill="#94a3b8">{params.peakIn}</text>
-          <text x="8" y="70" textAnchor="middle" fontSize="6" fill="#94a3b8" transform="rotate(-90, 8, 70)">Q (cfs)</text>
+          <text x="8" y="70" textAnchor="middle" fontSize="6" fill="#94a3b8" transform="rotate(-90, 8, 70)">Q ({u.flow})</text>
 
           <path d={inflowPath} fill="none" stroke="#ef4444" strokeWidth="2" strokeDasharray="6,3" />
 
@@ -285,17 +287,17 @@ export function DetentionPondAnimation() {
 
           <g>
             <rect x="322" y="235" width="8" height="15" fill={orificeActive ? "#22c55e" : "#d1d5db"} stroke="#64748b" strokeWidth="1" rx="1" />
-            <text x="340" y="245" fontSize="5" fill="#64748b">Orifice 6"</text>
+            <text x="340" y="245" fontSize="5" fill="#64748b">Orifice {conv.diameter(6).toFixed(0)}{u.diameter}</text>
 
             <rect x="322" y="215" width="12" height="5" fill={weirActive ? "#f59e0b" : "#d1d5db"} stroke="#64748b" strokeWidth="1" />
-            <text x="345" y="220" fontSize="5" fill="#64748b">Weir 2ft</text>
+            <text x="345" y="220" fontSize="5" fill="#64748b">Weir {conv.length(2).toFixed(0)}{u.length}</text>
 
             <rect x="322" y="190" width="16" height="4" fill={spillwayActive ? "#ef4444" : "#d1d5db"} stroke="#64748b" strokeWidth="1" />
             <text x="350" y="194" fontSize="5" fill="#64748b">Spillway</text>
           </g>
 
           <text x="200" y="270" textAnchor="middle" fontSize="7" fill="#64748b">
-            Stage: {(pondLevel * 8).toFixed(1)} ft | Outlets: {orificeActive ? "Orifice" : ""}{weirActive ? " + Weir" : ""}{spillwayActive ? " + Spillway" : ""}
+            Stage: {conv.length(pondLevel * 8).toFixed(1)} {u.length} | Outlets: {orificeActive ? "Orifice" : ""}{weirActive ? " + Weir" : ""}{spillwayActive ? " + Spillway" : ""}
           </text>
         </svg>
 
@@ -333,6 +335,7 @@ export function DetentionPondAnimation() {
 }
 
 export function ParallelPipeAnimation() {
+  const { u, conv } = useUnits();
   const [largeDia, setLargeDia] = useState([36]);
   const [numPipes, setNumPipes] = useState([2]);
   const [animOffset, setAnimOffset] = useState(0);
@@ -402,15 +405,15 @@ export function ParallelPipeAnimation() {
             Single Large Pipe vs {N} Parallel Smaller Pipes
           </text>
 
-          <text x="50" y="40" fontSize="7" fill="#64748b" fontWeight="bold">Option A: Single {D}" Pipe</text>
+          <text x="50" y="40" fontSize="7" fill="#64748b" fontWeight="bold">Option A: Single {conv.diameter(D).toFixed(0)}{u.diameter} Pipe</text>
           <rect x="60" y={70 - D * 0.4} width="280" height={Math.max(D * 0.8, 16)} rx={D * 0.4} fill="rgba(148,163,184,0.2)" stroke="#94a3b8" strokeWidth="2" />
           <rect x="60" y={70 - D * 0.4 + 2} width="280" height={Math.max(D * 0.8 - 4, 12)} rx={D * 0.4 - 2} fill="rgba(59,130,246,0.15)" />
           {flowParticles(70, 6)}
-          <text x="360" y={75} fontSize="7" fill="#3b82f6" fontWeight="bold">Q = {qSingle.toFixed(1)} cfs</text>
+          <text x="360" y={75} fontSize="7" fill="#3b82f6" fontWeight="bold">Q = {conv.flow(qSingle).toFixed(1)} {u.flow}</text>
           <circle cx="40" cy="70" r={Math.min(D * 0.4, 20)} fill="none" stroke="#94a3b8" strokeWidth="1.5" />
-          <text x="40" y={73} textAnchor="middle" fontSize="5" fill="#64748b">{D}"</text>
+          <text x="40" y={73} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(D).toFixed(0)}{u.diameter}</text>
 
-          <text x="50" y={135} fontSize="7" fill="#64748b" fontWeight="bold">Option B: {N}× {smallDiaRounded.toFixed(0)}" Pipes</text>
+          <text x="50" y={135} fontSize="7" fill="#64748b" fontWeight="bold">Option B: {N}× {conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter} Pipes</text>
           {Array.from({ length: N }, (_, i) => {
             const pipeSpacing = Math.min(40, 120 / N);
             const baseY = 160 + i * pipeSpacing;
@@ -424,10 +427,10 @@ export function ParallelPipeAnimation() {
             );
           })}
           <text x="360" y={165} fontSize="7" fill="#3b82f6" fontWeight="bold">
-            Q = {qSmall.toFixed(1)}×{N} = {qParallel.toFixed(1)} cfs
+            Q = {conv.flow(qSmall).toFixed(1)}×{N} = {conv.flow(qParallel).toFixed(1)} {u.flow}
           </text>
           <circle cx="40" cy="170" r={Math.min(smallDiaRounded * 0.25, 12)} fill="none" stroke="#94a3b8" strokeWidth="1.5" />
-          <text x="40" y={173} textAnchor="middle" fontSize="5" fill="#64748b">{smallDiaRounded.toFixed(0)}"</text>
+          <text x="40" y={173} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter}</text>
 
           <rect x="30" y="225" width="340" height="45" rx="4" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1" />
           <text x="200" y="240" textAnchor="middle" fontSize="7" fill="#92400e" fontWeight="bold">
@@ -437,13 +440,13 @@ export function ParallelPipeAnimation() {
             Area scales with D², but hydraulic radius also changes: Q ∝ A × R^(2/3)
           </text>
           <text x="200" y="264" textAnchor="middle" fontSize="6" fill="#64748b">
-            R(single) = {rLarge.toFixed(3)} ft | R(small) = {rSmall.toFixed(3)} ft
+            R(single) = {conv.length(rLarge).toFixed(3)} {u.length} | R(small) = {conv.length(rSmall).toFixed(3)} {u.length}
           </text>
         </svg>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-large-dia">Large Pipe Diameter: {D}"</label>
+            <label className="text-xs font-medium" data-testid="label-large-dia">Large Pipe Diameter: {conv.diameter(D).toFixed(0)}{u.diameter}</label>
             <Slider value={largeDia} onValueChange={setLargeDia} min={12} max={60} step={1} data-testid="slider-large-dia" />
           </div>
           <div className="space-y-1">
@@ -455,20 +458,20 @@ export function ParallelPipeAnimation() {
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3">
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-single-capacity">
-              <span className="text-muted-foreground">Single {D}" Q_full:</span>{" "}
-              <span className="font-bold">{qSingle.toFixed(1)} cfs</span>
+              <span className="text-muted-foreground">Single {conv.diameter(D).toFixed(0)}{u.diameter} Q_full:</span>{" "}
+              <span className="font-bold">{conv.flow(qSingle).toFixed(1)} {u.flow}</span>
             </div>
             <div data-testid="text-parallel-capacity">
-              <span className="text-muted-foreground">{N}× {smallDiaRounded.toFixed(0)}" Q_full:</span>{" "}
-              <span className="font-bold">{qParallel.toFixed(1)} cfs</span>
+              <span className="text-muted-foreground">{N}× {conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter} Q_full:</span>{" "}
+              <span className="font-bold">{conv.flow(qParallel).toFixed(1)} {u.flow}</span>
             </div>
             <div data-testid="text-small-dia">
               <span className="text-muted-foreground">Small Pipe Dia:</span>{" "}
-              <span className="font-bold">{smallDiaRounded.toFixed(1)}"</span>
+              <span className="font-bold">{conv.diameter(smallDiaRounded).toFixed(1)}{u.diameter}</span>
             </div>
             <div data-testid="text-area-check">
               <span className="text-muted-foreground">Area Match:</span>{" "}
-              <span className="font-bold">{(Math.PI * (smallDiaRounded / 2) ** 2 * N).toFixed(0)} vs {largeArea.toFixed(0)} in²</span>
+              <span className="font-bold">{conv.area(Math.PI * (smallDiaRounded / 2) ** 2 * N).toFixed(0)} vs {conv.area(largeArea).toFixed(0)} {u.area}</span>
             </div>
           </div>
         </div>
@@ -493,6 +496,7 @@ export function ParallelPipeAnimation() {
 }
 
 export function CalibrationVisualAnimation() {
+  const { u, conv } = useUnits();
   const [manningN, setManningN] = useState([0.013]);
   const [imperviousness, setImperviousness] = useState([65]);
   const [width, setWidth] = useState([400]);
@@ -583,7 +587,7 @@ export function CalibrationVisualAnimation() {
             </g>
           ))}
 
-          <text x="10" y="140" textAnchor="middle" fontSize="7" fill="#94a3b8" transform="rotate(-90, 10, 140)">Q (cfs)</text>
+          <text x="10" y="140" textAnchor="middle" fontSize="7" fill="#94a3b8" transform="rotate(-90, 10, 140)">Q ({u.flow})</text>
           <text x="200" y="265" textAnchor="middle" fontSize="7" fill="#94a3b8">Time (hours)</text>
 
           <path d={observedPath} fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,3" />
@@ -612,7 +616,7 @@ export function CalibrationVisualAnimation() {
             PBIAS: {pbias.toFixed(1)}%
           </text>
           <text x="330" y="107" textAnchor="middle" fontSize="6" fill="#64748b" data-testid="text-rmse">
-            RMSE: {rmse.toFixed(2)} cfs
+            RMSE: {conv.flow(rmse).toFixed(2)} {u.flow}
           </text>
 
           <circle cx="285" cy="66" r="5" fill={nseColor} opacity="0.8" />
@@ -628,11 +632,11 @@ export function CalibrationVisualAnimation() {
             <Slider value={imperviousness} onValueChange={setImperviousness} min={40} max={90} step={1} data-testid="slider-cal-imperviousness" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-cal-width">Width: {w} ft</label>
+            <label className="text-xs font-medium" data-testid="label-cal-width">Width: {conv.length(w).toFixed(0)} {u.length}</label>
             <Slider value={width} onValueChange={setWidth} min={100} max={800} step={10} data-testid="slider-cal-width" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-cal-depstorage">Depression Storage: {ds.toFixed(2)} in</label>
+            <label className="text-xs font-medium" data-testid="label-cal-depstorage">Depression Storage: {conv.lengthSmall(ds).toFixed(2)} {u.lengthSmall}</label>
             <Slider value={depStorage} onValueChange={setDepStorage} min={0.01} max={0.10} step={0.005} data-testid="slider-cal-depstorage" />
           </div>
         </div>

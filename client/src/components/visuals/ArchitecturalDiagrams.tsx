@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { FileText, Cpu, PlayCircle, Beaker, Droplets, ArrowDownUp, Gauge, FileOutput, AlertTriangle, CheckCircle2, Code } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function InputFileParserDiagram() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -186,6 +187,7 @@ C2       J2     J3     400`;
 }
 
 export function MatrixSolverDiagram() {
+  const { u, conv } = useUnits();
   const [step, setStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [matrix, setMatrix] = useState<number[][]>([[0, 0], [0, 0]]);
@@ -368,7 +370,7 @@ export function MatrixSolverDiagram() {
                   className="mt-3 p-2 bg-green-900/30 border border-green-500/50 rounded"
                   data-testid="text-solution"
                 >
-                  <div className="text-green-400">H2 = {solution[0]} ft, H3 = {solution[1]} ft</div>
+                  <div className="text-green-400">H2 = {conv.length(solution[0]).toFixed(1)} {u.length}, H3 = {conv.length(solution[1]).toFixed(1)} {u.length}</div>
                 </motion.div>
               )}
             </div>
@@ -396,6 +398,7 @@ export function MatrixSolverDiagram() {
 }
 
 export function RTCRulesDiagram() {
+  const { u, conv } = useUnits();
   const [isRunning, setIsRunning] = useState(false);
   const [simTime, setSimTime] = useState(0);
   const [nodeDepth, setNodeDepth] = useState(1.0);
@@ -525,7 +528,7 @@ export function RTCRulesDiagram() {
               <div className="flex justify-between">
                 <span className="text-slate-400">Node 123 Depth:</span>
                 <span className={`font-mono ${nodeDepth > 2 ? 'text-red-400' : 'text-green-400'}`} data-testid="text-node-depth">
-                  {nodeDepth.toFixed(2)} ft
+                  {conv.length(nodeDepth).toFixed(2)} {u.length}
                 </span>
               </div>
             </div>
@@ -547,7 +550,7 @@ export function RTCRulesDiagram() {
               />
               
               <line x1="68" y1="80" x2="68" y2="40" className="stroke-yellow-400 stroke-dashed" strokeWidth="1" strokeDasharray="3,3" />
-              <text x="75" y="65" className="text-[7px] fill-yellow-400">2.0 ft</text>
+              <text x="75" y="65" className="text-[7px] fill-yellow-400">{conv.length(2.0).toFixed(1)} {u.length}</text>
               
               <g transform="translate(120, 70)">
                 <rect x="0" y="0" width="40" height="30" rx="3" className={`${pumpStatus ? 'fill-green-600' : 'fill-slate-700'} stroke-slate-400`} />
@@ -576,7 +579,7 @@ export function RTCRulesDiagram() {
               )}
               
               <text x="140" y="120" textAnchor="middle" className="text-[8px] fill-slate-400">
-                {pumpStatus ? `Flow: ${flowRate} cfs` : "Pump OFF"}
+                {pumpStatus ? `Flow: ${conv.flow(flowRate).toFixed(1)} ${u.flow}` : "Pump OFF"}
               </text>
             </svg>
           </div>
@@ -603,6 +606,7 @@ export function RTCRulesDiagram() {
 }
 
 export function MassRoutingDiagram() {
+  const { u, conv } = useUnits();
   const [isAnimating, setIsAnimating] = useState(false);
   const [inflowConc, setInflowConc] = useState([50]);
   const [decayCoeff, setDecayCoeff] = useState([0.1]);
@@ -705,7 +709,7 @@ export function MassRoutingDiagram() {
           <div className="md:col-span-2 relative h-52 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
             <svg className="w-full h-full" viewBox="0 0 220 130" data-testid="svg-mass-routing">
               <rect x="20" y="60" width="180" height="30" rx="15" className="fill-slate-600 stroke-slate-400" />
-              <text x="110" y="52" textAnchor="middle" className="text-[9px] fill-slate-400">Pipe Segment (L = 500 ft)</text>
+              <text x="110" y="52" textAnchor="middle" className="text-[9px] fill-slate-400">Pipe Segment (L = {conv.length(500).toFixed(0)} {u.length})</text>
               
               {parcelPosition > 0 && (
                 <motion.rect
@@ -721,9 +725,9 @@ export function MassRoutingDiagram() {
                 />
               )}
               
-              <text x="20" y="105" className="text-[8px] fill-teal-400">0 ft</text>
-              <text x="110" y="105" textAnchor="middle" className="text-[8px] fill-teal-400">250 ft</text>
-              <text x="195" y="105" textAnchor="end" className="text-[8px] fill-teal-400">500 ft</text>
+              <text x="20" y="105" className="text-[8px] fill-teal-400">0 {u.length}</text>
+              <text x="110" y="105" textAnchor="middle" className="text-[8px] fill-teal-400">{conv.length(250).toFixed(0)} {u.length}</text>
+              <text x="195" y="105" textAnchor="end" className="text-[8px] fill-teal-400">{conv.length(500).toFixed(0)} {u.length}</text>
               
               {concentrations.length > 1 && (
                 <g>
@@ -774,6 +778,7 @@ export function MassRoutingDiagram() {
 }
 
 export function SurchargeCodeDiagram() {
+  const { u, conv } = useUnits();
   const [activeTab, setActiveTab] = useState("algorithm");
   const [waterLevel, setWaterLevel] = useState([70]);
   const [method, setMethod] = useState("swmm");
@@ -882,7 +887,7 @@ export function SurchargeCodeDiagram() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Wave Speed:</span>
-                  <span className="text-pink-400 font-mono">{waveSpeed.toFixed(1)} m/s</span>
+                  <span className="text-pink-400 font-mono">{conv.velocity(waveSpeed).toFixed(1)} {u.velocity}</span>
                 </div>
                 {method === "swmm" && isSurcharged && (
                   <div className="text-yellow-400 mt-2 p-2 bg-yellow-500/10 rounded">
@@ -941,6 +946,7 @@ if (depth > soffit) {
 }
 
 export function GroundwaterExchangeDiagram() {
+  const { u, conv } = useUnits();
   const [aquiferHead, setAquiferHead] = useState([8]);
   const [nodeHead, setNodeHead] = useState([5]);
   const [hydCond] = useState(0.01);
@@ -965,7 +971,7 @@ export function GroundwaterExchangeDiagram() {
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label className="text-xs">Aquifer Head (ft)</Label>
+              <Label className="text-xs">Aquifer Head ({u.length})</Label>
               <Slider
                 value={aquiferHead}
                 onValueChange={setAquiferHead}
@@ -974,11 +980,11 @@ export function GroundwaterExchangeDiagram() {
                 step={0.5}
                 data-testid="slider-aquifer-head"
               />
-              <div className="text-xs text-muted-foreground text-center">{aquiferHead[0]} ft</div>
+              <div className="text-xs text-muted-foreground text-center">{conv.length(aquiferHead[0]).toFixed(1)} {u.length}</div>
             </div>
             
             <div className="space-y-2">
-              <Label className="text-xs">Node Head (ft)</Label>
+              <Label className="text-xs">Node Head ({u.length})</Label>
               <Slider
                 value={nodeHead}
                 onValueChange={setNodeHead}
@@ -987,7 +993,7 @@ export function GroundwaterExchangeDiagram() {
                 step={0.5}
                 data-testid="slider-node-head"
               />
-              <div className="text-xs text-muted-foreground text-center">{nodeHead[0]} ft</div>
+              <div className="text-xs text-muted-foreground text-center">{conv.length(nodeHead[0]).toFixed(1)} {u.length}</div>
             </div>
             
             <div className="bg-slate-800 rounded-lg p-3 text-xs font-mono">
@@ -997,7 +1003,7 @@ export function GroundwaterExchangeDiagram() {
                 Q = {hydCond} × 100 × ({aquiferHead[0]} - {nodeHead[0]}) / 2
               </div>
               <div className="text-amber-300 mt-1">
-                Q = {flowRate.toFixed(2)} cfs
+                Q = {conv.flow(flowRate).toFixed(2)} {u.flow}
               </div>
             </div>
           </div>
@@ -1087,7 +1093,7 @@ export function GroundwaterExchangeDiagram() {
              flowDirection === "out_of_pipe" ? "↑ Exfiltration" : "Equilibrium"}
           </Badge>
           <span className="text-xs text-muted-foreground">
-            Flow Rate: <span className="font-mono text-amber-400" data-testid="text-gw-flow">{Math.abs(flowRate).toFixed(2)} cfs</span>
+            Flow Rate: <span className="font-mono text-amber-400" data-testid="text-gw-flow">{conv.flow(Math.abs(flowRate)).toFixed(2)} {u.flow}</span>
           </span>
         </div>
       </CardContent>
@@ -1096,6 +1102,7 @@ export function GroundwaterExchangeDiagram() {
 }
 
 export function MinorLossesDiagram() {
+  const { u, conv } = useUnits();
   const [showLosses, setShowLosses] = useState(false);
   const [kInlet, setKInlet] = useState([0.5]);
   const [kOutlet, setKOutlet] = useState([1.0]);
@@ -1170,12 +1177,12 @@ export function MinorLossesDiagram() {
               <>
                 <line x1="35" y1="30" x2="35" y2={30 + inletLoss * 3} className="stroke-yellow-400 stroke-2" />
                 <text x="45" y={30 + inletLoss * 1.5} className="text-[7px] fill-yellow-400">
-                  -{inletLoss.toFixed(2)} ft
+                  -{conv.length(inletLoss).toFixed(2)} {u.length}
                 </text>
                 
                 <line x1="180" y1={45 + inletLoss * 3} x2="180" y2={45 + inletLoss * 3 + outletLoss * 3} className="stroke-yellow-400 stroke-2" />
                 <text x="155" y={45 + inletLoss * 3 + outletLoss * 1.5} className="text-[7px] fill-yellow-400">
-                  -{outletLoss.toFixed(2)} ft
+                  -{conv.length(outletLoss).toFixed(2)} {u.length}
                 </text>
               </>
             )}
@@ -1188,8 +1195,8 @@ export function MinorLossesDiagram() {
           </div>
           {showLosses && (
             <div className="text-right">
-              <div>Inlet: {inletLoss.toFixed(3)} ft</div>
-              <div>Outlet: {outletLoss.toFixed(3)} ft</div>
+              <div>Inlet: {conv.length(inletLoss).toFixed(3)} {u.length}</div>
+              <div>Outlet: {conv.length(outletLoss).toFixed(3)} {u.length}</div>
             </div>
           )}
         </div>

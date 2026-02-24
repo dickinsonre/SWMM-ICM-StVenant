@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WATER_DEPTHS: Record<string, number> = {
@@ -10,6 +11,7 @@ const WATER_DEPTHS: Record<string, number> = {
 };
 
 export function IndianStepwellAnimation() {
+  const { u, conv } = useUnits();
   const [month, setMonth] = useState("Aug");
   const [animOffset, setAnimOffset] = useState(0);
 
@@ -73,10 +75,10 @@ export function IndianStepwellAnimation() {
           <rect x="30" y={wellTop} width="340" height={wellHeight} fill="url(#tempGrad)" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
-            Stepwell Cross-Section — 30m Deep
+            Stepwell Cross-Section — {conv.length(30).toFixed(0)}{u.length} Deep
           </text>
           <text x="200" y="27" textAnchor="middle" fontSize="7" fill="#64748b">
-            Month: {month} | Water Table: {waterDepth}m below surface
+            Month: {month} | Water Table: {conv.length(waterDepth).toFixed(0)}{u.length} below surface
           </text>
 
           {terraces.map((t, i) => {
@@ -113,7 +115,7 @@ export function IndianStepwellAnimation() {
                 )}
                 {i % 2 === 0 && !submerged && (
                   <text x={t.widthLeft - 3} y={y + 8} textAnchor="end" fontSize="5" fill="#64748b">
-                    {t.depth}m
+                    {conv.length(t.depth).toFixed(0)}{u.length}
                   </text>
                 )}
               </g>
@@ -197,7 +199,7 @@ export function IndianStepwellAnimation() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-water-depth">
               <span className="text-muted-foreground">Water Table:</span>{" "}
-              <span className="font-bold">{waterDepth}m deep</span>
+              <span className="font-bold">{conv.length(waterDepth).toFixed(0)}{u.length} deep</span>
             </div>
             <div data-testid="text-submerged-steps">
               <span className="text-muted-foreground">Submerged Steps:</span>{" "}
@@ -231,6 +233,7 @@ export function IndianStepwellAnimation() {
 type AztecScenario = "dry" | "flood1449" | "flush";
 
 export function AztecDikeAnimation() {
+  const { u, conv } = useUnits();
   const [scenario, setScenario] = useState<AztecScenario>("dry");
   const [sluiceOpen, setSluiceOpen] = useState(false);
   const [lakeLevel, setLakeLevel] = useState([2.0]);
@@ -290,14 +293,14 @@ export function AztecDikeAnimation() {
           <rect x="12" y="42" width="146" height="156" rx="7" fill={`rgba(139,115,85,${0.1 + level * 0.05})`} />
           <text x="85" y="70" textAnchor="middle" fontSize="9" fill="#8B7355" fontWeight="bold">Lake Texcoco</text>
           <text x="85" y="82" textAnchor="middle" fontSize="7" fill="#8B7355">(Brackish/Salt)</text>
-          <text x="85" y="94" textAnchor="middle" fontSize="7" fill="#8B7355">Level: {level.toFixed(1)}m</text>
+          <text x="85" y="94" textAnchor="middle" fontSize="7" fill="#8B7355">Level: {conv.length(level).toFixed(1)}{u.length}</text>
 
           {waterParticles(30, 110, 140, 130, 5, "#a78b5a")}
           {waterParticles(50, 150, 130, 140, 4, "#a78b5a")}
 
           <rect x="165" y="40" width="12" height="160" fill="#a78b5a" stroke="#8B7355" strokeWidth="2" rx="1" />
           <text x="171" y="35" textAnchor="middle" fontSize="6" fill="#8B7355" fontWeight="bold">DIKE</text>
-          <text x="171" y="210" textAnchor="middle" fontSize="5" fill="#8B7355">16 km</text>
+          <text x="171" y="210" textAnchor="middle" fontSize="5" fill="#8B7355">{conv.length(16000).toFixed(0)} {u.length}</text>
 
           {sluiceOpen && (
             <rect x="167" y="100" width="8" height="12" fill="#3b82f6" opacity="0.6" rx="1" />
@@ -338,13 +341,13 @@ export function AztecDikeAnimation() {
           <polygon points="30,280 60,250 140,250 170,280" fill="#a78b5a" stroke="#8B7355" strokeWidth="1.5" />
           <polygon points="50,275 70,258 130,258 150,275" fill="#8B7355" opacity="0.5" />
           <text x="100" y="270" textAnchor="middle" fontSize="5" fill="white">Earth + Stone Core</text>
-          <text x="30" y="290" fontSize="5" fill="#64748b">Base: 8m</text>
-          <text x="140" y="246" fontSize="5" fill="#64748b">Height: 4m</text>
+          <text x="30" y="290" fontSize="5" fill="#64748b">Base: {conv.length(8).toFixed(0)}{u.length}</text>
+          <text x="140" y="246" fontSize="5" fill="#64748b">Height: {conv.length(4).toFixed(0)}{u.length}</text>
 
           <rect x="200" y="220" width="190" height="70" fill="#f5f0e8" stroke="#8B7355" strokeWidth="1" rx="3" />
           <text x="295" y="235" textAnchor="middle" fontSize="7" fill="#64748b" fontWeight="bold">SWMM5 Model</text>
           <text x="210" y="250" fontSize="5" fill="#64748b">• Storage nodes for both lakes</text>
-          <text x="210" y="260" fontSize="5" fill="#64748b">• High weir link for dike (crest={dikeHeight}m)</text>
+          <text x="210" y="260" fontSize="5" fill="#64748b">• High weir link for dike (crest={conv.length(dikeHeight).toFixed(1)}{u.length})</text>
           <text x="210" y="270" fontSize="5" fill="#64748b">• Orifice + RTC for sluice gate</text>
           <text x="210" y="280" fontSize="5" fill="#64748b">• {overtopping ? "⚠ Weir overflow active!" : "Dike holding"}</text>
         </svg>
@@ -378,7 +381,7 @@ export function AztecDikeAnimation() {
             Sluice: {sluiceOpen ? "OPEN" : "CLOSED"}
           </Button>
           <div className="flex-1 space-y-1">
-            <label className="text-xs font-medium" data-testid="label-lake-level">Lake Level: {level.toFixed(1)}m</label>
+            <label className="text-xs font-medium" data-testid="label-lake-level">Lake Level: {conv.length(level).toFixed(1)}{u.length}</label>
             <Slider value={lakeLevel} onValueChange={setLakeLevel} min={1.0} max={4.0} step={0.1} data-testid="slider-lake-level" />
           </div>
         </div>
@@ -387,7 +390,7 @@ export function AztecDikeAnimation() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-lake-status">
               <span className="text-muted-foreground">Lake Texcoco:</span>{" "}
-              <span className="font-bold">{level.toFixed(1)}m ({level > 3.5 ? "Critical" : level > 2.5 ? "High" : "Normal"})</span>
+              <span className="font-bold">{conv.length(level).toFixed(1)}{u.length} ({level > 3.5 ? "Critical" : level > 2.5 ? "High" : "Normal"})</span>
             </div>
             <div data-testid="text-dike-status">
               <span className="text-muted-foreground">Dike Status:</span>{" "}
@@ -401,7 +404,7 @@ export function AztecDikeAnimation() {
             </div>
             <div data-testid="text-freshwater-level">
               <span className="text-muted-foreground">Freshwater Lagoon:</span>{" "}
-              <span className="font-bold">{freshwaterLevel.toFixed(1)}m</span>
+              <span className="font-bold">{conv.length(freshwaterLevel).toFixed(1)}{u.length}</span>
             </div>
           </div>
         </div>
@@ -409,7 +412,7 @@ export function AztecDikeAnimation() {
         <div className="bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 p-3" data-testid="text-historical-fact-aztec">
           <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">Historical Fact: </span>
           <span className="text-xs text-amber-800 dark:text-amber-200">
-            Nezahualcóyotl's Great Dike — 16 km long, protecting 200,000+ people from brackish flooding. The Aztecs separated salt and fresh water to sustain their island city of Tenochtitlan.
+            Nezahualcóyotl's Great Dike — {conv.length(16000).toFixed(0)} {u.length} long, protecting 200,000+ people from brackish flooding. The Aztecs separated salt and fresh water to sustain their island city of Tenochtitlan.
           </span>
         </div>
       </CardContent>
@@ -418,6 +421,7 @@ export function AztecDikeAnimation() {
 }
 
 export function DutchPolderAnimation() {
+  const { u, conv } = useUnits();
   const [rainfall, setRainfall] = useState([10]);
   const [windSpeed, setWindSpeed] = useState([20]);
   const [animOffset, setAnimOffset] = useState(0);
@@ -467,7 +471,7 @@ export function DutchPolderAnimation() {
         })}
         <circle cx={x} cy={hubY} r="2.5" fill="#8B7355" />
         <text x={x} y={baseY + 10} textAnchor="middle" fontSize="5" fill="#64748b">
-          {pumpPerMill.toFixed(1)} m³/min
+          {conv.volume(pumpPerMill).toFixed(1)} {u.volume}/min
         </text>
       </g>
     );
@@ -486,7 +490,7 @@ export function DutchPolderAnimation() {
           <rect x="0" y="0" width="400" height="300" fill="#f0f9ff" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
-            Polder Cross-Section — 4.5m Below Sea Level
+            Polder Cross-Section — {conv.length(4.5).toFixed(1)}{u.length} Below Sea Level
           </text>
 
           <rect x="0" y={seaY} width="70" height={250 - seaY} fill="rgba(59,130,246,0.3)" />
@@ -505,11 +509,11 @@ export function DutchPolderAnimation() {
           <text x="85" y={seaY + 30} textAnchor="middle" fontSize="6" fill="white" fontWeight="bold" transform="rotate(-80 85 150)">DIKE</text>
 
           <line x1="100" y1={seaY} x2="395" y2={seaY} stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="3,3" />
-          <text x="395" y={seaY - 3} textAnchor="end" fontSize="5" fill="#3b82f6">0.0m (Sea Level)</text>
+          <text x="395" y={seaY - 3} textAnchor="end" fontSize="5" fill="#3b82f6">0.0{u.length} (Sea Level)</text>
 
           <rect x="100" y={polderY} width="290" height={250 - polderY} fill="#dcfce7" stroke="#22c55e" strokeWidth="1" />
           <text x="245" y={polderY + 15} textAnchor="middle" fontSize="7" fill="#15803d" fontWeight="bold">POLDER FARMLAND</text>
-          <text x="245" y={polderY + 25} textAnchor="middle" fontSize="6" fill="#15803d">−4.5m below sea level</text>
+          <text x="245" y={polderY + 25} textAnchor="middle" fontSize="6" fill="#15803d">−{conv.length(4.5).toFixed(1)}{u.length} below sea level</text>
 
           {[0, 1, 2, 3, 4].map(i => (
             <line key={`grass-${i}`} x1={140 + i * 40} y1={polderY} x2={140 + i * 40} y2={polderY - 5} stroke="#22c55e" strokeWidth="1" />
@@ -548,15 +552,15 @@ export function DutchPolderAnimation() {
             );
           })}
 
-          <text x="5" y={polderY + 5} fontSize="5" fill="#64748b">−4.5m</text>
-          <text x="5" y={seaY + 4} fontSize="5" fill="#64748b">0.0m</text>
+          <text x="5" y={polderY + 5} fontSize="5" fill="#64748b">−{conv.length(4.5).toFixed(1)}{u.length}</text>
+          <text x="5" y={seaY + 4} fontSize="5" fill="#64748b">0.0{u.length}</text>
 
           {[1.5, 3.0].map((h, i) => {
             const y = polderY - (h / 4.5) * (polderY - seaY);
             return (
               <g key={`elev-${i}`}>
                 <line x1="100" y1={y} x2="110" y2={y} stroke="#94a3b8" strokeWidth="0.5" />
-                <text x="5" y={y + 3} fontSize="5" fill="#94a3b8">−{(4.5 - h).toFixed(1)}m</text>
+                <text x="5" y={y + 3} fontSize="5" fill="#94a3b8">−{conv.length(4.5 - h).toFixed(1)}{u.length}</text>
               </g>
             );
           })}
@@ -564,39 +568,39 @@ export function DutchPolderAnimation() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-rainfall">Rainfall: {rain} mm/day</label>
+            <label className="text-xs font-medium" data-testid="label-rainfall">Rainfall: {conv.rainfall(rain / 24).toFixed(1)} {u.rainfall}</label>
             <Slider value={rainfall} onValueChange={setRainfall} min={0} max={30} step={1} data-testid="slider-rainfall" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-wind-speed">Wind Speed: {wind} km/h</label>
+            <label className="text-xs font-medium" data-testid="label-wind-speed">Wind Speed: {conv.velocity(wind / 3.6).toFixed(1)} {u.velocity}</label>
             <Slider value={windSpeed} onValueChange={setWindSpeed} min={0} max={40} step={1} data-testid="slider-wind-speed" />
           </div>
         </div>
 
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3">
-          <div className="text-xs font-semibold mb-2 text-blue-700 dark:text-blue-300">Water Balance (m³/min)</div>
+          <div className="text-xs font-semibold mb-2 text-blue-700 dark:text-blue-300">Water Balance ({u.volume}/min)</div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-rain-inflow">
               <span className="text-muted-foreground">Rain on polder:</span>{" "}
-              <span className="font-bold text-blue-500">+{rainInflow.toFixed(1)}</span>
+              <span className="font-bold text-blue-500">+{conv.volume(rainInflow).toFixed(1)}</span>
             </div>
             <div data-testid="text-seepage">
               <span className="text-muted-foreground">Groundwater seepage:</span>{" "}
-              <span className="font-bold text-blue-500">+{seepage}</span>
+              <span className="font-bold text-blue-500">+{conv.volume(seepage).toFixed(0)}</span>
             </div>
             <div data-testid="text-evaporation">
               <span className="text-muted-foreground">Evaporation:</span>{" "}
-              <span className="font-bold text-green-500">−{evaporation}</span>
+              <span className="font-bold text-green-500">−{conv.volume(evaporation).toFixed(0)}</span>
             </div>
             <div data-testid="text-pumping">
               <span className="text-muted-foreground">Windmill pumping:</span>{" "}
-              <span className={`font-bold ${totalPumping > 0 ? "text-green-500" : "text-red-500"}`}>−{totalPumping.toFixed(1)}</span>
+              <span className={`font-bold ${totalPumping > 0 ? "text-green-500" : "text-red-500"}`}>−{conv.volume(totalPumping).toFixed(1)}</span>
             </div>
           </div>
           <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-700">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold" data-testid="text-net-balance">
-                Net Balance: <span className={netBalance > 0 ? "text-red-500" : "text-green-500"}>{netBalance > 0 ? "+" : ""}{netBalance.toFixed(1)} m³/min</span>
+                Net Balance: <span className={netBalance > 0 ? "text-red-500" : "text-green-500"}>{netBalance > 0 ? "+" : ""}{conv.volume(netBalance).toFixed(1)} {u.volume}/min</span>
               </span>
               {netBalance > 0 && (
                 <Badge variant="destructive" className="text-[10px]" data-testid="badge-flood-warning">
@@ -612,11 +616,11 @@ export function DutchPolderAnimation() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-windmill-capacity">
               <span className="text-muted-foreground">Windmill:</span>{" "}
-              <span className="font-bold">5 m³/min</span>
+              <span className="font-bold">{conv.volume(5).toFixed(0)} {u.volume}/min</span>
             </div>
             <div data-testid="text-gemaal-capacity">
               <span className="text-muted-foreground">Modern Gemaal:</span>{" "}
-              <span className="font-bold text-blue-600">500 m³/min</span>
+              <span className="font-bold text-blue-600">{conv.volume(500).toFixed(0)} {u.volume}/min</span>
             </div>
           </div>
         </div>
@@ -624,7 +628,7 @@ export function DutchPolderAnimation() {
         <div className="bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 p-3" data-testid="text-historical-fact-polder">
           <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">Historical Fact: </span>
           <span className="text-xs text-amber-800 dark:text-amber-200">
-            If wind stops, polder floods in 3.2 days — this is why the Dutch never sleep. The chain of windmills must lift water in stages, each mill raising it 1.5m to the next canal level.
+            If wind stops, polder floods in 3.2 days — this is why the Dutch never sleep. The chain of windmills must lift water in stages, each mill raising it {conv.length(1.5).toFixed(1)}{u.length} to the next canal level.
           </span>
         </div>
       </CardContent>
@@ -633,6 +637,7 @@ export function DutchPolderAnimation() {
 }
 
 export function RomanSiphonAnimation() {
+  const { u, conv } = useUnits();
   const [pipeDiameter, setPipeDiameter] = useState([0.20]);
   const [frictionFactor, setFrictionFactor] = useState([0.025]);
   const [animOffset, setAnimOffset] = useState(0);
@@ -718,12 +723,12 @@ export function RomanSiphonAnimation() {
           <rect x={headerX - 5} y={headerY - 15} width={30} height={20} fill="#a78b5a" stroke="#8B7355" strokeWidth="1.5" rx="2" />
           <rect x={headerX - 3} y={headerY - 10} width={26} height={12} fill="rgba(59,130,246,0.4)" rx="1" />
           <text x={headerX + 10} y={headerY - 18} textAnchor="middle" fontSize="6" fill="#8B7355" fontWeight="bold">Header Tank</text>
-          <text x={headerX + 10} y={headerY + 15} textAnchor="middle" fontSize="5" fill="#64748b">{headerElev}m</text>
+          <text x={headerX + 10} y={headerY + 15} textAnchor="middle" fontSize="5" fill="#64748b">{conv.length(headerElev).toFixed(0)}{u.length}</text>
 
           <rect x={receiverX - 25} y={receiverY - 15} width={30} height={20} fill="#a78b5a" stroke="#8B7355" strokeWidth="1.5" rx="2" />
           <rect x={receiverX - 23} y={receiverY - 10} width={26} height={12} fill="rgba(59,130,246,0.4)" rx="1" />
           <text x={receiverX - 10} y={receiverY - 18} textAnchor="middle" fontSize="6" fill="#8B7355" fontWeight="bold">Receiver</text>
-          <text x={receiverX - 10} y={receiverY + 15} textAnchor="middle" fontSize="5" fill="#64748b">{receiverElev}m</text>
+          <text x={receiverX - 10} y={receiverY + 15} textAnchor="middle" fontSize="5" fill="#64748b">{conv.length(receiverElev).toFixed(0)}{u.length}</text>
 
           {[-2, -1, 0, 1, 2].map(offset => (
             <path
@@ -737,7 +742,7 @@ export function RomanSiphonAnimation() {
             />
           ))}
 
-          <text x={valleyX} y={valleyY + 25} textAnchor="middle" fontSize="5" fill="#64748b">{valleyFloor}m (Valley Floor)</text>
+          <text x={valleyX} y={valleyY + 25} textAnchor="middle" fontSize="5" fill="#64748b">{conv.length(valleyFloor).toFixed(0)}{u.length} (Valley Floor)</text>
           <text x={valleyX} y={valleyY + 33} textAnchor="middle" fontSize="5" fill="#64748b">9 parallel lead pipes</text>
 
           {velocity > 0 && Array.from({ length: 12 }, (_, i) => {
@@ -793,17 +798,17 @@ export function RomanSiphonAnimation() {
           })}
 
           <text x={valleyX} y={270} textAnchor="middle" fontSize="5" fill="#64748b">
-            Max pressure at valley bottom: {maxPressure.toFixed(1)} atm ({((headerElev - valleyFloor) * 9.81 / 1000).toFixed(1)} MPa)
+            Max pressure at valley bottom: {conv.pressure(maxPressure * 101.325).toFixed(1)} {u.pressure} ({((headerElev - valleyFloor) * 9.81 / 1000).toFixed(1)} MPa)
           </text>
 
-          <text x="10" y={headerY + 4} fontSize="5" fill="#94a3b8">{headerElev}m</text>
-          <text x="10" y={valleyY + 4} fontSize="5" fill="#94a3b8">{valleyFloor}m</text>
-          <text x="10" y={receiverY + 4} fontSize="5" fill="#94a3b8">{receiverElev}m</text>
+          <text x="10" y={headerY + 4} fontSize="5" fill="#94a3b8">{conv.length(headerElev).toFixed(0)}{u.length}</text>
+          <text x="10" y={valleyY + 4} fontSize="5" fill="#94a3b8">{conv.length(valleyFloor).toFixed(0)}{u.length}</text>
+          <text x="10" y={receiverY + 4} fontSize="5" fill="#94a3b8">{conv.length(receiverElev).toFixed(0)}{u.length}</text>
         </svg>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-pipe-diameter">Pipe Diameter: {D.toFixed(2)}m</label>
+            <label className="text-xs font-medium" data-testid="label-pipe-diameter">Pipe Diameter: {conv.length(D).toFixed(2)}{u.length}</label>
             <Slider value={pipeDiameter} onValueChange={setPipeDiameter} min={0.10} max={0.30} step={0.01} data-testid="slider-pipe-diameter" />
           </div>
           <div className="space-y-1">
@@ -819,27 +824,27 @@ export function RomanSiphonAnimation() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-max-pressure">
               <span className="text-muted-foreground">Max Pressure:</span>{" "}
-              <span className="font-bold text-red-500">{maxPressure.toFixed(1)} atm</span>
+              <span className="font-bold text-red-500">{conv.pressure(maxPressure * 101.325).toFixed(1)} {u.pressure}</span>
             </div>
             <div data-testid="text-flow-velocity">
               <span className="text-muted-foreground">Velocity:</span>{" "}
-              <span className="font-bold">{velocity.toFixed(2)} m/s</span>
+              <span className="font-bold">{conv.velocity(velocity).toFixed(2)} {u.velocity}</span>
             </div>
             <div data-testid="text-total-flow">
               <span className="text-muted-foreground">Total Flow (9 pipes):</span>{" "}
-              <span className="font-bold text-blue-600">{totalFlow.toFixed(1)} L/s</span>
+              <span className="font-bold text-blue-600">{conv.flowSmall(totalFlow).toFixed(1)} {u.flowSmall}</span>
             </div>
             <div data-testid="text-head-loss">
               <span className="text-muted-foreground">Head Loss:</span>{" "}
-              <span className="font-bold">{headLoss.toFixed(2)} m</span>
+              <span className="font-bold">{conv.length(headLoss).toFixed(2)} {u.length}</span>
             </div>
             <div data-testid="text-pipe-length">
               <span className="text-muted-foreground">Pipe Length:</span>{" "}
-              <span className="font-bold">{(pipeLength).toFixed(0)} m</span>
+              <span className="font-bold">{conv.length(pipeLength).toFixed(0)} {u.length}</span>
             </div>
             <div data-testid="text-flow-per-pipe">
               <span className="text-muted-foreground">Per Pipe:</span>{" "}
-              <span className="font-bold">{flowPerPipe.toFixed(2)} L/s</span>
+              <span className="font-bold">{conv.flowSmall(flowPerPipe).toFixed(2)} {u.flowSmall}</span>
             </div>
           </div>
         </div>
@@ -847,7 +852,7 @@ export function RomanSiphonAnimation() {
         <div className="bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 p-3" data-testid="text-historical-fact-siphon">
           <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">Historical Fact: </span>
           <span className="text-xs text-amber-800 dark:text-amber-200">
-            Romans used 9 parallel pipes — smaller pipes = thicker wall ratio = higher pressure rating. Same principle as modern force mains. The Aspendos siphon crossed a 60m deep valley under 12 atmospheres of pressure.
+            Romans used 9 parallel pipes — smaller pipes = thicker wall ratio = higher pressure rating. Same principle as modern force mains. The Aspendos siphon crossed a {conv.length(60).toFixed(0)}{u.length} deep valley under 12 atmospheres of pressure.
           </span>
         </div>
       </CardContent>

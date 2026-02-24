@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function NewtonRaphsonConvergence() {
+  const { u, conv } = useUnits();
   const [nonlinearity, setNonlinearity] = useState([5]);
   const [animStep, setAnimStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,7 +88,7 @@ export function NewtonRaphsonConvergence() {
 
         <text x="30" y="20" fontSize="8" fill={color} fontWeight="bold">{label}</text>
         <text x="200" y="268" textAnchor="middle" fontSize="7" fill="#64748b">Iteration</text>
-        <text x="15" y="140" fontSize="7" fill="#64748b" transform="rotate(-90, 15, 140)">Q (m³/s)</text>
+        <text x="15" y="140" fontSize="7" fill="#64748b" transform="rotate(-90, 15, 140)">{`Q (${u.flow})`}</text>
 
         {visibleIters.length > 1 && (
           <polyline points={pathPoints} fill="none" stroke={color} strokeWidth="2" />
@@ -166,7 +168,7 @@ export function NewtonRaphsonConvergence() {
         <div className="bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 p-3" data-testid="text-convergence-insight">
           <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">Key Insight: </span>
           <span className="text-xs text-amber-800 dark:text-amber-200">
-            Both methods converge to Q≈{targetQ} m³/s, H≈{targetH} m. But Newton-Raphson converges quadratically (error² each step), while successive relaxation converges linearly. For nonlinear problems, ICM's approach is dramatically faster.
+            Both methods converge to Q≈{conv.flow(targetQ).toFixed(1)} {u.flow}, H≈{conv.length(targetH).toFixed(1)} {u.length}. But Newton-Raphson converges quadratically (error² each step), while successive relaxation converges linearly. For nonlinear problems, ICM's approach is dramatically faster.
           </span>
         </div>
       </CardContent>

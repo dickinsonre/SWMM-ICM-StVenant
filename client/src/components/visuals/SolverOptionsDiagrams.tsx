@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight } from "lucide-react";
+import { useUnits } from "@/contexts/UnitsContext";
 
 export function CFLStabilityDiagram() {
+  const { u, conv } = useUnits();
   const [routeStep, setRouteStep] = useState([15]);
   const [pipeLength, setPipeLength] = useState([300]);
   const [waveSpeed, setWaveSpeed] = useState([3]);
@@ -66,8 +68,8 @@ export function CFLStabilityDiagram() {
               
               {/* Length indicator */}
               <div className="flex justify-between mt-2 text-[9px] text-muted-foreground">
-                <span>0 m</span>
-                <span className="font-mono">{L} m</span>
+                <span>0 {u.length}</span>
+                <span className="font-mono">{conv.length(L).toFixed(0)} {u.length}</span>
               </div>
             </div>
 
@@ -130,7 +132,7 @@ export function CFLStabilityDiagram() {
 
             <div className="space-y-2">
               <Label htmlFor="pipe-length" className="text-sm font-medium">
-                Pipe Length (L): <span className="font-mono text-primary">{L} m</span>
+                Pipe Length (L): <span className="font-mono text-primary">{conv.length(L).toFixed(0)} {u.length}</span>
               </Label>
               <Slider
                 id="pipe-length"
@@ -145,7 +147,7 @@ export function CFLStabilityDiagram() {
 
             <div className="space-y-2">
               <Label htmlFor="wave-speed" className="text-sm font-medium">
-                Wave Speed (c): <span className="font-mono text-primary">{c} m/s</span>
+                Wave Speed (c): <span className="font-mono text-primary">{conv.velocity(c).toFixed(1)} {u.velocity}</span>
               </Label>
               <Slider
                 id="wave-speed"
