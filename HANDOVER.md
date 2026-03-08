@@ -19,10 +19,11 @@
    - 4.5 [27 Visual Component Files](#45-27-visual-component-files)
    - 4.6 [Interactive Calculators](#46-interactive-calculators)
    - 4.7 [Units Toggle (USA / SI)](#47-units-toggle-usa--si)
-   - 4.8 [Dark Mode / Theme System](#48-dark-mode--theme-system)
-   - 4.9 [Export System (JSON & Markdown)](#49-export-system-json--markdown)
-   - 4.10 [Executive Summary Card](#410-executive-summary-card)
-   - 4.11 [TOPIC_DIAGRAM_MAP — Cross-Referencing](#411-topic_diagram_map--cross-referencing)
+   - 4.8 [Favorites System](#48-favorites-system)
+   - 4.9 [Dark Mode / Theme System](#49-dark-mode--theme-system)
+   - 4.10 [Export System (JSON & Markdown)](#410-export-system-json--markdown)
+   - 4.11 [Executive Summary Card](#411-executive-summary-card)
+   - 4.12 [TOPIC_DIAGRAM_MAP — Cross-Referencing](#412-topic_diagram_map--cross-referencing)
 5. [Backend Deep Dive](#5-backend-deep-dive)
 6. [Data Layer](#6-data-layer)
    - 6.1 [comparison-data.ts](#61-comparison-datats)
@@ -50,6 +51,7 @@ This is an educational web application that provides a structured, interactive c
 - Provides four viewing modes: Visuals, Topic (accordion), Table (side-by-side), and Source Code
 - Includes animated SVG visualizations, canvas-based simulators, and slider-driven calculators
 - Supports a global **USA/SI units toggle** that converts all displayed values between imperial and metric
+- Provides a **Favorites system** — star any diagram or topic for quick access via a dedicated Favorites category
 - Offers **dark/light theme** toggle
 - Allows **JSON and Markdown export** of the entire knowledge base
 - Shows an **Executive Summary** comparison card
@@ -66,10 +68,11 @@ This is an educational web application that provides a structured, interactive c
 ┌─────────────────────────────────────────────────┐
 │                   Browser                        │
 │  React 18 + TypeScript + Tailwind + shadcn/ui   │
-│  ┌─────────┐  ┌──────────┐  ┌───────────────┐  │
-│  │Dashboard │  │ Contexts │  │27 Visual Comps│  │
-│  │(main pg) │  │Units/Theme│  │(SVG/Canvas)  │  │
-│  └─────────┘  └──────────┘  └───────────────┘  │
+│  ┌─────────┐  ┌──────────────┐  ┌─────────────┐│
+│  │Dashboard │  │   Contexts   │  │27 Visual    ││
+│  │(main pg) │  │Units/Theme/  │  │Comps (SVG/  ││
+│  │          │  │Favorites     │  │Canvas)      ││
+│  └─────────┘  └──────────────┘  └─────────────┘│
 │  ┌─────────────────────┐  ┌──────────────────┐  │
 │  │ comparison-data.ts  │  │source-code-snips │  │
 │  │ (knowledge base)    │  │(viewable source) │  │
@@ -143,7 +146,8 @@ The app is **primarily frontend-driven**. All comparison data, diagram logic, an
 │       │       ├── CalculatorDiagrams.tsx
 │       │       └── TimestepComparisonDiagram.tsx
 │       ├── contexts/
-│       │   └── UnitsContext.tsx              # USA/SI unit toggle context
+│       │   ├── UnitsContext.tsx              # USA/SI unit toggle context
+│       │   └── FavoritesContext.tsx          # localStorage-backed favorites system
 │       ├── data/
 │       │   ├── comparison-data.ts            # Knowledge base (KB object, topics, sources)
 │       │   └── source-code-snippets.ts       # Raw source code strings for Source tab
@@ -187,7 +191,7 @@ The app is **primarily frontend-driven**. All comparison data, diagram logic, an
 
 **`client/src/App.tsx`** — Wraps the app in providers and sets up routing:
 ```
-QueryClientProvider → UnitsProvider → Router
+QueryClientProvider → UnitsProvider → FavoritesProvider → Router
   Route "/" → Dashboard
   Route (fallback) → NotFound
 ```
@@ -201,11 +205,12 @@ QueryClientProvider → UnitsProvider → Router
 - **Header bar** — App title, "117 Interactive Diagrams" badge, view mode tabs, Units toggle (USA/SI), Theme toggle (dark/light), About dialog
 - **Executive Summary** — Always-visible comparison card at the top
 - **Content area** — Changes based on the active viewing mode
+- **Favorites** — Star-based bookmarking on every diagram and comparison topic, with a dedicated Favorites category
 - **Footer** — Companion tool links, version tracker
 
 **State variables:**
 - `activeView`: `"visuals" | "topic" | "table" | "source"` — which tab is active
-- `activeCategory`: which diagram category is selected in the sidebar
+- `activeCategory`: which diagram category is selected in the sidebar (including `"favorites"`)
 - `selectedFile`: which source file is open in the Source viewer
 
 ### 4.3 Four Viewing Modes
@@ -362,7 +367,37 @@ All calculators respect the global USA/SI toggle. Sliders maintain their ranges 
 
 **Key design decision:** All internal calculations, slider ranges, and state values remain in US units. Only the **display text** is wrapped with conversion functions. This avoids rounding errors and simplifies the codebase.
 
-### 4.8 Dark Mode / Theme System
+### 4.8 Favorites System
+
+**File:** `client/src/contexts/FavoritesContext.tsx`
+
+**How it works:**
+1. `FavoritesProvider` wraps the app (in `App.tsx`, inside `UnitsProvider`)
+2. Stores a `Set<string>` of favorite IDs in React state, persisted to `localStorage` under key `swmm-icm-favorites`
+3. Provides via context: `{ favorites, toggleFavorite, isFavorite, count, clearAll }`
+4. Components call `const { isFavorite, toggleFavorite } = useFavorites()` to read/write favorites
+
+**ID Conventions:**
+| Prefix | Type | Example |
+|--------|------|---------|
+| `d-` | Diagram | `d-preissmann-slot`, `d-roman-aqueduct`, `d-cfl-calc` |
+| `t-` | Comparison Topic | `t-governing_equations`, `t-pressurisation_surcharge` |
+
+**UI Components (defined in `dashboard.tsx`):**
+
+- **`FavoriteButton`** — Absolute-positioned star icon (`top-3 right-3`). Yellow fill when active, muted when inactive. Calls `toggleFavorite(id)` on click with `stopPropagation`.
+- **`Fav` wrapper** — `<div className="relative">` that wraps any diagram component and overlays a `FavoriteButton`. Usage: `<Fav id="d-slug"><DiagramComponent /></Fav>`
+- **Topic stars** — Inline star buttons on each Topic accordion trigger and Table view topic cell. Use `t-{topic.key}` IDs.
+- **Favorites category** — First entry in `DIAGRAM_CATEGORIES`, shown with a yellow star icon and red badge count in the category sidebar.
+- **Favorites view** — When the "Favorites" category is selected, renders:
+  - Empty state with guidance text when no favorites exist
+  - "Saved Diagrams" section showing favorited diagram components with category badges
+  - "Saved Comparisons" section showing favorited topics in an expandable accordion
+  - "Clear All" button to reset all favorites
+
+**`DIAGRAM_REGISTRY`** — Array of 117 entries (defined inside `Dashboard` component) mapping each diagram ID to its label, category, and React component. Used to resolve favorited diagram IDs back to renderable components.
+
+### 4.9 Dark Mode / Theme System
 
 **File:** `client/src/hooks/use-theme.tsx`
 
@@ -371,7 +406,7 @@ All calculators respect the global USA/SI toggle. Sliders maintain their ranges 
 - Uses CSS variables defined in `client/src/index.css` for all colors
 - Blue-themed palette in both light and dark modes
 
-### 4.9 Export System (JSON & Markdown)
+### 4.10 Export System (JSON & Markdown)
 
 Both exports are **client-side only** (no server calls):
 
@@ -385,7 +420,7 @@ Both exports are **client-side only** (no server calls):
 - Includes: title, summary table, all 15 comparison topics with bullet points, source list
 - Filename: `swmm5-icm-comparison.md`
 
-### 4.10 Executive Summary Card
+### 4.11 Executive Summary Card
 
 Always visible at the top of Visuals and Topic views. Provides a quick-reference comparison:
 
@@ -396,7 +431,7 @@ Always visible at the top of Visuals and Topic views. Provides a quick-reference
 | Best For | Urban drainage design | Complex integrated modeling |
 | ... | ... | ... |
 
-### 4.11 TOPIC_DIAGRAM_MAP — Cross-Referencing
+### 4.12 TOPIC_DIAGRAM_MAP — Cross-Referencing
 
 Defined in `dashboard.tsx` (lines ~112–126). Maps textual comparison topics to related interactive diagrams, enabling "Related Diagram" buttons in Topic and Table views.
 
@@ -768,7 +803,8 @@ Every file in `client/src/components/visuals/` imports and uses `useUnits()`. No
 
 ### State Management
 - **Local state:** `useState` for component-specific animation/interaction state
-- **Context:** `UnitsContext` for global unit system, `useTheme` for theme
+- **Context:** `UnitsContext` for global unit system, `FavoritesContext` for bookmark persistence, `useTheme` for theme
+- **Persistence:** Favorites stored in `localStorage` (key: `swmm-icm-favorites`), theme in `localStorage`
 - **Server state:** TanStack React Query (configured but minimally used since data is static)
 
 ### Import Aliases
@@ -792,9 +828,8 @@ import { asset } from "@assets/file";                     // → attached_assets
 7. **No i18n** — English only (unit labels change but all text is English)
 
 ### Potential Future Features
-- User authentication and saved preferences
+- User authentication and saved preferences (favorites currently use localStorage only)
 - Full-text search across all diagrams and topics
-- Bookmark/favorite diagrams
 - Printable PDF export
 - Additional unit systems (e.g., Australian, UK variations)
 - Database-backed content for easier updates
@@ -845,9 +880,11 @@ npm run db:push
 2. Follow the standard pattern: `useUnits()` hook, Card wrapper, SVG viewBox, setInterval animation
 3. Export the component as a named export
 4. Import and render it in the appropriate category section of `dashboard.tsx`
-5. Update the diagram count badge in the dashboard header
-6. Optionally add a cross-reference entry in `TOPIC_DIAGRAM_MAP`
-7. Optionally add source code to `source-code-snippets.ts` for the Source tab
+5. Wrap with `<Fav id="d-unique-slug">` for favorites support
+6. Add an entry to `DIAGRAM_REGISTRY` (inside `Dashboard` component) with matching ID, label, and category
+7. Update the diagram count badge in the dashboard header
+8. Optionally add a cross-reference entry in `TOPIC_DIAGRAM_MAP`
+9. Optionally add source code to `source-code-snippets.ts` for the Source tab
 
 ### Adding a New Category
 
