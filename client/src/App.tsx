@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { UnitsProvider } from "@/contexts/UnitsContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 
@@ -21,12 +22,14 @@ function App() {
   return (
     <ThemeProvider>
       <UnitsProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </QueryClientProvider>
+        <FavoritesProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </QueryClientProvider>
+        </FavoritesProvider>
       </UnitsProvider>
     </ThemeProvider>
   );

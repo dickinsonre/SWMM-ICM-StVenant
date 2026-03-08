@@ -147,3 +147,11 @@ The database schema currently includes a users table, though the primary applica
   - Created `UnitsContext.tsx` with provider, hook, unit labels, and conversion functions
   - Updated all 27 visual component files to use dynamic unit labels and conversion functions
   - Internal calculations stay in original units; only display values are converted
+- Added **Favorites System** — localStorage-backed star toggle on every diagram and comparison topic
+  - Created `FavoritesContext.tsx` with provider, hook (`useFavorites`), toggle/isFavorite/clearAll
+  - `<Fav>` wrapper component adds yellow star overlay to all 117 diagrams
+  - Star toggles on Topic accordion triggers and Table view topic cells
+  - Dedicated "Favorites" category in sidebar with badge count
+  - Favorites view shows saved diagrams (with category badge) and saved topics (expandable accordion)
+  - "Clear All" button to reset favorites; empty state with guidance text
+  - IDs: diagrams use `d-{slug}` prefix, topics use `t-{topic.key}` prefix

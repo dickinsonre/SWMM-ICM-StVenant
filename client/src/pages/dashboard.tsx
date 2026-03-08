@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { 
   Activity, 
   BookOpen, 
@@ -27,10 +27,14 @@ import {
   Landmark,
   MapPin,
   FlaskConical,
-  AlertTriangle
+  AlertTriangle,
+  Star,
+  Heart,
+  Trash2
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useUnits } from "@/contexts/UnitsContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -126,6 +130,7 @@ const TOPIC_DIAGRAM_MAP: Record<string, { category: string; label: string }[]> =
 };
 
 const DIAGRAM_CATEGORIES = [
+  { id: "favorites", label: "Favorites", icon: "star", count: 0 },
   { id: "solver", label: "Solver Mechanics", icon: "cpu", count: 16 },
   { id: "options", label: "Solver Options", icon: "settings", count: 8 },
   { id: "dynwave", label: "Dynamic Wave Options", icon: "zap", count: 10 },
@@ -144,12 +149,161 @@ const DIAGRAM_CATEGORIES = [
   { id: "historical", label: "Historical Engineering", icon: "landmark", count: 13 },
 ];
 
+function FavoriteButton({ id, className = "" }: { id: string; className?: string }) {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const fav = isFavorite(id);
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); toggleFavorite(id); }}
+      className={`absolute top-3 right-3 z-10 p-1.5 rounded-full transition-all ${fav ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-500" : "bg-muted/60 text-muted-foreground/40 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"} ${className}`}
+      title={fav ? "Remove from favorites" : "Add to favorites"}
+      data-testid={`button-favorite-${id}`}
+    >
+      <Star className={`h-4 w-4 ${fav ? "fill-yellow-500" : ""}`} />
+    </button>
+  );
+}
+
+function Fav({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <div className="relative">
+      <FavoriteButton id={id} />
+      {children}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { theme, toggleTheme } = useTheme();
   const { unitSystem, toggleUnits } = useUnits();
+  const { favorites, isFavorite, toggleFavorite, count: favCount, clearAll: clearFavorites } = useFavorites();
   const [activeView, setActiveView] = useState<"visuals" | "topic" | "table" | "source">("visuals");
   const [activeCategory, setActiveCategory] = useState("solver");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
+  const DIAGRAM_REGISTRY: { id: string; label: string; category: string; component: ReactNode }[] = [
+    { id: "d-discretization", label: "Spatial Discretization", category: "solver", component: <DiscretizationDiagram /> },
+    { id: "d-preissmann-slot", label: "Preissmann Slot", category: "solver", component: <PreissmannSlotDiagram /> },
+    { id: "d-wave-propagation", label: "Wave Propagation", category: "solver", component: <WavePropagationDiagram /> },
+    { id: "d-dry-network", label: "Dry Network", category: "solver", component: <DryNetworkDiagram /> },
+    { id: "d-manhole-vs-node", label: "Manhole vs Node", category: "solver", component: <ManholeVsNodeDiagram /> },
+    { id: "d-node-area", label: "Node Area", category: "solver", component: <NodeAreaDiagram /> },
+    { id: "d-preissmann-calc", label: "Preissmann Slot Calculator", category: "solver", component: <PreissmannSlotCalculator /> },
+    { id: "d-mannings-calc", label: "Manning's Flow Calculator", category: "solver", component: <ManningsFlowCalculator /> },
+    { id: "d-comp-points", label: "Computational Points", category: "solver", component: <ComputationalPointsDiagram /> },
+    { id: "d-surcharge-algo", label: "Surcharge Algorithm", category: "solver", component: <SurchargeAlgorithmDiagram /> },
+    { id: "d-live-network", label: "Live Network Comparison", category: "solver", component: <LiveNetworkComparison /> },
+    { id: "d-force-main", label: "Force Main Comparison", category: "solver", component: <ForceMainComparison /> },
+    { id: "d-backwater", label: "Backwater Propagation", category: "solver", component: <BackwaterPropagation /> },
+    { id: "d-newton-raphson", label: "Newton-Raphson Convergence", category: "solver", component: <NewtonRaphsonConvergence /> },
+    { id: "d-theta-weighting", label: "Theta Weighting", category: "solver", component: <ThetaWeightingAnimation /> },
+    { id: "d-staggered-grid", label: "Staggered Grid", category: "solver", component: <StaggeredGridAnimation /> },
+    { id: "d-cfl-stability", label: "CFL Stability", category: "options", component: <CFLStabilityDiagram /> },
+    { id: "d-adaptive-timestep", label: "Adaptive Timestep", category: "options", component: <AdaptiveTimestepDiagram /> },
+    { id: "d-surcharge-method", label: "Surcharge Method", category: "options", component: <SurchargeMethodDiagram /> },
+    { id: "d-theta-param", label: "Theta Parameter", category: "options", component: <ThetaParameterDiagram /> },
+    { id: "d-routing-flowchart", label: "Routing Flowchart", category: "options", component: <RoutingMethodFlowchart /> },
+    { id: "d-coupling-1d2d", label: "1D-2D Coupling", category: "options", component: <Coupling1D2DDiagram /> },
+    { id: "d-routing-comparison", label: "Routing Method Comparison", category: "options", component: <RoutingMethodComparison /> },
+    { id: "d-timestep-instability", label: "Timestep Instability", category: "options", component: <TimestepInstabilityAnimation /> },
+    { id: "d-inertial-terms", label: "Inertial Terms", category: "dynwave", component: <InertialTermsDiagram /> },
+    { id: "d-normal-flow", label: "Normal Flow Criterion", category: "dynwave", component: <NormalFlowCriterionDiagram /> },
+    { id: "d-surcharge-deep", label: "Surcharge Deep Dive", category: "dynwave", component: <SurchargeMethodDeepDiveDiagram /> },
+    { id: "d-variable-timestep", label: "Variable Timestep", category: "dynwave", component: <VariableTimestepDiagram /> },
+    { id: "d-conduit-lengthening", label: "Conduit Lengthening", category: "dynwave", component: <ConduitLengtheningDiagram /> },
+    { id: "d-min-nodal-area", label: "Min Nodal Surface Area", category: "dynwave", component: <MinNodalSurfaceAreaDiagram /> },
+    { id: "d-convergence-tol", label: "Convergence Tolerances", category: "dynwave", component: <ConvergenceTolerancesDiagram /> },
+    { id: "d-parallel-threads", label: "Parallel Threads", category: "dynwave", component: <ParallelThreadsDiagram /> },
+    { id: "d-froude-calc", label: "Froude Number Calculator", category: "dynwave", component: <FroudeNumberCalculator /> },
+    { id: "d-inertial-calc", label: "Inertial Terms Calculator", category: "dynwave", component: <InertialTermsCalculator /> },
+    { id: "d-wave-travel", label: "Wave Travel vs Timestep", category: "temporal", component: <WaveTravelVsTimestepDiagram /> },
+    { id: "d-adaptive-sim", label: "Adaptive Timestep Simulator", category: "temporal", component: <AdaptiveTimestepSimulatorDiagram /> },
+    { id: "d-conduit-cheat", label: "Conduit Lengthening Cheat Code", category: "temporal", component: <ConduitLengtheningCheatCodeDiagram /> },
+    { id: "d-dry-start", label: "Dry Start vs Base Flow", category: "temporal", component: <DryStartVsBaseFlowDiagram /> },
+    { id: "d-cfl-calc", label: "CFL Stability Calculator", category: "temporal", component: <CFLStabilityCalculator /> },
+    { id: "d-timestep-efficiency", label: "TimeStep Efficiency Estimator", category: "temporal", component: <TimeStepEfficiencyEstimator /> },
+    { id: "d-control-logic", label: "Control Logic Builder", category: "controls", component: <ControlLogicBuilderDiagram /> },
+    { id: "d-execution-timeline", label: "Execution Timeline", category: "controls", component: <ExecutionTimelineDiagram /> },
+    { id: "d-controller-types", label: "Controller Types", category: "controls", component: <ControllerTypesDiagram /> },
+    { id: "d-convergence-snap", label: "Convergence Snapshots", category: "advanced", component: <ConvergenceSnapshotsDiagram /> },
+    { id: "d-mass-balance", label: "Mass Balance Error", category: "advanced", component: <MassBalanceErrorDiagram /> },
+    { id: "d-oscillation", label: "Oscillation Challenge", category: "advanced", component: <OscillationChallengeDiagram /> },
+    { id: "d-wetting-front", label: "Wetting Front", category: "advanced", component: <WettingFrontDiagram /> },
+    { id: "d-timestep-dash", label: "Timestep Dashboard", category: "advanced", component: <TimestepDashboardDiagram /> },
+    { id: "d-solver-decision", label: "Solver Decision Tree", category: "advanced", component: <SolverDecisionTreeDiagram /> },
+    { id: "d-timestep-comparison", label: "Timestep Comparison", category: "advanced", component: <TimestepComparisonDiagram /> },
+    { id: "d-conduit-sensitivity", label: "Conduit Length Sensitivity", category: "advanced", component: <ConduitLengthSensitivity /> },
+    { id: "d-migration-pitfalls", label: "Common Migration Pitfalls", category: "advanced", component: <CommonPitfalls /> },
+    { id: "d-runoff-process", label: "Runoff Process", category: "hydrologic", component: <RunoffProcessDiagram /> },
+    { id: "d-rtk", label: "RTK Method", category: "hydrologic", component: <RTKDiagram /> },
+    { id: "d-buildup-washoff", label: "Buildup & Washoff", category: "hydrologic", component: <BuildupWashoffDiagram /> },
+    { id: "d-hydro-workflow", label: "Hydrologic Workflow", category: "hydrologic", component: <HydrologicWorkflowDiagram /> },
+    { id: "d-nonlinear-reservoir", label: "Nonlinear Reservoir", category: "hydrologic", component: <NonlinearReservoirAnimation /> },
+    { id: "d-width-sensitivity", label: "Width Sensitivity", category: "hydrologic", component: <WidthSensitivityAnimation /> },
+    { id: "d-snowmelt", label: "Snowmelt Algorithms", category: "climate", component: <SnowmeltAlgorithmsDiagram /> },
+    { id: "d-infiltration", label: "Infiltration Shootout", category: "climate", component: <InfiltrationShootoutDiagram /> },
+    { id: "d-baseflow", label: "Base Flow Stability", category: "icm", component: <BaseFlowStabilityDiagram /> },
+    { id: "d-spatial-discr", label: "Spatial Discretization (ICM)", category: "icm", component: <SpatialDiscretizationDiagram /> },
+    { id: "d-icm-preissmann", label: "ICM Preissmann Slot", category: "icm", component: <ICMPreissmannSlotDiagram /> },
+    { id: "d-icm-adaptive", label: "Adaptive Time Stepping (ICM)", category: "icm", component: <AdaptiveTimeSteppingDiagram /> },
+    { id: "d-headloss-trans", label: "Headloss Transition", category: "icm", component: <HeadlossTransitionDiagram /> },
+    { id: "d-cold-start", label: "Cold Start Initialization", category: "icm", component: <ColdStartInitializationDiagram /> },
+    { id: "d-headloss-junction", label: "Headloss Junction", category: "icm", component: <HeadlossJunctionDiagram /> },
+    { id: "d-headloss-surcharge", label: "Headloss Surcharge Transition", category: "icm", component: <HeadlossSurchargeTransitionDiagram /> },
+    { id: "d-headloss-inference", label: "Headloss Inference", category: "icm", component: <HeadlossInferenceDiagram /> },
+    { id: "d-infosewer", label: "InfoSewer Emulation", category: "icm", component: <InfoSewerSteadyStateEmulationDiagram /> },
+    { id: "d-surface-flooding", label: "Surface Flooding", category: "icm", component: <SurfaceFloodingDiagram /> },
+    { id: "d-three-engine", label: "Three-Engine Comparison", category: "icm", component: <ICMSWMMEngineComparison /> },
+    { id: "d-manhole-sim", label: "Manhole Hydraulics Simulator", category: "icm", component: <ICMManholeSimulator /> },
+    { id: "d-1d2d-coupling", label: "1D-2D Coupling (ICM)", category: "icm", component: <OneDTwoDCoupling /> },
+    { id: "d-manhole-storage", label: "Manhole Storage Volume", category: "icm", component: <ManholeStorageVolume /> },
+    { id: "d-flood-type", label: "Flood Type Comparison", category: "icm", component: <FloodTypeComparison /> },
+    { id: "d-inlet-element", label: "Inlet Elements", category: "inlets", component: <InletElementDiagram /> },
+    { id: "d-hec22", label: "HEC-22 Calculator", category: "inlets", component: <HEC22InletCalculatorDiagram /> },
+    { id: "d-flow-transition", label: "Flow Transition", category: "inlets", component: <FlowTransitionDiagram /> },
+    { id: "d-inlet-efficiency", label: "Inlet Efficiency Curves", category: "inlets", component: <InletEfficiencyCurvesDiagram /> },
+    { id: "d-lid-suds", label: "LID vs SUDS", category: "green", component: <LIDvsSUDSDiagram /> },
+    { id: "d-dual-solver", label: "Dual Solver Architecture", category: "green", component: <DualSolverArchitectureDiagram /> },
+    { id: "d-lid-layer", label: "LID Layer Stack", category: "green", component: <LIDLayerStackAnimation /> },
+    { id: "d-input-parser", label: "Input File Parser", category: "architecture", component: <InputFileParserDiagram /> },
+    { id: "d-matrix-solver", label: "Matrix Solver", category: "architecture", component: <MatrixSolverDiagram /> },
+    { id: "d-rtc-rules", label: "RTC Rules", category: "architecture", component: <RTCRulesDiagram /> },
+    { id: "d-mass-routing", label: "Mass Routing", category: "architecture", component: <MassRoutingDiagram /> },
+    { id: "d-surcharge-code", label: "Surcharge Code", category: "architecture", component: <SurchargeCodeDiagram /> },
+    { id: "d-gw-exchange", label: "Groundwater Exchange", category: "architecture", component: <GroundwaterExchangeDiagram /> },
+    { id: "d-minor-losses", label: "Minor Losses", category: "architecture", component: <MinorLossesDiagram /> },
+    { id: "d-reporting", label: "Reporting System", category: "architecture", component: <ReportingSystemDiagram /> },
+    { id: "d-outfall-types", label: "Outfall Types", category: "boundary", component: <OutfallTypesAnimation /> },
+    { id: "d-inflow-types", label: "Inflow Types", category: "boundary", component: <InflowTypesAnimation /> },
+    { id: "d-treatment-nodes", label: "Treatment at Nodes", category: "boundary", component: <TreatmentAtNodesAnimation /> },
+    { id: "d-coeff-conversion", label: "Coefficient Conversion", category: "boundary", component: <CoefficientConversionAnimation /> },
+    { id: "d-cso", label: "CSO Modeling", category: "scenarios", component: <CSOModelingAnimation /> },
+    { id: "d-detention", label: "Detention Pond", category: "scenarios", component: <DetentionPondAnimation /> },
+    { id: "d-parallel-pipe", label: "Parallel Pipe Analysis", category: "scenarios", component: <ParallelPipeAnimation /> },
+    { id: "d-calibration", label: "Calibration Visual", category: "scenarios", component: <CalibrationVisualAnimation /> },
+    { id: "d-loop-detection", label: "Loop Detection", category: "performance", component: <LoopDetectionAnimation /> },
+    { id: "d-boundary-influence", label: "Boundary Influence", category: "performance", component: <BoundaryInfluenceAnimation /> },
+    { id: "d-perf-scaling", label: "Performance Scaling", category: "performance", component: <PerformanceScalingAnimation /> },
+    { id: "d-warnings", label: "Warning Messages Decoded", category: "performance", component: <WarningMessagesAnimation /> },
+    { id: "d-solver-evolution", label: "Solver Evolution Timeline", category: "performance", component: <SolverEvolutionTimeline /> },
+    { id: "d-equations", label: "Saint-Venant Equations", category: "performance", component: <EquationsSideBySideAnimation /> },
+    { id: "d-roman-aqueduct", label: "Roman Aqueduct", category: "historical", component: <RomanAqueductAnimation /> },
+    { id: "d-dujiangyan", label: "Dujiangyan", category: "historical", component: <DujiangyanAnimation /> },
+    { id: "d-inca-fountain", label: "Inca Fountains", category: "historical", component: <IncaFountainAnimation /> },
+    { id: "d-persian-qanat", label: "Persian Qanat", category: "historical", component: <PersianQanatAnimation /> },
+    { id: "d-indian-stepwell", label: "Indian Stepwell", category: "historical", component: <IndianStepwellAnimation /> },
+    { id: "d-aztec-dike", label: "Aztec Dike", category: "historical", component: <AztecDikeAnimation /> },
+    { id: "d-dutch-polder", label: "Dutch Polder", category: "historical", component: <DutchPolderAnimation /> },
+    { id: "d-roman-siphon", label: "Roman Siphon", category: "historical", component: <RomanSiphonAnimation /> },
+    { id: "d-maya-filtration", label: "Maya Filtration", category: "historical", component: <MayaFiltrationAnimation /> },
+    { id: "d-khmer-baray", label: "Khmer Baray", category: "historical", component: <KhmerBarayAnimation /> },
+    { id: "d-cloaca-maxima", label: "Cloaca Maxima", category: "historical", component: <CloacaMaximaAnimation /> },
+    { id: "d-indus-valley", label: "Indus Valley Drains", category: "historical", component: <IndusValleyDrainAnimation /> },
+    { id: "d-archimedes-screw", label: "Archimedes Screw", category: "historical", component: <ArchimedesScrewAnimation /> },
+  ];
+
+  const favoritedDiagrams = DIAGRAM_REGISTRY.filter(d => isFavorite(d.id));
+  const favoritedTopics = TOPIC_ORDER.filter(t => isFavorite(`t-${t.key}`));
 
   const handleExport = (format: "json" | "md") => {
     let content = "";
@@ -504,7 +658,8 @@ export default function Dashboard() {
              {/* Category Menu */}
              <div className="flex flex-wrap gap-2 p-4 bg-muted/30 rounded-lg border border-border" data-testid="diagram-category-menu">
                {DIAGRAM_CATEGORIES.map(cat => {
-                 const IconComponent = cat.id === "solver" ? Cpu : 
+                 const IconComponent = cat.id === "favorites" ? Star :
+                                       cat.id === "solver" ? Cpu : 
                                        cat.id === "options" ? Settings : 
                                        cat.id === "dynwave" ? Zap : 
                                        cat.id === "temporal" ? Clock : 
@@ -519,22 +674,130 @@ export default function Dashboard() {
                                       cat.id === "scenarios" ? FlaskConical :
                                       cat.id === "performance" ? AlertTriangle :
                                       cat.id === "historical" ? Landmark : Code;
+                 const displayCount = cat.id === "favorites" ? favCount : cat.count;
                  return (
                    <Button
                      key={cat.id}
-                     variant={activeCategory === cat.id ? "default" : "outline"}
+                     variant={activeCategory === cat.id ? "default" : (cat.id === "favorites" && favCount > 0) ? "secondary" : "outline"}
                      size="sm"
                      onClick={() => setActiveCategory(cat.id)}
-                     className="flex items-center gap-2"
+                     className={`flex items-center gap-2 ${cat.id === "favorites" && favCount > 0 ? "border-yellow-300 dark:border-yellow-700" : ""}`}
                      data-testid={`button-category-${cat.id}`}
                    >
-                     <IconComponent className="h-4 w-4" />
+                     <IconComponent className={`h-4 w-4 ${cat.id === "favorites" && favCount > 0 ? "fill-yellow-500 text-yellow-500" : ""}`} />
                      {cat.label}
-                     {activeCategory === cat.id && <ChevronRight className="h-3 w-3 ml-1" />}
+                     {cat.id === "favorites" && favCount > 0 && (
+                       <Badge variant="destructive" className="text-[10px] px-1.5 py-0 ml-1 h-4 min-w-[18px] flex items-center justify-center">{favCount}</Badge>
+                     )}
+                     {activeCategory === cat.id && cat.id !== "favorites" && <ChevronRight className="h-3 w-3 ml-1" />}
                    </Button>
                  );
                })}
              </div>
+
+             {/* Favorites */}
+             {activeCategory === "favorites" && (
+               <div className="space-y-6" data-testid="section-favorites">
+                 <div className="mb-4 flex items-center justify-between">
+                   <div>
+                     <h3 className="text-2xl font-bold tracking-tight mb-2 flex items-center gap-2">
+                       <Star className="h-6 w-6 text-yellow-500 fill-yellow-500" />
+                       Your Favorites
+                     </h3>
+                     <p className="text-muted-foreground">Quick access to your saved diagrams and comparisons. Click the star on any diagram or topic to add it here.</p>
+                   </div>
+                   {favCount > 0 && (
+                     <Button variant="outline" size="sm" onClick={clearFavorites} className="gap-2 text-destructive hover:text-destructive" data-testid="button-clear-favorites">
+                       <Trash2 className="h-3.5 w-3.5" />
+                       Clear All
+                     </Button>
+                   )}
+                 </div>
+                 {favCount === 0 ? (
+                   <Card className="p-12 text-center border-dashed">
+                     <Star className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
+                     <h4 className="text-lg font-semibold mb-2">No favorites yet</h4>
+                     <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                       Click the star icon on any diagram or comparison topic to save it here for quick access.
+                     </p>
+                   </Card>
+                 ) : (
+                   <>
+                     {favoritedDiagrams.length > 0 && (
+                       <div>
+                         <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                           <BarChart2 className="h-4 w-4" />
+                           Saved Diagrams ({favoritedDiagrams.length})
+                         </h4>
+                         <div className="grid md:grid-cols-1 gap-6">
+                           {favoritedDiagrams.map(d => (
+                             <Fav key={d.id} id={d.id}>
+                               <div>
+                                 <Badge variant="secondary" className="mb-2 text-[10px]">{DIAGRAM_CATEGORIES.find(c => c.id === d.category)?.label}</Badge>
+                                 {d.component}
+                               </div>
+                             </Fav>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+                     {favoritedTopics.length > 0 && (
+                       <div>
+                         <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                           <BookOpen className="h-4 w-4" />
+                           Saved Comparisons ({favoritedTopics.length})
+                         </h4>
+                         <Accordion type="single" collapsible className="w-full space-y-4">
+                           {favoritedTopics.map(topic => (
+                             <AccordionItem key={topic.key} value={topic.key} className="border border-border rounded-lg bg-card px-4 shadow-sm overflow-hidden">
+                               <AccordionTrigger className="hover:no-underline py-4">
+                                 <div className="flex items-center gap-3 text-left flex-1">
+                                   <button
+                                     onClick={(e) => { e.stopPropagation(); toggleFavorite(`t-${topic.key}`); }}
+                                     className="p-1 rounded-full bg-yellow-100 dark:bg-yellow-900/40 text-yellow-500"
+                                     data-testid={`button-unfav-topic-${topic.key}`}
+                                   >
+                                     <Star className="h-3.5 w-3.5 fill-yellow-500" />
+                                   </button>
+                                   <span className="font-semibold text-lg">{topic.label}</span>
+                                 </div>
+                               </AccordionTrigger>
+                               <AccordionContent className="pb-6 pt-2">
+                                 <div className="grid md:grid-cols-2 gap-8 relative">
+                                   <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2"></div>
+                                   <div className="space-y-3">
+                                     <h4 className="font-medium text-sm text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                                       <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                                       SWMM 5
+                                     </h4>
+                                     <ul className="space-y-3">
+                                       {(KB.swmm5.topics as any)[topic.key].map((point: string, i: number) => (
+                                         <li key={i} className="text-sm text-muted-foreground leading-relaxed pl-4 border-l-2 border-border/50">{point}</li>
+                                       ))}
+                                     </ul>
+                                   </div>
+                                   <div className="space-y-3">
+                                     <h4 className="font-medium text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                       InfoWorks ICM
+                                     </h4>
+                                     <ul className="space-y-3">
+                                       {(KB.icm.topics as any)[topic.key].map((point: string, i: number) => (
+                                         <li key={i} className="text-sm text-muted-foreground leading-relaxed pl-4 border-l-2 border-border/50">{point}</li>
+                                       ))}
+                                     </ul>
+                                   </div>
+                                 </div>
+                               </AccordionContent>
+                             </AccordionItem>
+                           ))}
+                         </Accordion>
+                       </div>
+                     )}
+                   </>
+                 )}
+               </div>
+             )}
 
              {/* Solver Mechanics */}
              {activeCategory === "solver" && (
@@ -544,52 +807,52 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Core discretization and fundamental solver architecture differences.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <DiscretizationDiagram />
-                    <PreissmannSlotDiagram />
+                    <Fav id="d-discretization"><DiscretizationDiagram /></Fav>
+                    <Fav id="d-preissmann-slot"><PreissmannSlotDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <WavePropagationDiagram />
-                    <DryNetworkDiagram />
+                    <Fav id="d-wave-propagation"><WavePropagationDiagram /></Fav>
+                    <Fav id="d-dry-network"><DryNetworkDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ManholeVsNodeDiagram />
+                    <Fav id="d-manhole-vs-node"><ManholeVsNodeDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6 max-w-3xl mx-auto">
-                    <NodeAreaDiagram />
+                    <Fav id="d-node-area"><NodeAreaDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
                    <p className="text-muted-foreground text-sm">Hands-on tools to explore solver differences and build intuition.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <PreissmannSlotCalculator />
-                    <ManningsFlowCalculator />
-                    <ComputationalPointsDiagram />
-                    <SurchargeAlgorithmDiagram />
+                    <Fav id="d-preissmann-calc"><PreissmannSlotCalculator /></Fav>
+                    <Fav id="d-mannings-calc"><ManningsFlowCalculator /></Fav>
+                    <Fav id="d-comp-points"><ComputationalPointsDiagram /></Fav>
+                    <Fav id="d-surcharge-algo"><SurchargeAlgorithmDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Network-Level Simulation</h4>
                    <p className="text-muted-foreground text-sm">Watch how the same network behaves under each solver and explore force main differences.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <LiveNetworkComparison />
-                    <ForceMainComparison />
+                    <Fav id="d-live-network"><LiveNetworkComparison /></Fav>
+                    <Fav id="d-force-main"><ForceMainComparison /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Backwater Effects</h4>
                    <p className="text-muted-foreground text-sm">How downstream boundary changes propagate upstream through each solver's computational grid.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <BackwaterPropagation />
+                    <Fav id="d-backwater"><BackwaterPropagation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Numerical Methods Deep Dive</h4>
                    <p className="text-muted-foreground text-sm">Convergence behavior, weighting schemes, and computational grid differences between the two solvers.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <NewtonRaphsonConvergence />
-                    <ThetaWeightingAnimation />
-                    <StaggeredGridAnimation />
+                    <Fav id="d-newton-raphson"><NewtonRaphsonConvergence /></Fav>
+                    <Fav id="d-theta-weighting"><ThetaWeightingAnimation /></Fav>
+                    <Fav id="d-staggered-grid"><StaggeredGridAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -602,24 +865,24 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Interactive controls that engineers use to tune model behavior.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <CFLStabilityDiagram />
-                    <AdaptiveTimestepDiagram />
+                    <Fav id="d-cfl-stability"><CFLStabilityDiagram /></Fav>
+                    <Fav id="d-adaptive-timestep"><AdaptiveTimestepDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <SurchargeMethodDiagram />
-                    <ThetaParameterDiagram />
+                    <Fav id="d-surcharge-method"><SurchargeMethodDiagram /></Fav>
+                    <Fav id="d-theta-param"><ThetaParameterDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <RoutingMethodFlowchart />
-                    <Coupling1D2DDiagram />
+                    <Fav id="d-routing-flowchart"><RoutingMethodFlowchart /></Fav>
+                    <Fav id="d-coupling-1d2d"><Coupling1D2DDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Routing & Stability Analysis</h4>
                    <p className="text-muted-foreground text-sm">Compare routing methods side-by-side and explore what happens when timesteps are too large.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <RoutingMethodComparison />
-                    <TimestepInstabilityAnimation />
+                    <Fav id="d-routing-comparison"><RoutingMethodComparison /></Fav>
+                    <Fav id="d-timestep-instability"><TimestepInstabilityAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -632,33 +895,33 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Deep insights into solver convergence, stability, and practical engineering scenarios.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <ConvergenceSnapshotsDiagram />
-                    <MassBalanceErrorDiagram />
+                    <Fav id="d-convergence-snap"><ConvergenceSnapshotsDiagram /></Fav>
+                    <Fav id="d-mass-balance"><MassBalanceErrorDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <OscillationChallengeDiagram />
-                    <WettingFrontDiagram />
+                    <Fav id="d-oscillation"><OscillationChallengeDiagram /></Fav>
+                    <Fav id="d-wetting-front"><WettingFrontDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <TimestepDashboardDiagram />
-                    <SolverDecisionTreeDiagram />
+                    <Fav id="d-timestep-dash"><TimestepDashboardDiagram /></Fav>
+                    <Fav id="d-solver-decision"><SolverDecisionTreeDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <TimestepComparisonDiagram />
+                    <Fav id="d-timestep-comparison"><TimestepComparisonDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Conduit Discretization Impact</h4>
                    <p className="text-muted-foreground text-sm">How conduit length and element count affect accuracy.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ConduitLengthSensitivity />
+                    <Fav id="d-conduit-sensitivity"><ConduitLengthSensitivity /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Migration Pitfalls</h4>
                    <p className="text-muted-foreground text-sm">Common mistakes when comparing or converting between solvers.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <CommonPitfalls />
+                    <Fav id="d-migration-pitfalls"><CommonPitfalls /></Fav>
                  </div>
                </div>
              )}
@@ -671,22 +934,22 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Rainfall-runoff transformation, RDII, and water quality modeling.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <HydrologicWorkflowDiagram />
+                    <Fav id="d-hydro-workflow"><HydrologicWorkflowDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <RunoffProcessDiagram />
-                    <RTKDiagram />
+                    <Fav id="d-runoff-process"><RunoffProcessDiagram /></Fav>
+                    <Fav id="d-rtk"><RTKDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <BuildupWashoffDiagram />
+                    <Fav id="d-buildup-washoff"><BuildupWashoffDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Subcatchment Runoff Mechanics</h4>
                    <p className="text-muted-foreground text-sm">The nonlinear reservoir model and how width controls hydrograph shape.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <NonlinearReservoirAnimation />
-                    <WidthSensitivityAnimation />
+                    <Fav id="d-nonlinear-reservoir"><NonlinearReservoirAnimation /></Fav>
+                    <Fav id="d-width-sensitivity"><WidthSensitivityAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -699,8 +962,8 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Snowmelt algorithms and infiltration method comparisons.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <SnowmeltAlgorithmsDiagram />
-                    <InfiltrationShootoutDiagram />
+                    <Fav id="d-snowmelt"><SnowmeltAlgorithmsDiagram /></Fav>
+                    <Fav id="d-infiltration"><InfiltrationShootoutDiagram /></Fav>
                  </div>
                </div>
              )}
@@ -713,17 +976,17 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">LID/SUDS controls and ICM's dual-solver architecture.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <LIDvsSUDSDiagram />
+                    <Fav id="d-lid-suds"><LIDvsSUDSDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <DualSolverArchitectureDiagram />
+                    <Fav id="d-dual-solver"><DualSolverArchitectureDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">LID Layer Mechanics</h4>
                    <p className="text-muted-foreground text-sm">Interactive cross-section of a bio-retention cell showing infiltration, storage, and underdrain processes.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <LIDLayerStackAnimation />
+                    <Fav id="d-lid-layer"><LIDLayerStackAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -736,64 +999,64 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Interactive diagrams explaining InfoWorks ICM's critical solver parameters and numerical stability controls.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <BaseFlowStabilityDiagram />
-                    <SpatialDiscretizationDiagram />
-                    <ICMPreissmannSlotDiagram />
-                    <AdaptiveTimeSteppingDiagram />
-                    <HeadlossTransitionDiagram />
-                    <ColdStartInitializationDiagram />
+                    <Fav id="d-baseflow"><BaseFlowStabilityDiagram /></Fav>
+                    <Fav id="d-spatial-discr"><SpatialDiscretizationDiagram /></Fav>
+                    <Fav id="d-icm-preissmann"><ICMPreissmannSlotDiagram /></Fav>
+                    <Fav id="d-icm-adaptive"><AdaptiveTimeSteppingDiagram /></Fav>
+                    <Fav id="d-headloss-trans"><HeadlossTransitionDiagram /></Fav>
+                    <Fav id="d-cold-start"><ColdStartInitializationDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Junction Headloss Mechanics</h4>
                    <p className="text-muted-foreground text-sm">Physics of energy loss at junctions and transitions.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <HeadlossJunctionDiagram />
-                    <HeadlossSurchargeTransitionDiagram />
-                    <HeadlossInferenceDiagram />
+                    <Fav id="d-headloss-junction"><HeadlossJunctionDiagram /></Fav>
+                    <Fav id="d-headloss-surcharge"><HeadlossSurchargeTransitionDiagram /></Fav>
+                    <Fav id="d-headloss-inference"><HeadlossInferenceDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Model Translation & Workflows</h4>
                    <p className="text-muted-foreground text-sm">Bridging workflows between InfoSewer and ICM.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <InfoSewerSteadyStateEmulationDiagram />
+                    <Fav id="d-infosewer"><InfoSewerSteadyStateEmulationDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Surface Flooding Approach</h4>
                    <p className="text-muted-foreground text-sm">Compare SWMM5's ponded area vs ICM's full 2D mesh for overland flow.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <SurfaceFloodingDiagram />
+                    <Fav id="d-surface-flooding"><SurfaceFloodingDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Three-Engine Comparison</h4>
                    <p className="text-muted-foreground text-sm">EPA SWMM5 vs ICM SWMM (embedded) vs ICM InfoWorks (native) — which engine to use when.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ICMSWMMEngineComparison />
+                    <Fav id="d-three-engine"><ICMSWMMEngineComparison /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Manhole Hydraulics Simulator</h4>
                    <p className="text-muted-foreground text-sm">Interactive ICM manhole with inlet/outlet pipes, gate valve, and head-driven orifice outflow — watch the water level respond in real time.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ICMManholeSimulator />
+                    <Fav id="d-manhole-sim"><ICMManholeSimulator /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">1D-2D Coupling</h4>
                    <p className="text-muted-foreground text-sm">ICM's signature capability — coupling underground pipe networks with surface flood routing.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <OneDTwoDCoupling />
+                    <Fav id="d-1d2d-coupling"><OneDTwoDCoupling /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Storage & Flooding</h4>
                    <p className="text-muted-foreground text-sm">How each solver computes manhole storage volume and handles surface flooding.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <ManholeStorageVolume />
-                    <FloodTypeComparison />
+                    <Fav id="d-manhole-storage"><ManholeStorageVolume /></Fav>
+                    <Fav id="d-flood-type"><FloodTypeComparison /></Fav>
                  </div>
                </div>
              )}
@@ -810,34 +1073,34 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">Settings that control how the solver handles inertia and limits flow conditions.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <InertialTermsDiagram />
-                    <NormalFlowCriterionDiagram />
-                    <SurchargeMethodDeepDiveDiagram />
+                    <Fav id="d-inertial-terms"><InertialTermsDiagram /></Fav>
+                    <Fav id="d-normal-flow"><NormalFlowCriterionDiagram /></Fav>
+                    <Fav id="d-surcharge-deep"><SurchargeMethodDeepDiveDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Timestep & Stability Controls</h4>
                    <p className="text-muted-foreground text-sm">Parameters that govern computational timesteps and numerical stability.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <VariableTimestepDiagram />
-                    <ConduitLengtheningDiagram />
-                    <MinNodalSurfaceAreaDiagram />
+                    <Fav id="d-variable-timestep"><VariableTimestepDiagram /></Fav>
+                    <Fav id="d-conduit-lengthening"><ConduitLengtheningDiagram /></Fav>
+                    <Fav id="d-min-nodal-area"><MinNodalSurfaceAreaDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Solver Performance</h4>
                    <p className="text-muted-foreground text-sm">Convergence settings and parallel processing options.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ConvergenceTolerancesDiagram />
-                    <ParallelThreadsDiagram />
+                    <Fav id="d-convergence-tol"><ConvergenceTolerancesDiagram /></Fav>
+                    <Fav id="d-parallel-threads"><ParallelThreadsDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
                    <p className="text-muted-foreground text-sm">Explore flow regime behavior and momentum equation effects.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <FroudeNumberCalculator />
-                    <InertialTermsCalculator />
+                    <Fav id="d-froude-calc"><FroudeNumberCalculator /></Fav>
+                    <Fav id="d-inertial-calc"><InertialTermsCalculator /></Fav>
                  </div>
                </div>
              )}
@@ -854,24 +1117,24 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">Why timesteps must "catch" physical waves and what happens when they don't.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <WaveTravelVsTimestepDiagram />
-                    <AdaptiveTimestepSimulatorDiagram />
+                    <Fav id="d-wave-travel"><WaveTravelVsTimestepDiagram /></Fav>
+                    <Fav id="d-adaptive-sim"><AdaptiveTimestepSimulatorDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Stability Techniques</h4>
                    <p className="text-muted-foreground text-sm">How solvers maintain stability through lengthening and base flow.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ConduitLengtheningCheatCodeDiagram />
-                    <DryStartVsBaseFlowDiagram />
+                    <Fav id="d-conduit-cheat"><ConduitLengtheningCheatCodeDiagram /></Fav>
+                    <Fav id="d-dry-start"><DryStartVsBaseFlowDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Interactive Calculators</h4>
                    <p className="text-muted-foreground text-sm">Calculate CFL numbers and estimate simulation efficiency.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <CFLStabilityCalculator />
-                    <TimeStepEfficiencyEstimator />
+                    <Fav id="d-cfl-calc"><CFLStabilityCalculator /></Fav>
+                    <Fav id="d-timestep-efficiency"><TimeStepEfficiencyEstimator /></Fav>
                  </div>
                </div>
              )}
@@ -888,15 +1151,15 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">Architecture vs scripting approaches to defining control rules.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ControlLogicBuilderDiagram />
-                    <ExecutionTimelineDiagram />
+                    <Fav id="d-control-logic"><ControlLogicBuilderDiagram /></Fav>
+                    <Fav id="d-execution-timeline"><ExecutionTimelineDiagram /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Controller Sophistication</h4>
                    <p className="text-muted-foreground text-sm">From simple on/off to advanced PID and incremental control.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ControllerTypesDiagram />
+                    <Fav id="d-controller-types"><ControllerTypesDiagram /></Fav>
                  </div>
                </div>
              )}
@@ -909,10 +1172,10 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Inlet representation, HEC-22 equations, and flow transition scenarios between surface and sewer systems.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <InletElementDiagram />
-                    <HEC22InletCalculatorDiagram />
-                    <FlowTransitionDiagram />
-                    <InletEfficiencyCurvesDiagram />
+                    <Fav id="d-inlet-element"><InletElementDiagram /></Fav>
+                    <Fav id="d-hec22"><HEC22InletCalculatorDiagram /></Fav>
+                    <Fav id="d-flow-transition"><FlowTransitionDiagram /></Fav>
+                    <Fav id="d-inlet-efficiency"><InletEfficiencyCurvesDiagram /></Fav>
                  </div>
                </div>
              )}
@@ -925,20 +1188,20 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Deep dive into SWMM5's internal operations, data structures, and processing pipeline.</p>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <InputFileParserDiagram />
-                    <MatrixSolverDiagram />
+                    <Fav id="d-input-parser"><InputFileParserDiagram /></Fav>
+                    <Fav id="d-matrix-solver"><MatrixSolverDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <RTCRulesDiagram />
-                    <MassRoutingDiagram />
+                    <Fav id="d-rtc-rules"><RTCRulesDiagram /></Fav>
+                    <Fav id="d-mass-routing"><MassRoutingDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <SurchargeCodeDiagram />
-                    <GroundwaterExchangeDiagram />
+                    <Fav id="d-surcharge-code"><SurchargeCodeDiagram /></Fav>
+                    <Fav id="d-gw-exchange"><GroundwaterExchangeDiagram /></Fav>
                  </div>
                  <div className="grid md:grid-cols-2 gap-6">
-                    <MinorLossesDiagram />
-                    <ReportingSystemDiagram />
+                    <Fav id="d-minor-losses"><MinorLossesDiagram /></Fav>
+                    <Fav id="d-reporting"><ReportingSystemDiagram /></Fav>
                  </div>
                </div>
              )}
@@ -955,22 +1218,22 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">How each solver defines system boundaries — outfall types and node inflow components.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <OutfallTypesAnimation />
-                    <InflowTypesAnimation />
+                    <Fav id="d-outfall-types"><OutfallTypesAnimation /></Fav>
+                    <Fav id="d-inflow-types"><InflowTypesAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Water Quality Treatment</h4>
                    <p className="text-muted-foreground text-sm">How treatment functions reduce pollutant concentrations at nodes.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <TreatmentAtNodesAnimation />
+                    <Fav id="d-treatment-nodes"><TreatmentAtNodesAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Coefficient Conversion Cheat Sheet</h4>
                    <p className="text-muted-foreground text-sm">The TOP 5 mistakes when converting models between SWMM5 and ICM — and how to fix them.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <CoefficientConversionAnimation />
+                    <Fav id="d-coeff-conversion"><CoefficientConversionAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -983,16 +1246,16 @@ export default function Dashboard() {
                    <p className="text-muted-foreground">Practical modeling scenarios connecting theory to practice — CSO events, detention design, pipe sizing, and calibration.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <CSOModelingAnimation />
-                    <DetentionPondAnimation />
+                    <Fav id="d-cso"><CSOModelingAnimation /></Fav>
+                    <Fav id="d-detention"><DetentionPondAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Pipe Design & Calibration</h4>
                    <p className="text-muted-foreground text-sm">Parallel pipe analysis and interactive model calibration.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ParallelPipeAnimation />
-                    <CalibrationVisualAnimation />
+                    <Fav id="d-parallel-pipe"><ParallelPipeAnimation /></Fav>
+                    <Fav id="d-calibration"><CalibrationVisualAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -1009,24 +1272,24 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">How solvers handle loops and flow regime transitions.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <LoopDetectionAnimation />
-                    <BoundaryInfluenceAnimation />
+                    <Fav id="d-loop-detection"><LoopDetectionAnimation /></Fav>
+                    <Fav id="d-boundary-influence"><BoundaryInfluenceAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Computational Performance</h4>
                    <p className="text-muted-foreground text-sm">How computation time scales with network size and common warning messages decoded.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <PerformanceScalingAnimation />
-                    <WarningMessagesAnimation />
+                    <Fav id="d-perf-scaling"><PerformanceScalingAnimation /></Fav>
+                    <Fav id="d-warnings"><WarningMessagesAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Solver History & Equations</h4>
                    <p className="text-muted-foreground text-sm">The evolution of hydraulic solvers from 1971 to today, and the complete Saint-Venant equations compared.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <SolverEvolutionTimeline />
-                    <EquationsSideBySideAnimation />
+                    <Fav id="d-solver-evolution"><SolverEvolutionTimeline /></Fav>
+                    <Fav id="d-equations"><EquationsSideBySideAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -1042,67 +1305,67 @@ export default function Dashboard() {
                    <p className="text-muted-foreground text-sm">Ancient civilizations mastered gravity-driven water delivery across vast distances.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <RomanAqueductAnimation />
+                    <Fav id="d-roman-aqueduct"><RomanAqueductAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <DujiangyanAnimation />
+                    <Fav id="d-dujiangyan"><DujiangyanAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <IncaFountainAnimation />
+                    <Fav id="d-inca-fountain"><IncaFountainAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Underground & Groundwater</h4>
                    <p className="text-muted-foreground text-sm">Ingenious systems for tapping aquifers and accessing water tables.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <PersianQanatAnimation />
+                    <Fav id="d-persian-qanat"><PersianQanatAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <IndianStepwellAnimation />
+                    <Fav id="d-indian-stepwell"><IndianStepwellAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Flood Control</h4>
                    <p className="text-muted-foreground text-sm">How ancient engineers protected cities from floods using dikes, polders, and passive flow control.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <AztecDikeAnimation />
+                    <Fav id="d-aztec-dike"><AztecDikeAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <DutchPolderAnimation />
+                    <Fav id="d-dutch-polder"><DutchPolderAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Pressure Flow</h4>
                    <p className="text-muted-foreground text-sm">Pressurized pipe systems that predate modern force main engineering.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <RomanSiphonAnimation />
+                    <Fav id="d-roman-siphon"><RomanSiphonAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Water Treatment & Storage</h4>
                    <p className="text-muted-foreground text-sm">Filtration, reservoir management, and water quality — solved millennia ago.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <MayaFiltrationAnimation />
+                    <Fav id="d-maya-filtration"><MayaFiltrationAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <KhmerBarayAnimation />
+                    <Fav id="d-khmer-baray"><KhmerBarayAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Sanitation & Drainage</h4>
                    <p className="text-muted-foreground text-sm">The world's first sewers and urban drainage networks — some still in operation.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <CloacaMaximaAnimation />
+                    <Fav id="d-cloaca-maxima"><CloacaMaximaAnimation /></Fav>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <IndusValleyDrainAnimation />
+                    <Fav id="d-indus-valley"><IndusValleyDrainAnimation /></Fav>
                  </div>
                  <div className="mt-6 mb-4">
                    <h4 className="text-xl font-bold tracking-tight mb-2">Water Lifting</h4>
                    <p className="text-muted-foreground text-sm">Mechanical pumping technology that hasn't been improved in 2,200 years.</p>
                  </div>
                  <div className="grid md:grid-cols-1 gap-6">
-                    <ArchimedesScrewAnimation />
+                    <Fav id="d-archimedes-screw"><ArchimedesScrewAnimation /></Fav>
                  </div>
                </div>
              )}
@@ -1125,9 +1388,13 @@ export default function Dashboard() {
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <div className="flex items-center gap-3 text-left flex-1">
-                      <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0 text-muted-foreground text-xs font-mono font-medium">
-                        {topic.key.substring(0, 2).toUpperCase()}
-                      </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(`t-${topic.key}`); }}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${isFavorite(`t-${topic.key}`) ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-500" : "bg-muted text-muted-foreground hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"}`}
+                        data-testid={`button-fav-topic-${topic.key}`}
+                      >
+                        <Star className={`h-3.5 w-3.5 ${isFavorite(`t-${topic.key}`) ? "fill-yellow-500" : ""}`} />
+                      </button>
                       <span className="font-semibold text-lg">{topic.label}</span>
                       {TOPIC_DIAGRAM_MAP[topic.key] && (
                         <Badge variant="secondary" className="ml-2 text-[10px]" data-testid={`badge-diagram-${topic.key}`}>
@@ -1226,6 +1493,13 @@ export default function Dashboard() {
                     >
                       <div className="p-4 text-sm font-medium text-foreground/80 space-y-2">
                         <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleFavorite(`t-${topic.key}`)}
+                            className={`p-1 rounded-full transition-colors shrink-0 ${isFavorite(`t-${topic.key}`) ? "text-yellow-500" : "text-muted-foreground/40 hover:text-yellow-500"}`}
+                            data-testid={`button-table-fav-${topic.key}`}
+                          >
+                            <Star className={`h-3.5 w-3.5 ${isFavorite(`t-${topic.key}`) ? "fill-yellow-500" : ""}`} />
+                          </button>
                           <span>{topic.label}</span>
                           {TOPIC_DIAGRAM_MAP[topic.key] && (
                             <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
