@@ -200,7 +200,7 @@ export function SnowmeltAlgorithmsDiagram() {
               </div>
             )}
 
-            <svg viewBox="0 0 300 250" className="w-full h-64 mt-16">
+            <svg role="img" aria-label="Snowmelt algorithms comparison" viewBox="0 0 300 250" className="w-full h-64 mt-16">
               <defs>
                 <linearGradient id="snowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#e0f2fe" />
@@ -498,7 +498,7 @@ export function InfiltrationShootoutDiagram() {
               <Badge>t = {time}s</Badge>
             </div>
             
-            <svg viewBox="0 0 200 250" className="w-full h-64 mt-6">
+            <svg role="img" aria-label="Infiltration methods comparison" viewBox="0 0 200 250" className="w-full h-64 mt-6">
               <rect x="40" y="10" width="120" height="20" fill="#60a5fa" opacity="0.5" />
               <text x="100" y="24" textAnchor="middle" className="text-xs fill-foreground">
                 Ponding: {getRainIntensity(time).toFixed(0)} {u.rainfall}

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, Component, type ReactNode, type ErrorInfo } from "react";
 import { 
   Activity, 
   BookOpen, 
@@ -164,11 +164,46 @@ function FavoriteButton({ id, className = "" }: { id: string; className?: string
   );
 }
 
+class DiagramErrorBoundary extends Component<
+  { children: ReactNode; name: string },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; name: string }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`Diagram error in ${this.props.name}:`, error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 border border-destructive/30 rounded-lg bg-destructive/5 text-center" data-testid="diagram-error">
+          <p className="text-sm text-destructive font-medium">This diagram failed to render</p>
+          <button
+            className="mt-2 text-xs text-muted-foreground underline"
+            onClick={() => this.setState({ hasError: false })}
+            data-testid="button-retry-diagram"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function Fav({ id, children }: { id: string; children: ReactNode }) {
   return (
     <div className="relative">
       <FavoriteButton id={id} />
-      {children}
+      <DiagramErrorBoundary name={id}>
+        {children}
+      </DiagramErrorBoundary>
     </div>
   );
 }
@@ -385,7 +420,7 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold tracking-tight leading-none">SWMM5 vs ICM InfoWorks Networks</h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Hydraulic Solver Comparison</p>
-                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">117 Interactive Diagrams</Badge>
+                <Badge variant="destructive" className="text-sm px-2 py-0.5 font-bold" data-testid="badge-diagram-count">118 Interactive Diagrams</Badge>
               </div>
             </div>
             

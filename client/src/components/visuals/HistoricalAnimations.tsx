@@ -70,7 +70,7 @@ export function RomanAqueductAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-roman-aqueduct">
+        <svg role="img" aria-label="Roman aqueduct hydraulics animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-roman-aqueduct">
           <defs>
             <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#e0f2fe" />
@@ -247,7 +247,7 @@ export function DujiangyanAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-dujiangyan">
+        <svg role="img" aria-label="Dujiangyan water system animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-dujiangyan">
           <rect x="0" y="0" width="400" height="300" fill="#f0fdf4" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -404,7 +404,7 @@ export function IncaFountainAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-inca-fountain">
+        <svg role="img" aria-label="Inca fountain cascade animation" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-inca-fountain">
           <rect x="0" y="0" width={svgW} height={svgH} fill="#fefce8" opacity="0.3" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -617,7 +617,7 @@ export function PersianQanatAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-persian-qanat">
+        <svg role="img" aria-label="Persian qanat tunnel animation" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-persian-qanat">
           <rect x="0" y="0" width={svgW} height={svgH} fill="#fef3c7" opacity="0.2" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">

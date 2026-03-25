@@ -82,7 +82,7 @@ PRIORITY 2`;
                 ))}
               </div>
               
-              <svg className="w-full h-16 mt-2" viewBox="0 0 200 50">
+              <svg role="img" aria-label="Control logic builder diagram" className="w-full h-16 mt-2" viewBox="0 0 200 50">
                 <path d="M 20 10 L 20 40" stroke="#94a3b8" strokeWidth="2" fill="none" />
                 <path d="M 20 25 L 60 25 L 60 10" stroke="#94a3b8" strokeWidth="2" fill="none" />
                 <path d="M 20 25 L 60 25 L 60 40" stroke="#94a3b8" strokeWidth="2" fill="none" />
@@ -411,7 +411,7 @@ export function ControllerTypesDiagram() {
         <div className="space-y-4">
           <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
             <div className="text-xs text-muted-foreground mb-2">Tank Level ({u.length})</div>
-            <svg viewBox="0 0 400 80" className="w-full h-20">
+            <svg role="img" aria-label="Controller types comparison diagram" viewBox="0 0 400 80" className="w-full h-20">
               <line x1="30" y1="70" x2="380" y2="70" stroke="#94a3b8" strokeWidth="1" />
               <line x1="30" y1="10" x2="30" y2="70" stroke="#94a3b8" strokeWidth="1" />
               

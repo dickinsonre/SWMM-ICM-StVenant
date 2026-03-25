@@ -387,7 +387,7 @@ export function TimestepComparisonDiagram() {
             </div>
             
             <div className="relative h-24 bg-muted/30 rounded border border-border overflow-hidden">
-              <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
+              <svg role="img" aria-label="Timestep comparison dashboard" className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
                 <path
                   d={renderWavePath(trueWavePath, 100)}
                   fill="none"

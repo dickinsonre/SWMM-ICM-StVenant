@@ -67,7 +67,7 @@ export function MayaFiltrationAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-maya-filtration">
+        <svg role="img" aria-label="Maya water filtration animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-maya-filtration">
           <rect x="0" y="0" width="400" height="300" fill="#f0fdf4" opacity="0.3" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Corriental Reservoir Cross-Section (250–900 CE)
@@ -224,7 +224,7 @@ export function KhmerBarayAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-khmer-baray">
+        <svg role="img" aria-label="Khmer baray reservoir animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-khmer-baray">
           <rect x="0" y="0" width="400" height="300" fill="#fefce8" opacity="0.3" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             West Baray — Plan View ({conv.length(8000).toFixed(0)} {u.length} × {conv.length(2300).toFixed(0)} {u.length}, {conv.volume(50000000).toFixed(0)} {u.volume})
@@ -378,7 +378,7 @@ export function CloacaMaximaAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-cloaca-maxima">
+        <svg role="img" aria-label="Cloaca Maxima sewer animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-cloaca-maxima">
           <rect x="0" y="0" width="400" height="300" fill="#fefce8" opacity="0.2" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Cloaca Maxima — Longitudinal Section (Grade 0.3%)
@@ -543,7 +543,7 @@ export function IndusValleyDrainAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-indus-valley">
+        <svg role="img" aria-label="Indus Valley drainage animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-indus-valley">
           <rect x="0" y="0" width="400" height="300" fill="#fefce8" opacity="0.2" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Mohenjo-Daro — Urban Drainage Plan (2600 BCE)
@@ -712,7 +712,7 @@ export function ArchimedesScrewAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-archimedes-screw">
+        <svg role="img" aria-label="Archimedes screw animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-archimedes-screw">
           <rect x="0" y="0" width="400" height="300" fill="#f0fdf4" opacity="0.2" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Archimedes Screw — Profile View ({angle}° angle)

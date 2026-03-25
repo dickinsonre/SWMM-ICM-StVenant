@@ -89,7 +89,7 @@ export function ConvergenceSnapshotsDiagram() {
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative h-72 bg-muted/30 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
+            <svg role="img" aria-label="Convergence snapshots visualization" className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
               <rect x="0" y="0" width="200" height="180" className="fill-slate-950/30" />
               
               <line x1="20" y1="90" x2="80" y2="90" className="stroke-slate-400 stroke-[8]" strokeLinecap="round" />
@@ -512,7 +512,7 @@ export function OscillationChallengeDiagram() {
               SWMM5 Response (Node-Link)
             </div>
             <div className="relative h-32 bg-muted/30 rounded-lg border border-blue-500/30 overflow-hidden">
-              <svg className="w-full h-full" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true">
+              <svg role="img" aria-label="Oscillation challenge interactive diagram" className="w-full h-full" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true">
                 <line x1="10" y1="40" x2="190" y2="40" className="stroke-slate-600/30 stroke-1" strokeDasharray="2,2" />
                 
                 {swmmData.length > 1 && (
@@ -669,7 +669,7 @@ export function WettingFrontDiagram() {
           <div className="space-y-2">
             <div className="text-xs font-semibold text-blue-500">SWMM5: Stepwise Wetting Front</div>
             <div className="relative h-24 bg-muted/30 rounded-lg border border-blue-500/30 overflow-hidden">
-              <svg className="w-full h-full" viewBox="0 0 200 60" aria-hidden="true">
+              <svg role="img" aria-label="Wetting front progression animation" className="w-full h-full" viewBox="0 0 200 60" aria-hidden="true">
                 <rect x="10" y="25" width="180" height="20" rx="10" className="fill-slate-400/30 stroke-slate-500" />
                 
                 <clipPath id="swmmPipe">
@@ -855,7 +855,7 @@ export function TimestepDashboardDiagram() {
             </div>
             
             <div className="relative h-16 bg-muted/30 rounded overflow-hidden">
-              <svg className="w-full h-full" viewBox="0 0 150 40" aria-hidden="true">
+              <svg role="img" aria-label="Timestep performance dashboard" className="w-full h-full" viewBox="0 0 150 40" aria-hidden="true">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <motion.line
                     key={i}

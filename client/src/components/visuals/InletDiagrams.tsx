@@ -39,7 +39,7 @@ export function InletElementDiagram() {
         </div>
         
         <div className="relative h-80 bg-gradient-to-b from-sky-100 to-slate-200 dark:from-sky-900/30 dark:to-slate-800 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 300" className="w-full h-full">
+          <svg role="img" aria-label="Street inlet element diagram" viewBox="0 0 400 300" className="w-full h-full">
             <defs>
               <linearGradient id="streetGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#64748b" />
@@ -279,7 +279,7 @@ export function HEC22InletCalculatorDiagram() {
         </Tabs>
         
         <div className="relative h-48 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 180" className="w-full h-full">
+          <svg role="img" aria-label="HEC-22 inlet calculator diagram" viewBox="0 0 400 180" className="w-full h-full">
             <defs>
               <linearGradient id="gutterWater" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.8" />
@@ -508,7 +508,7 @@ export function FlowTransitionDiagram() {
         </div>
         
         <div className="relative h-64 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 240" className="w-full h-full">
+          <svg role="img" aria-label="Flow transition visualization" viewBox="0 0 400 240" className="w-full h-full">
             <defs>
               <linearGradient id="rainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.3" />
@@ -675,7 +675,7 @@ export function InletEfficiencyCurvesDiagram() {
         </Tabs>
         
         <div className="relative h-64 bg-white dark:bg-slate-900 rounded-lg border">
-          <svg viewBox="0 0 400 220" className="w-full h-full">
+          <svg role="img" aria-label="Inlet efficiency curves diagram" viewBox="0 0 400 220" className="w-full h-full">
             <line x1="50" y1="20" x2="50" y2="190" stroke="#94a3b8" strokeWidth="1" />
             <line x1="50" y1="190" x2="380" y2="190" stroke="#94a3b8" strokeWidth="1" />
             

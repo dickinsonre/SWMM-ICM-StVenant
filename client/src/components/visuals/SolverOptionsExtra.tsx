@@ -133,7 +133,7 @@ export function RoutingMethodComparison() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-routing-comparison">
+        <svg role="img" aria-label="Routing method comparison animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-routing-comparison">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Same Network, Same Storm — Three Routing Methods
           </text>
@@ -379,7 +379,7 @@ export function TimestepInstabilityAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-timestep-instability">
+        <svg role="img" aria-label="Timestep instability demonstration" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-timestep-instability">
           <text x="200" y="16" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Same Simulation — Different Forced Timesteps
           </text>

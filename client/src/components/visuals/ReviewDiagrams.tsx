@@ -227,7 +227,7 @@ export function LiveNetworkComparison() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 360 120" className="w-full h-24 bg-gray-50 rounded-lg" data-testid="svg-network-diagram">
+        <svg role="img" aria-label="live network comparison" viewBox="0 0 360 120" className="w-full h-24 bg-gray-50 rounded-lg" data-testid="svg-network-diagram">
           {links.map((link, i) => (
             <g key={i}>
               <line 
@@ -404,7 +404,7 @@ export function ForceMainComparison() {
             <div className="flex items-center gap-2 mb-3">
               <Badge className="bg-blue-100 text-blue-700">SWMM5</Badge>
             </div>
-            <svg viewBox="0 0 200 100" className="w-full h-20" data-testid="svg-swmm5-forcemain">
+            <svg role="img" aria-label="force main comparison" viewBox="0 0 200 100" className="w-full h-20" data-testid="svg-swmm5-forcemain">
               <rect x="20" y="30" width="160" height="40" rx="20" ry="20" fill="#dbeafe" stroke="#3b82f6" strokeWidth="2" />
               <motion.rect 
                 x="20" y="30" width="160" height="40" rx="20" ry="20" 
@@ -548,7 +548,7 @@ export function ConduitLengthSensitivity() {
               <Badge className="bg-blue-100 text-blue-700">SWMM5</Badge>
               <Badge variant="outline" className="text-xs">1 element</Badge>
             </div>
-            <svg viewBox="0 0 260 80" className="w-full h-16" data-testid="svg-swmm5-conduit-length">
+            <svg role="img" aria-label="conduit length sensitivity" viewBox="0 0 260 80" className="w-full h-16" data-testid="svg-swmm5-conduit-length">
               <circle cx="30" cy="40" r="10" fill="#3b82f6" stroke="#1d4ed8" strokeWidth="2" />
               <circle cx="230" cy="40" r="10" fill="#3b82f6" stroke="#1d4ed8" strokeWidth="2" />
               <line x1="40" y1="40" x2="220" y2="40" stroke="#3b82f6" strokeWidth="4" />

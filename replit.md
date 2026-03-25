@@ -4,7 +4,7 @@
 
 This is an educational web application that provides a structured comparison of how EPA SWMM 5 and InfoWorks ICM solve the 1D Saint-Venant equations for unsteady flow in hydraulic modeling. The app allows users to browse technical comparisons by topic, view side-by-side summary tables, and export content to Markdown or JSON formats.
 
-The application features **117 interactive diagrams and calculators** organized across **16 categories**, multiple viewing modes, and comprehensive source code documentation.
+The application features **118 interactive diagrams and calculators** organized across **16 categories**, multiple viewing modes, and comprehensive source code documentation.
 
 ## User Preferences
 
@@ -142,14 +142,14 @@ The database schema currently includes a users table, though the primary applica
   - **ScenarioDiagrams**: CSO Modeling, Detention Pond routing, Parallel Pipe analysis, Calibration Visual
   - **PerformanceDiagrams**: Loop Detection, Boundary Influence, Performance Scaling, Warning Messages, Solver Evolution Timeline, Saint-Venant Equations Side-by-Side
 - Added 3 new categories: Boundary Conditions, Real-World Scenarios, Performance & Topology
-- Total diagram count: 117 across 16 categories
+- Total diagram count: 118 across 16 categories
 - Added **Units Toggle** (USA/SI) — global context switches all diagrams between imperial (ft, cfs, in) and metric (m, m³/s, mm) units
   - Created `UnitsContext.tsx` with provider, hook, unit labels, and conversion functions
   - Updated all 27 visual component files to use dynamic unit labels and conversion functions
   - Internal calculations stay in original units; only display values are converted
 - Added **Favorites System** — localStorage-backed star toggle on every diagram and comparison topic
   - Created `FavoritesContext.tsx` with provider, hook (`useFavorites`), toggle/isFavorite/clearAll
-  - `<Fav>` wrapper component adds yellow star overlay to all 117 diagrams
+  - `<Fav>` wrapper component adds yellow star overlay and error boundary to all 118 diagrams
   - Star toggles on Topic accordion triggers and Table view topic cells
   - Dedicated "Favorites" category in sidebar with badge count
   - Favorites view shows saved diagrams (with category badge) and saved topics (expandable accordion)

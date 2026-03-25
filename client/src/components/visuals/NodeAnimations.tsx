@@ -132,7 +132,7 @@ export function BackwaterPropagation() {
             <div className="text-sm font-semibold text-blue-600 text-center" data-testid="label-swmm-backwater">
               SWMM5 — Staircase
             </div>
-            <svg viewBox="0 0 400 250" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-backwater">
+            <svg role="img" aria-label="Backwater propagation animation" viewBox="0 0 400 250" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-backwater">
               {renderPipeNetwork(false)}
               {renderSwmmWater()}
               <text x="200" y="220" textAnchor="middle" fontSize="9" fill="#64748b">
@@ -249,7 +249,7 @@ export function OneDTwoDCoupling() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="text-sm font-semibold text-blue-600 text-center">SWMM5 — No surface routing</div>
-            <svg viewBox="0 0 360 220" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-1d2d">
+            <svg role="img" aria-label="1D-2D coupling animation" viewBox="0 0 360 220" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-1d2d">
               <line x1="30" y1={groundY} x2="330" y2={groundY} stroke="#94a3b8" strokeWidth="1" strokeDasharray="4,2" />
               <text x="335" y={groundY + 4} fontSize="8" fill="#94a3b8">Ground</text>
               {[0, 1].map((i) => {
@@ -470,7 +470,7 @@ export function ManholeStorageVolume() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="text-sm font-semibold text-blue-600 text-center">SWMM5 — Uniform Shaft</div>
-            <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-swmm-storage">
+            <svg role="img" aria-label="Manhole storage volume comparison" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-swmm-storage">
               <rect
                 x={(svgW - shaftWidth) / 2}
                 y={groundYpx}
@@ -821,7 +821,7 @@ export function FloodTypeComparison() {
           />
         </div>
         <div className="flex justify-center">
-          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full max-w-md border rounded bg-muted/20" data-testid="svg-flood-type">
+          <svg role="img" aria-label="Flood type comparison animation" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full max-w-md border rounded bg-muted/20" data-testid="svg-flood-type">
             <AnimatePresence mode="wait">
               <motion.g
                 key={floodType}

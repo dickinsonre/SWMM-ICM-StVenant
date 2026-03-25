@@ -62,7 +62,7 @@ export function IndianStepwellAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-indian-stepwell">
+        <svg role="img" aria-label="Indian stepwell cross-section animation" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-indian-stepwell">
           <defs>
             <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#ef4444" stopOpacity="0.15" />
@@ -282,7 +282,7 @@ export function AztecDikeAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-aztec-dike">
+        <svg role="img" aria-label="Aztec dike system animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-aztec-dike">
           <rect x="0" y="0" width="400" height="300" fill="#fef9ef" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -486,7 +486,7 @@ export function DutchPolderAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-dutch-polder">
+        <svg role="img" aria-label="Dutch polder pumping animation" viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-dutch-polder">
           <rect x="0" y="0" width="400" height="300" fill="#f0f9ff" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -707,7 +707,7 @@ export function RomanSiphonAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-roman-siphon">
+        <svg role="img" aria-label="Roman inverted siphon animation" viewBox={`0 0 ${svgW} ${svgH}`} className="w-full border rounded bg-muted/20" data-testid="svg-roman-siphon">
           <rect x="0" y="0" width={svgW} height={svgH} fill="#fefce8" opacity="0.3" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">

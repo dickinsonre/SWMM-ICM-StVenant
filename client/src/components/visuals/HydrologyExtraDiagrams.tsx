@@ -98,7 +98,7 @@ export function LIDLayerStackAnimation() {
           <Slider value={rainIntensity} onValueChange={setRainIntensity} min={0} max={4} step={0.1} data-testid="slider-rain-intensity-lid" />
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-lid-layer-stack">
+        <svg role="img" aria-label="LID layer stack animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-lid-layer-stack">
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Bio-Retention Cell Cross-Section
           </text>
@@ -359,7 +359,7 @@ export function NonlinearReservoirAnimation() {
           <Slider value={rainIntensity} onValueChange={setRainIntensity} min={0} max={4} step={0.1} data-testid="slider-rain-intensity-nlr" />
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-nonlinear-reservoir">
+        <svg role="img" aria-label="Nonlinear reservoir model animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-nonlinear-reservoir">
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Subcatchment Surface — Nonlinear Reservoir Model
           </text>
@@ -541,7 +541,7 @@ export function WidthSensitivityAnimation() {
           <Slider value={widthVal} onValueChange={setWidthVal} min={50} max={1000} step={10} data-testid="slider-width" />
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-width-sensitivity">
+        <svg role="img" aria-label="Width sensitivity analysis animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-width-sensitivity">
           <text x="200" y="14" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Hydrograph Response vs. Width
           </text>

@@ -213,7 +213,7 @@ export function OutfallTypesAnimation() {
           ))}
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-outfall-types">
+        <svg role="img" aria-label="Outfall boundary types animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-outfall-types">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Outfall Type: {outfallType === "TIMESERIES" ? "TIME SERIES" : outfallType}
@@ -387,7 +387,7 @@ export function InflowTypesAnimation() {
           ))}
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-inflow-types">
+        <svg role="img" aria-label="Node inflow types animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-inflow-types">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Inflow Hydrographs — 24hr Period
@@ -569,7 +569,7 @@ export function TreatmentAtNodesAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-treatment">
+        <svg role="img" aria-label="Treatment at nodes animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-treatment">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
           <text x="120" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Inflow → Treatment Node → Outflow
@@ -804,7 +804,7 @@ export function CoefficientConversionAnimation() {
           ))}
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-conversion">
+        <svg role="img" aria-label="Coefficient conversion animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-conversion">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
           <text x="200" y="20" textAnchor="middle" fontSize="10" fill="#64748b" fontWeight="bold">
             {data.title}

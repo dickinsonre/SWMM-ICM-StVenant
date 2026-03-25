@@ -111,7 +111,7 @@ export function RunoffProcessDiagram() {
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative h-72 bg-gradient-to-b from-sky-100/20 to-amber-100/20 dark:from-sky-900/20 dark:to-amber-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
+            <svg role="img" aria-label="Runoff process visualization" className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
               {isAnimating && Array.from({ length: 8 }).map((_, i) => (
                 <motion.circle
                   key={i}
@@ -298,7 +298,7 @@ export function RTKDiagram() {
             
             <div className="bg-muted/30 rounded-lg border border-border p-3">
               <div className="text-[10px] text-muted-foreground mb-2">Individual Unit Hydrographs</div>
-              <svg className="w-full h-20" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true">
+              <svg role="img" aria-label="RDII triangular hydrograph diagram" className="w-full h-20" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true">
                 <path d={pathFromData(uh1, 45, 115)} className="fill-blue-500/30 stroke-blue-500 stroke-1" />
                 <path d={pathFromData(uh2, 45, 115)} className="fill-emerald-500/30 stroke-emerald-500 stroke-1" />
                 <path d={pathFromData(uh3, 45, 115)} className="fill-amber-500/30 stroke-amber-500 stroke-1" />
@@ -508,7 +508,7 @@ export function BuildupWashoffDiagram() {
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative h-72 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
+            <svg role="img" aria-label="Pollutant buildup and washoff diagram" className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
               <rect x="20" y="120" width="160" height="40" className="fill-slate-500/30" />
               <text x="100" y="145" textAnchor="middle" className="text-[10px] fill-slate-500">Street Surface</text>
               
@@ -672,7 +672,7 @@ export function HydrologicWorkflowDiagram() {
       </CardHeader>
       <CardContent>
         <div className="relative py-8">
-          <svg className="w-full h-64" viewBox="0 0 400 200" aria-hidden="true">
+          <svg role="img" aria-label="Hydrologic workflow diagram" className="w-full h-64" viewBox="0 0 400 200" aria-hidden="true">
             <circle cx="200" cy="30" r="25" className="fill-sky-500/20 stroke-sky-500 stroke-2" />
             <CloudRain className="h-6 w-6 text-sky-500" x="188" y="18" />
             <text x="200" y="70" textAnchor="middle" className="text-[10px] fill-sky-600 font-semibold">Rainfall</text>

@@ -61,7 +61,7 @@ export function CSOModelingAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-cso-modeling">
+        <svg role="img" aria-label="CSO modeling animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-cso-modeling">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -238,7 +238,7 @@ export function DetentionPondAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-detention-hydrograph">
+        <svg role="img" aria-label="Detention pond routing animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-detention-hydrograph">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Inflow vs Outflow Hydrograph
@@ -398,7 +398,7 @@ export function ParallelPipeAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-parallel-pipe">
+        <svg role="img" aria-label="Parallel pipe analysis animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-parallel-pipe">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
@@ -564,7 +564,7 @@ export function CalibrationVisualAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-calibration">
+        <svg role="img" aria-label="Calibration visual comparison" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-calibration">
           <rect x="0" y="0" width="400" height="280" fill="#f8fafc" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">

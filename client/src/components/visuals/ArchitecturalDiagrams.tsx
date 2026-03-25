@@ -267,7 +267,7 @@ export function MatrixSolverDiagram() {
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative h-48 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 120" data-testid="svg-network">
+            <svg role="img" aria-label="Hydraulic matrix solver visualization" className="w-full h-full" viewBox="0 0 200 120" data-testid="svg-network">
               {links.map((link, i) => (
                 <g key={link.id}>
                   <line
@@ -535,7 +535,7 @@ export function RTCRulesDiagram() {
           </div>
           
           <div className="relative h-64 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 160" data-testid="svg-pump-station">
+            <svg role="img" aria-label="Real-time control rules diagram" className="w-full h-full" viewBox="0 0 200 160" data-testid="svg-pump-station">
               <rect x="30" y="40" width="60" height="80" rx="5" className="fill-slate-600 stroke-slate-400" />
               <text x="60" y="35" textAnchor="middle" className="text-[9px] fill-slate-400">Node 123</text>
               
@@ -707,7 +707,7 @@ export function MassRoutingDiagram() {
           </div>
           
           <div className="md:col-span-2 relative h-52 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 220 130" data-testid="svg-mass-routing">
+            <svg role="img" aria-label="Mass routing flow visualization" className="w-full h-full" viewBox="0 0 220 130" data-testid="svg-mass-routing">
               <rect x="20" y="60" width="180" height="30" rx="15" className="fill-slate-600 stroke-slate-400" />
               <text x="110" y="52" textAnchor="middle" className="text-[9px] fill-slate-400">Pipe Segment (L = {conv.length(500).toFixed(0)} {u.length})</text>
               
@@ -835,7 +835,7 @@ export function SurchargeCodeDiagram() {
             
             <div className="grid md:grid-cols-2 gap-4">
               <div className="relative h-48 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 200 120" data-testid="svg-surcharge">
+                <svg role="img" aria-label="Surcharge detection logic diagram" className="w-full h-full" viewBox="0 0 200 120" data-testid="svg-surcharge">
                   <ellipse cx="100" cy="80" rx="60" ry="35" className="fill-slate-700 stroke-slate-500" strokeWidth="2" />
                   
                   {method === "preissmann" && isSurcharged && (
@@ -1009,7 +1009,7 @@ export function GroundwaterExchangeDiagram() {
           </div>
           
           <div className="relative h-56 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 140" data-testid="svg-groundwater">
+            <svg role="img" aria-label="Groundwater exchange visualization" className="w-full h-full" viewBox="0 0 200 140" data-testid="svg-groundwater">
               <defs>
                 <pattern id="soil" patternUnits="userSpaceOnUse" width="8" height="8">
                   <circle cx="2" cy="2" r="1" className="fill-amber-800/50" />
@@ -1147,7 +1147,7 @@ export function MinorLossesDiagram() {
         </div>
         
         <div className="relative h-48 bg-gradient-to-b from-slate-100/20 to-slate-200/20 dark:from-slate-800/20 dark:to-slate-900/20 rounded-lg border border-border overflow-hidden">
-          <svg className="w-full h-full" viewBox="0 0 220 120" data-testid="svg-minor-losses">
+          <svg role="img" aria-label="Minor losses calculation diagram" className="w-full h-full" viewBox="0 0 220 120" data-testid="svg-minor-losses">
             <rect x="20" y="80" width="180" height="25" className="fill-slate-700 stroke-slate-500" />
             <text x="110" y="95" textAnchor="middle" className="text-[8px] fill-white">Conduit</text>
             

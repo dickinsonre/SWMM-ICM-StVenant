@@ -101,7 +101,7 @@ export function WaveTravelVsTimestepDiagram() {
         </div>
         
         <div className="relative h-40 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden p-4">
-          <svg viewBox="0 0 400 100" className="w-full h-full">
+          <svg role="img" aria-label="Wave travel versus timestep diagram" viewBox="0 0 400 100" className="w-full h-full">
             <circle cx="30" cy="50" r="12" fill="#3b82f6" />
             <text x="30" y="80" className="text-[8px] fill-slate-600" textAnchor="middle">Upstream</text>
             
@@ -269,7 +269,7 @@ export function AdaptiveTimestepSimulatorDiagram() {
           <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
             <div className="text-xs text-muted-foreground mb-2">Solver Time Step</div>
             <div className="h-24 relative">
-              <svg viewBox="0 0 200 80" className="w-full h-full">
+              <svg role="img" aria-label="Adaptive timestep simulator" viewBox="0 0 200 80" className="w-full h-full">
                 <line x1="20" y1="70" x2="190" y2="70" stroke="#94a3b8" strokeWidth="1" />
                 <line x1="20" y1="10" x2="20" y2="70" stroke="#94a3b8" strokeWidth="1" />
                 
@@ -536,7 +536,7 @@ export function DryStartVsBaseFlowDiagram() {
         </Tabs>
         
         <div className="relative h-56 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 200" className="w-full h-full">
+          <svg role="img" aria-label="Dry start versus base flow comparison" viewBox="0 0 400 200" className="w-full h-full">
             <rect x="30" y="30" width="60" height="80" fill="#374151" rx="3" />
             <motion.rect
               x="35"

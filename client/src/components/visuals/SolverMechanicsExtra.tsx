@@ -140,7 +140,7 @@ export function NewtonRaphsonConvergence() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="text-sm font-semibold text-blue-600 text-center" data-testid="label-swmm-convergence">SWMM5 — Successive Relaxation</div>
-            <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-convergence">
+            <svg role="img" aria-label="Newton-Raphson convergence visualization" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-swmm-convergence">
               {renderChart(swmmIters, "#3b82f6", "SWMM5", swmmFailed)}
             </svg>
           </div>
@@ -263,7 +263,7 @@ export function ThetaWeightingAnimation() {
           </div>
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-theta-wave">
+        <svg role="img" aria-label="Theta weighting factor animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-theta-wave">
           <line x1="30" y1="180" x2="370" y2="180" stroke="#94a3b8" strokeWidth="1" />
           <text x="375" y="183" fontSize="7" fill="#94a3b8">Base level</text>
 
@@ -397,7 +397,7 @@ export function StaggeredGridAnimation() {
           <Slider value={icmPoints} onValueChange={setIcmPoints} min={3} max={10} step={1} data-testid="slider-icm-points" />
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-staggered-grid">
+        <svg role="img" aria-label="Staggered grid arrangement animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-staggered-grid">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Computational Point Locations
           </text>

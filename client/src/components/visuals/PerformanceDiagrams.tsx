@@ -110,7 +110,7 @@ export function LoopDetectionAnimation() {
           ))}
         </div>
 
-        <svg viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-loop-detection">
+        <svg role="img" aria-label="Network loop detection animation" viewBox="0 0 400 280" className="w-full border rounded bg-muted/20" data-testid="svg-loop-detection">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Dendritic (Tree) Network
           </text>
@@ -311,7 +311,7 @@ export function BoundaryInfluenceAnimation() {
           </div>
         </div>
 
-        <svg viewBox="0 0 400 220" className="w-full border rounded bg-muted/20" data-testid="svg-boundary-influence">
+        <svg role="img" aria-label="Boundary influence propagation animation" viewBox="0 0 400 220" className="w-full border rounded bg-muted/20" data-testid="svg-boundary-influence">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             {regime === "subcritical" ? "Subcritical Flow — Downstream Controls" :
              regime === "supercritical" ? "Supercritical Flow — Upstream Controls" :
@@ -466,7 +466,7 @@ export function PerformanceScalingAnimation() {
           </div>
         </div>
 
-        <svg viewBox="0 0 400 240" className="w-full border rounded bg-muted/20" data-testid="svg-performance-chart">
+        <svg role="img" aria-label="Performance scaling comparison" viewBox="0 0 400 240" className="w-full border rounded bg-muted/20" data-testid="svg-performance-chart">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Computation Time at {nodeCount.toLocaleString()} Nodes
           </text>
@@ -743,7 +743,7 @@ export function SolverEvolutionTimeline() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 260" className="w-full border rounded bg-muted/20" data-testid="svg-evolution-timeline">
+        <svg role="img" aria-label="Solver evolution timeline" viewBox="0 0 400 260" className="w-full border rounded bg-muted/20" data-testid="svg-evolution-timeline">
           <text x="200" y="18" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             SWMM &amp; ICM/InfoWorks Development Timeline
           </text>
@@ -898,7 +898,7 @@ export function EquationsSideBySideAnimation() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <svg viewBox="0 0 400 160" className="w-full border rounded bg-muted/20" data-testid="svg-equations">
+        <svg role="img" aria-label="Saint-Venant equations side by side" viewBox="0 0 400 160" className="w-full border rounded bg-muted/20" data-testid="svg-equations">
           <text x="200" y="20" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
             Full Saint-Venant Equations
           </text>

@@ -260,7 +260,7 @@ export const KB = {
       },
       {
         label: "Chaudhry, M.H. — Open-Channel Flow (Textbook)",
-        url: "",
+        url: "https://link.springer.com/book/10.1007/978-0-387-68648-6",
         notes: "Standard reference for Saint-Venant equations and numerical methods.",
       },
     ],

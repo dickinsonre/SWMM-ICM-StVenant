@@ -79,7 +79,7 @@ export function InertialTermsDiagram() {
         </Tabs>
         
         <div className="relative h-48 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 180" className="w-full h-full">
+          <svg role="img" aria-label="Inertial terms visualization" viewBox="0 0 400 180" className="w-full h-full">
             <line x1="30" y1="150" x2="380" y2="150" stroke="#94a3b8" strokeWidth="2" />
             <line x1="30" y1="30" x2="30" y2="150" stroke="#94a3b8" strokeWidth="1" />
             
@@ -225,7 +225,7 @@ export function NormalFlowCriterionDiagram() {
         </div>
         
         <div className="relative h-52 bg-gradient-to-b from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-950/30 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 200" className="w-full h-full">
+          <svg role="img" aria-label="Normal flow criterion diagram" viewBox="0 0 400 200" className="w-full h-full">
             <line x1="20" y1="40" x2="380" y2="100" stroke="#78716c" strokeWidth="8" />
             <line x1="20" y1="50" x2="380" y2="110" stroke="#57534e" strokeWidth="3" />
             
@@ -314,7 +314,7 @@ export function SurchargeMethodDeepDiveDiagram() {
         </Tabs>
         
         <div className="relative h-56 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 220" className="w-full h-full">
+          <svg role="img" aria-label="Surcharge method deep dive" viewBox="0 0 400 220" className="w-full h-full">
             <rect x="50" y="80" width="120" height="60" fill="#374151" rx="5" />
             <rect x="230" y="80" width="120" height="60" fill="#374151" rx="5" />
             
@@ -482,7 +482,7 @@ export function VariableTimestepDiagram() {
         
         <div className="relative h-24 bg-slate-100 dark:bg-slate-800 rounded-lg p-2">
           <div className="text-xs text-muted-foreground mb-2">Variable Timestep History</div>
-          <svg viewBox="0 0 400 60" className="w-full h-12">
+          <svg role="img" aria-label="Variable timestep visualization" viewBox="0 0 400 60" className="w-full h-12">
             <line x1="0" y1="30" x2="400" y2="30" stroke="#94a3b8" strokeDasharray="2,2" />
             {variableTimesteps.map((dt, i) => (
               <rect
@@ -653,7 +653,7 @@ export function MinNodalSurfaceAreaDiagram() {
         </div>
         
         <div className="relative h-64 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg overflow-hidden">
-          <svg viewBox="0 0 400 240" className="w-full h-full">
+          <svg role="img" aria-label="Minimum nodal surface area diagram" viewBox="0 0 400 240" className="w-full h-full">
             <ellipse cx="200" cy="200" rx={30 + surfaceArea[0] * 2} ry="20" fill="#374151" />
             <rect x={200 - 30 - surfaceArea[0] * 2} y="60" width={(30 + surfaceArea[0] * 2) * 2} height="140" fill="#4b5563" />
             
@@ -783,7 +783,7 @@ export function ConvergenceTolerancesDiagram() {
         
         <div className="relative h-48 bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
           <div className="text-xs text-muted-foreground mb-2">Max Node Error (log scale)</div>
-          <svg viewBox="0 0 400 140" className="w-full h-32">
+          <svg role="img" aria-label="Convergence tolerances visualization" viewBox="0 0 400 140" className="w-full h-32">
             <line x1="40" y1="120" x2="380" y2="120" stroke="#94a3b8" strokeWidth="1" />
             <line x1="40" y1="20" x2="40" y2="120" stroke="#94a3b8" strokeWidth="1" />
             

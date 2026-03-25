@@ -264,7 +264,7 @@ export function PreissmannSlotCalculator() {
 
             <div className="p-4 rounded-lg border bg-muted/30 relative overflow-hidden">
               <div className="text-xs text-muted-foreground mb-2 text-center">Cross-Section Visualization</div>
-              <svg viewBox="0 0 200 150" className="w-full h-32">
+              <svg role="img" aria-label="preissmann slot calculator" viewBox="0 0 200 150" className="w-full h-32">
                 <circle cx="100" cy="90" r={pipeDiameter * 0.8} fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-400"/>
                 <rect 
                   x={100 - (slotWidth * 4)} 
@@ -795,7 +795,7 @@ export function ComputationalPointsDiagram() {
           <div className="p-4 rounded-lg border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20">
             <div className="text-center text-sm font-medium text-blue-600 mb-3">SWMM5</div>
             <div className="bg-white dark:bg-slate-800 rounded p-3">
-              <svg viewBox="0 0 200 40" className="w-full h-10">
+              <svg role="img" aria-label="computational points diagram" viewBox="0 0 200 40" className="w-full h-10">
                 <line x1="20" y1="20" x2="180" y2="20" stroke="currentColor" strokeWidth="2" className="text-slate-400"/>
                 <circle cx="20" cy="20" r="6" fill="currentColor" className="text-blue-500"/>
                 <circle cx="180" cy="20" r="6" fill="currentColor" className="text-blue-500"/>
@@ -969,7 +969,7 @@ export function SurchargeAlgorithmDiagram() {
           <div className="p-4 rounded-lg border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20">
             <div className="text-center text-sm font-medium text-blue-600 mb-3">SWMM5</div>
             <div className="relative h-24 bg-white dark:bg-slate-800 rounded overflow-hidden">
-              <svg viewBox="0 0 100 60" className="w-full h-full">
+              <svg role="img" aria-label="surcharge algorithm diagram" viewBox="0 0 100 60" className="w-full h-full">
                 <ellipse cx="50" cy="45" rx="35" ry="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400"/>
                 <motion.rect 
                   x="15" 
@@ -1076,7 +1076,7 @@ export function SurfaceFloodingDiagram() {
               <Badge variant="outline" className="bg-blue-100">SWMM5</Badge>
               <span className="text-sm font-medium">Ponded Area</span>
             </div>
-            <svg viewBox="0 0 200 150" className="w-full h-40" data-testid="svg-swmm5-ponded">
+            <svg role="img" aria-label="surface flooding diagram" viewBox="0 0 200 150" className="w-full h-40" data-testid="svg-swmm5-ponded">
               <rect x="40" y="80" width="120" height="60" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" rx="5" />
               <text x="100" y="115" textAnchor="middle" className="text-[10px] fill-gray-600">Ponded Area</text>
               <text x="100" y="130" textAnchor="middle" className="text-[8px] fill-gray-500">(lumped storage)</text>

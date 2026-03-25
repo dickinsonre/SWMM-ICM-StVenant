@@ -206,7 +206,7 @@ export function SurchargeMethodDiagram() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Visualization */}
           <div className="relative h-64 bg-muted/30 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 160" aria-hidden="true">
+            <svg role="img" aria-label="Surcharge method comparison" className="w-full h-full" viewBox="0 0 200 160" aria-hidden="true">
               {/* Ground */}
               <rect x="0" y="20" width="200" height="6" className="fill-amber-700/50" />
               
@@ -547,7 +547,7 @@ export function AdaptiveTimestepDiagram() {
         </Button>
 
         <div className="relative h-48 bg-muted/30 rounded-lg border border-border p-4 overflow-hidden">
-          <svg className="w-full h-full" viewBox="0 0 400 140" preserveAspectRatio="none">
+          <svg role="img" aria-label="Adaptive timestep visualization" className="w-full h-full" viewBox="0 0 400 140" preserveAspectRatio="none">
             {/* Hydrograph */}
             <path
               d={`M 0 ${130 - hydrographValue(0)} ${Array.from({length: 100}, (_, i) => 
@@ -727,7 +727,7 @@ export function ThetaParameterDiagram() {
         </Button>
 
         <div className="relative h-40 bg-muted/30 rounded-lg border border-border overflow-hidden">
-          <svg className="w-full h-full" viewBox="0 0 400 120" preserveAspectRatio="none">
+          <svg role="img" aria-label="Theta parameter diagram" className="w-full h-full" viewBox="0 0 400 120" preserveAspectRatio="none">
             {/* Channel bed */}
             <rect x="0" y="100" width="400" height="20" className="fill-amber-700/30" />
             
@@ -856,7 +856,7 @@ export function Coupling1D2DDiagram() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Visualization */}
           <div className="relative h-72 bg-muted/30 rounded-lg border border-border overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
+            <svg role="img" aria-label="1D-2D coupling diagram" className="w-full h-full" viewBox="0 0 200 180" aria-hidden="true">
               {/* Ground surface / 2D mesh representation */}
               <rect x="0" y="40" width="200" height="8" className="fill-amber-700/50" />
               <line x1="0" y1="40" x2="200" y2="40" className="stroke-amber-800 stroke-2" />

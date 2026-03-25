@@ -117,7 +117,7 @@ export function BaseFlowStabilityDiagram() {
         </div>
         
         <div className="flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full max-w-[200px]">
+          <svg role="img" aria-label="Base flow stability visualization" viewBox="0 0 200 200" className="w-full max-w-[200px]">
             <defs>
               <clipPath id="pipeClip">
                 <circle cx="100" cy={centerY} r={pipeRadius} />
@@ -338,7 +338,7 @@ export function SpatialDiscretizationDiagram() {
             </div>
           </div>
           
-          <svg viewBox="0 0 320 100" className="w-full">
+          <svg role="img" aria-label="ICM spatial discretization diagram" viewBox="0 0 320 100" className="w-full">
             <rect x="10" y="35" width="300" height="30" rx="5" fill="#1e3a3a" stroke="#10b981" strokeWidth="2" />
             
             {nodePositions.map((x, i) => (
@@ -470,7 +470,7 @@ export function ICMPreissmannSlotDiagram() {
         </div>
         
         <div className="flex items-center justify-center">
-          <svg viewBox="0 0 160 180" className="w-full max-w-[180px]">
+          <svg role="img" aria-label="ICM Preissmann slot visualization" viewBox="0 0 160 180" className="w-full max-w-[180px]">
             <defs>
               <clipPath id="pipeSlotClip">
                 <circle cx="80" cy={centerY} r={pipeRadius} />
@@ -924,7 +924,7 @@ export function HeadlossTransitionDiagram() {
         </div>
         
         <div>
-          <svg 
+          <svg role="img" aria-label="Headloss transition diagram" 
             viewBox={`0 0 ${graphWidth} ${graphHeight}`} 
             className="w-full"
             onMouseMove={(e) => {
@@ -1153,7 +1153,7 @@ export function ColdStartInitializationDiagram() {
         </div>
         
         <div className="space-y-4">
-          <svg viewBox="0 0 300 120" className="w-full">
+          <svg role="img" aria-label="Cold start initialization diagram" viewBox="0 0 300 120" className="w-full">
             <rect x="30" y="10" width="240" height="80" fill="#1e1b4b" rx="5" stroke="#4f46e5" strokeWidth="1" />
             
             <line x1="30" y1="85" x2="270" y2="85" stroke="#64748b" strokeWidth="1" />
@@ -1376,7 +1376,7 @@ export function HeadlossJunctionDiagram() {
         </div>
         
         <div className="flex flex-col items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full max-w-[200px]">
+          <svg role="img" aria-label="Headloss at junction diagram" viewBox="0 0 200 200" className="w-full max-w-[200px]">
             <circle cx="100" cy="100" r="30" fill="#1e293b" stroke="#f97316" strokeWidth="3" />
             <text x="100" y="105" textAnchor="middle" className="text-[8px] fill-orange-300">Junction</text>
             
@@ -1586,7 +1586,7 @@ export function HeadlossSurchargeTransitionDiagram() {
         <div className="space-y-4">
           <div className="bg-slate-900 rounded-lg p-2">
             <div className="text-[9px] text-slate-400 mb-1">k<sub>s</sub> vs Time</div>
-            <svg viewBox="0 0 280 100" className="w-full h-24">
+            <svg role="img" aria-label="Headloss surcharge transition diagram" viewBox="0 0 280 100" className="w-full h-24">
               <line x1="0" y1="80" x2="280" y2="80" stroke="#475569" strokeWidth="1" />
               <line x1="0" y1="10" x2="0" y2="80" stroke="#475569" strokeWidth="1" />
               
@@ -1781,7 +1781,7 @@ export function HeadlossInferenceDiagram() {
         </div>
         
         <div className="space-y-4">
-          <svg viewBox="0 0 200 200" className="w-full max-w-[200px] mx-auto">
+          <svg role="img" aria-label="Headloss inference diagram" viewBox="0 0 200 200" className="w-full max-w-[200px] mx-auto">
             <circle cx="100" cy="100" r="25" fill="#1e293b" stroke="#14b8a6" strokeWidth="3" />
             <text x="100" y="105" textAnchor="middle" className="text-[7px] fill-teal-300">Manhole</text>
             

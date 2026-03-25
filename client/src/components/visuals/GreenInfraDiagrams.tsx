@@ -250,7 +250,7 @@ export function LIDvsSUDSDiagram() {
 
         <div className="bg-muted p-4 rounded-lg">
           <h4 className="font-medium mb-2">Outflow Hydrograph Comparison</h4>
-          <svg viewBox="0 0 400 120" className="w-full h-28">
+          <svg role="img" aria-label="LID versus SUDS comparison" viewBox="0 0 400 120" className="w-full h-28">
             <line x1="40" y1="100" x2="380" y2="100" stroke="currentColor" strokeWidth="1" />
             <line x1="40" y1="10" x2="40" y2="100" stroke="currentColor" strokeWidth="1" />
             <text x="210" y="118" textAnchor="middle" className="text-[10px] fill-muted-foreground">Time</text>
@@ -423,7 +423,7 @@ export function DualSolverArchitectureDiagram() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-            <svg viewBox="0 0 400 200" className="w-full h-48">
+            <svg role="img" aria-label="Dual solver architecture diagram" viewBox="0 0 400 200" className="w-full h-48">
               <rect x="0" y="0" width="400" height="200" fill="none" />
               
               <text x="200" y="15" textAnchor="middle" className="text-xs fill-muted-foreground">City Drainage Network Map</text>
