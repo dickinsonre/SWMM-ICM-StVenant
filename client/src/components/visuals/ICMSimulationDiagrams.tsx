@@ -351,11 +351,11 @@ export function SpatialDiscretizationDiagram() {
             ))}
             
             <text x="160" y="95" textAnchor="middle" className="text-[8px] fill-slate-300">
-              {numNodes} nodes along {conv.length(conduitLength[0]).toFixed(0)}{u.length} conduit
+              {numNodes} nodes along {conv.length(conduitLength[0]).toFixed(0)} {u.length} conduit
             </text>
             
             <text x="10" y="25" className="text-[8px] fill-emerald-400">
-              Width: {conv.length(conduitWidth[0]).toFixed(1)}{u.length} × Height: {conv.length(conduitHeight[0]).toFixed(1)}{u.length}
+              Width: {conv.length(conduitWidth[0]).toFixed(1)} {u.length} × Height: {conv.length(conduitHeight[0]).toFixed(1)} {u.length}
             </text>
           </svg>
           
@@ -531,7 +531,7 @@ export function ICMPreissmannSlotDiagram() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              {conv.lengthSmall(slotPixelWidth / 10).toFixed(1)}{u.lengthSmall}
+              {conv.lengthSmall(slotPixelWidth / 10).toFixed(1)} {u.lengthSmall}
             </motion.text>
             
             {waterLevel[0] > 1 && (
@@ -1110,7 +1110,7 @@ export function ColdStartInitializationDiagram() {
           </div>
           
           <div>
-            <Label className="text-xs text-indigo-300">Steady State Depth Tolerance: {conv.lengthSmall(steadyTolDepth[0] * 1000).toFixed(1)}{u.lengthSmall}</Label>
+            <Label className="text-xs text-indigo-300">Steady State Depth Tolerance: {conv.lengthSmall(steadyTolDepth[0] * 1000).toFixed(1)} {u.lengthSmall}</Label>
             <Slider
               value={steadyTolDepth}
               onValueChange={setSteadyTolDepth}
@@ -1727,7 +1727,7 @@ export function HeadlossInferenceDiagram() {
                 </div>
                 <div>
                   <span className="text-slate-400">Ø: </span>
-                  <span className="text-white">{conv.length(pipe.diameter).toFixed(1)}{u.length}</span>
+                  <span className="text-white">{conv.length(pipe.diameter).toFixed(1)} {u.length}</span>
                 </div>
                 <div>
                   <span className="text-slate-400">k<sub>u</sub>: </span>
@@ -1774,7 +1774,7 @@ export function HeadlossInferenceDiagram() {
               className="p-2 rounded bg-teal-900/30 border border-teal-700/30 text-[10px] text-teal-300"
             >
               <CheckCircle2 className="h-3 w-3 inline mr-1 text-teal-400" />
-              Inference selected widest pipe (Ø{conv.length(Math.max(...pipes.map(p => p.diameter))).toFixed(1)}{u.length}) as major branch.
+              Inference selected widest pipe (Ø{conv.length(Math.max(...pipes.map(p => p.diameter))).toFixed(1)} {u.length}) as major branch.
               <p className="mt-1 text-slate-400 italic">Note: Does not account for multiple branches or unequal inverts.</p>
             </motion.div>
           )}

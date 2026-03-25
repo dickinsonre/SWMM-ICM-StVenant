@@ -83,7 +83,7 @@ export function RomanAqueductAnimation() {
           <polygon points="10,65 90,65 80,60 20,60" fill="#a78b5a" />
           <circle cx="50" cy="55" r="5" fill="#3b82f6" opacity="0.6" />
           <text x="50" y="22" textAnchor="middle" fontSize="8" fill="#64748b">Spring Source</text>
-          <text x="50" y="75" textAnchor="middle" fontSize="7" fill="#64748b">~{conv.length(400).toFixed(0)}{u.length} elev.</text>
+          <text x="50" y="75" textAnchor="middle" fontSize="7" fill="#64748b">~{conv.length(400).toFixed(0)} {u.length} elev.</text>
 
           <path d={aqueductPath} fill="none" stroke="#a78b5a" strokeWidth="8" />
           <path d={aqueductPath} fill="none" stroke="#8B7355" strokeWidth="6" />
@@ -109,7 +109,7 @@ export function RomanAqueductAnimation() {
           <rect x="340" y="190" width="50" height="30" fill="#a78b5a" stroke="#8B7355" strokeWidth="2" rx="2" />
           <rect x="342" y="195" width="46" height="20" fill="rgba(59,130,246,0.4)" />
           <text x="365" y="235" textAnchor="middle" fontSize="7" fill="#64748b">Castellum</text>
-          <text x="365" y="245" textAnchor="middle" fontSize="7" fill="#64748b">~{conv.length(200).toFixed(0)}{u.length} elev.</text>
+          <text x="365" y="245" textAnchor="middle" fontSize="7" fill="#64748b">~{conv.length(200).toFixed(0)} {u.length} elev.</text>
 
           <rect x="200" y="145" width="30" height="20" fill="#a78b5a" stroke="#8B7355" strokeWidth="1" rx="1" />
           <rect x="202" y="150" width="26" height="12" fill="rgba(59,130,246,0.3)" />
@@ -126,14 +126,14 @@ export function RomanAqueductAnimation() {
             return (
               <g key={`km-${km}`}>
                 <line x1={x} y1="263" x2={x} y2="267" stroke="#94a3b8" strokeWidth="0.5" />
-                <text x={x} y="275" textAnchor="middle" fontSize="6" fill="#94a3b8">{conv.length(km * 1000).toFixed(0)}{u.length}</text>
+                <text x={x} y="275" textAnchor="middle" fontSize="6" fill="#94a3b8">{conv.length(km * 1000).toFixed(0)} {u.length}</text>
               </g>
             );
           })}
 
           <polygon points="15,60 15,260 25,260 25,80" fill="none" stroke="#94a3b8" strokeWidth="0.5" strokeDasharray="2,2" />
-          <text x="12" y="58" fontSize="6" fill="#94a3b8" textAnchor="end">{conv.length(400).toFixed(0)}{u.length}</text>
-          <text x="12" y="210" fontSize="6" fill="#94a3b8" textAnchor="end">{conv.length(200).toFixed(0)}{u.length}</text>
+          <text x="12" y="58" fontSize="6" fill="#94a3b8" textAnchor="end">{conv.length(400).toFixed(0)} {u.length}</text>
+          <text x="12" y="210" fontSize="6" fill="#94a3b8" textAnchor="end">{conv.length(200).toFixed(0)} {u.length}</text>
         </svg>
 
         <div className="grid grid-cols-2 gap-3">
@@ -408,7 +408,7 @@ export function IncaFountainAnimation() {
           <rect x="0" y="0" width={svgW} height={svgH} fill="#fefce8" opacity="0.3" />
 
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
-            16 Cascading Fountains — Profile View ({conv.length(24).toFixed(0)}{u.length} total head)
+            16 Cascading Fountains — Profile View ({conv.length(24).toFixed(0)} {u.length} total head)
           </text>
 
           <rect x={startX - 5} y={startY - 15} width="30" height="15" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" strokeWidth="1" rx="2" />
@@ -515,7 +515,7 @@ export function IncaFountainAnimation() {
 
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3">
           <div className="text-xs font-semibold mb-2 text-blue-700 dark:text-blue-300" data-testid="text-energy-equation">
-            E = mgh | Total Head = {conv.length(totalHead).toFixed(0)}{u.length} | {conv.length(headPerFountain).toFixed(1)}{u.length} per fountain
+            E = mgh | Total Head = {conv.length(totalHead).toFixed(0)} {u.length} | {conv.length(headPerFountain).toFixed(1)} {u.length} per fountain
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div data-testid="text-source-flow-inca">
@@ -639,7 +639,7 @@ export function PersianQanatAnimation() {
             strokeWidth="1.5"
             strokeDasharray="6,3"
           />
-          <text x={svgW - 5} y={tableY + 10} textAnchor="end" fontSize="6" fill="#3b82f6">Water Table ({conv.length(effectiveTable).toFixed(0)}{u.length})</text>
+          <text x={svgW - 5} y={tableY + 10} textAnchor="end" fontSize="6" fill="#3b82f6">Water Table ({conv.length(effectiveTable).toFixed(0)} {u.length})</text>
 
           <rect x="0" y={tableY} width={svgW} height={tunnelBaseY - tableY + 20} fill="rgba(59,130,246,0.05)" />
 
@@ -736,7 +736,7 @@ export function PersianQanatAnimation() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-water-table">Water Table: {conv.length(waterTable[0]).toFixed(0)}{u.length}</label>
+            <label className="text-xs font-medium" data-testid="label-water-table">Water Table: {conv.length(waterTable[0]).toFixed(0)} {u.length}</label>
             <Slider value={waterTable} onValueChange={setWaterTable} min={-25} max={-5} step={1} data-testid="slider-water-table" />
           </div>
           <div className="space-y-1">

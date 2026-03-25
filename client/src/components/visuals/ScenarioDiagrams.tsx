@@ -287,10 +287,10 @@ export function DetentionPondAnimation() {
 
           <g>
             <rect x="322" y="235" width="8" height="15" fill={orificeActive ? "#22c55e" : "#d1d5db"} stroke="#64748b" strokeWidth="1" rx="1" />
-            <text x="340" y="245" fontSize="5" fill="#64748b">Orifice {conv.diameter(6).toFixed(0)}{u.diameter}</text>
+            <text x="340" y="245" fontSize="5" fill="#64748b">Orifice {conv.diameter(6).toFixed(0)} {u.diameter}</text>
 
             <rect x="322" y="215" width="12" height="5" fill={weirActive ? "#f59e0b" : "#d1d5db"} stroke="#64748b" strokeWidth="1" />
-            <text x="345" y="220" fontSize="5" fill="#64748b">Weir {conv.length(2).toFixed(0)}{u.length}</text>
+            <text x="345" y="220" fontSize="5" fill="#64748b">Weir {conv.length(2).toFixed(0)} {u.length}</text>
 
             <rect x="322" y="190" width="16" height="4" fill={spillwayActive ? "#ef4444" : "#d1d5db"} stroke="#64748b" strokeWidth="1" />
             <text x="350" y="194" fontSize="5" fill="#64748b">Spillway</text>
@@ -405,15 +405,15 @@ export function ParallelPipeAnimation() {
             Single Large Pipe vs {N} Parallel Smaller Pipes
           </text>
 
-          <text x="50" y="40" fontSize="7" fill="#64748b" fontWeight="bold">Option A: Single {conv.diameter(D).toFixed(0)}{u.diameter} Pipe</text>
+          <text x="50" y="40" fontSize="7" fill="#64748b" fontWeight="bold">Option A: Single {conv.diameter(D).toFixed(0)} {u.diameter} Pipe</text>
           <rect x="60" y={70 - D * 0.4} width="280" height={Math.max(D * 0.8, 16)} rx={D * 0.4} fill="rgba(148,163,184,0.2)" stroke="#94a3b8" strokeWidth="2" />
           <rect x="60" y={70 - D * 0.4 + 2} width="280" height={Math.max(D * 0.8 - 4, 12)} rx={D * 0.4 - 2} fill="rgba(59,130,246,0.15)" />
           {flowParticles(70, 6)}
           <text x="360" y={75} fontSize="7" fill="#3b82f6" fontWeight="bold">Q = {conv.flow(qSingle).toFixed(1)} {u.flow}</text>
           <circle cx="40" cy="70" r={Math.min(D * 0.4, 20)} fill="none" stroke="#94a3b8" strokeWidth="1.5" />
-          <text x="40" y={73} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(D).toFixed(0)}{u.diameter}</text>
+          <text x="40" y={73} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(D).toFixed(0)} {u.diameter}</text>
 
-          <text x="50" y={135} fontSize="7" fill="#64748b" fontWeight="bold">Option B: {N}× {conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter} Pipes</text>
+          <text x="50" y={135} fontSize="7" fill="#64748b" fontWeight="bold">Option B: {N}× {conv.diameter(smallDiaRounded).toFixed(0)} {u.diameter} Pipes</text>
           {Array.from({ length: N }, (_, i) => {
             const pipeSpacing = Math.min(40, 120 / N);
             const baseY = 160 + i * pipeSpacing;
@@ -430,7 +430,7 @@ export function ParallelPipeAnimation() {
             Q = {conv.flow(qSmall).toFixed(1)}×{N} = {conv.flow(qParallel).toFixed(1)} {u.flow}
           </text>
           <circle cx="40" cy="170" r={Math.min(smallDiaRounded * 0.25, 12)} fill="none" stroke="#94a3b8" strokeWidth="1.5" />
-          <text x="40" y={173} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter}</text>
+          <text x="40" y={173} textAnchor="middle" fontSize="5" fill="#64748b">{conv.diameter(smallDiaRounded).toFixed(0)} {u.diameter}</text>
 
           <rect x="30" y="225" width="340" height="45" rx="4" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1" />
           <text x="200" y="240" textAnchor="middle" fontSize="7" fill="#92400e" fontWeight="bold">
@@ -446,7 +446,7 @@ export function ParallelPipeAnimation() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium" data-testid="label-large-dia">Large Pipe Diameter: {conv.diameter(D).toFixed(0)}{u.diameter}</label>
+            <label className="text-xs font-medium" data-testid="label-large-dia">Large Pipe Diameter: {conv.diameter(D).toFixed(0)} {u.diameter}</label>
             <Slider value={largeDia} onValueChange={setLargeDia} min={12} max={60} step={1} data-testid="slider-large-dia" />
           </div>
           <div className="space-y-1">
@@ -458,16 +458,16 @@ export function ParallelPipeAnimation() {
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3">
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div data-testid="text-single-capacity">
-              <span className="text-muted-foreground">Single {conv.diameter(D).toFixed(0)}{u.diameter} Q_full:</span>{" "}
+              <span className="text-muted-foreground">Single {conv.diameter(D).toFixed(0)} {u.diameter} Q_full:</span>{" "}
               <span className="font-bold">{conv.flow(qSingle).toFixed(1)} {u.flow}</span>
             </div>
             <div data-testid="text-parallel-capacity">
-              <span className="text-muted-foreground">{N}× {conv.diameter(smallDiaRounded).toFixed(0)}{u.diameter} Q_full:</span>{" "}
+              <span className="text-muted-foreground">{N}× {conv.diameter(smallDiaRounded).toFixed(0)} {u.diameter} Q_full:</span>{" "}
               <span className="font-bold">{conv.flow(qParallel).toFixed(1)} {u.flow}</span>
             </div>
             <div data-testid="text-small-dia">
               <span className="text-muted-foreground">Small Pipe Dia:</span>{" "}
-              <span className="font-bold">{conv.diameter(smallDiaRounded).toFixed(1)}{u.diameter}</span>
+              <span className="font-bold">{conv.diameter(smallDiaRounded).toFixed(1)} {u.diameter}</span>
             </div>
             <div data-testid="text-area-check">
               <span className="text-muted-foreground">Area Match:</span>{" "}

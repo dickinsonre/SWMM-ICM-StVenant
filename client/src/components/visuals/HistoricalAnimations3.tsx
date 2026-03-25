@@ -227,7 +227,7 @@ export function KhmerBarayAnimation() {
         <svg viewBox="0 0 400 300" className="w-full border rounded bg-muted/20" data-testid="svg-khmer-baray">
           <rect x="0" y="0" width="400" height="300" fill="#fefce8" opacity="0.3" />
           <text x="200" y="15" textAnchor="middle" fontSize="9" fill="#64748b" fontWeight="bold">
-            West Baray — Plan View ({conv.length(8000).toFixed(0)}{u.length} × {conv.length(2300).toFixed(0)}{u.length}, {conv.volume(50000000).toFixed(0)} {u.volume})
+            West Baray — Plan View ({conv.length(8000).toFixed(0)} {u.length} × {conv.length(2300).toFixed(0)} {u.length}, {conv.volume(50000000).toFixed(0)} {u.volume})
           </text>
 
           <rect x="50" y="40" width="300" height="130" fill="none" stroke="#a78b5a" strokeWidth="3" rx="2" />
@@ -413,7 +413,7 @@ export function CloacaMaximaAnimation() {
                 <rect x={x - 3} y="80" width="6" height={sewerTop - 80 + 15} fill="#a78b5a" stroke="#8B7355" strokeWidth="0.5" />
 
                 <text x={x} y={sewerBot + 15} textAnchor="middle" fontSize="7" fill="#64748b" fontWeight="bold">{nodeLabels[i]}</text>
-                <text x={x} y={sewerBot + 25} textAnchor="middle" fontSize="6" fill="#3b82f6">d={conv.length(nodeDepths[i]).toFixed(1)}{u.length}</text>
+                <text x={x} y={sewerBot + 25} textAnchor="middle" fontSize="6" fill="#3b82f6">d={conv.length(nodeDepths[i]).toFixed(1)} {u.length}</text>
               </g>
             );
           })}
@@ -422,10 +422,10 @@ export function CloacaMaximaAnimation() {
           <text x="372" y="200" textAnchor="middle" fontSize="6" fill="#3b82f6">Tiber River</text>
 
           <g transform="translate(50, 220)">
-            <text x="0" y="0" fontSize="7" fill="#8B7355" fontWeight="bold">Cross-Section (Ø{conv.length(3.2).toFixed(1)}{u.length}):</text>
+            <text x="0" y="0" fontSize="7" fill="#8B7355" fontWeight="bold">Cross-Section (Ø{conv.length(3.2).toFixed(1)} {u.length}):</text>
             <path d={`M 0,50 L 0,20 Q 25,0 50,20 L 50,50 Z`} fill="none" stroke="#8B7355" strokeWidth="2" />
             <rect x="2" y={50 - fillRatio * 45} width="46" height={fillRatio * 45} fill="rgba(59,130,246,0.4)" rx="1" />
-            <text x="25" y="60" textAnchor="middle" fontSize="6" fill="#64748b">{conv.length(3.2).toFixed(1)}{u.length} stone arch</text>
+            <text x="25" y="60" textAnchor="middle" fontSize="6" fill="#64748b">{conv.length(3.2).toFixed(1)} {u.length} stone arch</text>
           </g>
 
           {isCSO && (
@@ -474,7 +474,7 @@ export function CloacaMaximaAnimation() {
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 p-3" data-testid="text-comparison-modern">
           <div className="text-xs font-semibold mb-1 text-blue-700 dark:text-blue-300">Modern vs Ancient:</div>
           <div className="text-xs text-blue-800 dark:text-blue-200">
-            Modern trunk sewer: Ø{conv.length(modernD).toFixed(1)}{u.length}, Q={conv.flow(modernQ).toFixed(1)} {u.flow} | Cloaca Maxima: Ø{conv.length(D).toFixed(1)}{u.length}, Q={conv.flow(Q_full).toFixed(1)} {u.flow}
+            Modern trunk sewer: Ø{conv.length(modernD).toFixed(1)} {u.length}, Q={conv.flow(modernQ).toFixed(1)} {u.flow} | Cloaca Maxima: Ø{conv.length(D).toFixed(1)} {u.length}, Q={conv.flow(Q_full).toFixed(1)} {u.flow}
           </div>
           <div className="text-xs font-bold text-blue-800 dark:text-blue-200 mt-1">
             "The Romans overbuilt. That's why it still works."
@@ -578,7 +578,7 @@ export function IndusValleyDrainAnimation() {
           })}
 
           <rect x="25" y="225" width="320" height="8" fill="#a78b5a" stroke="#8B7355" strokeWidth="1.5" rx="1" />
-          <text x="185" y="222" textAnchor="middle" fontSize="6" fill="#8B7355">Main Trunk Drain ({conv.length(0.6).toFixed(1)}{u.length} × {conv.length(0.9).toFixed(1)}{u.length}, covered)</text>
+          <text x="185" y="222" textAnchor="middle" fontSize="6" fill="#8B7355">Main Trunk Drain ({conv.length(0.6).toFixed(1)} {u.length} × {conv.length(0.9).toFixed(1)} {u.length}, covered)</text>
 
           {totalFlow > 0 && Array.from({ length: 8 }, (_, i) => {
             const t = ((animOffset + i * 35) % 300) / 300;
@@ -720,7 +720,7 @@ export function ArchimedesScrewAnimation() {
 
           <rect x="20" y="230" width="80" height="50" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" strokeWidth="1" rx="2" />
           <text x="60" y="260" textAnchor="middle" fontSize="7" fill="#1e40af">Lower Basin</text>
-          <text x="60" y="270" textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(100).toFixed(0)}{u.length}</text>
+          <text x="60" y="270" textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(100).toFixed(0)} {u.length}</text>
 
           {Array.from({ length: 3 }, (_, i) => {
             const t = ((animOffset + i * 40) % 200) / 200;
@@ -729,7 +729,7 @@ export function ArchimedesScrewAnimation() {
 
           <rect x={screwEndX - 20} y={screwEndY - 30} width="80" height="50" fill="rgba(59,130,246,0.3)" stroke="#3b82f6" strokeWidth="1" rx="2" />
           <text x={screwEndX + 20} y={screwEndY - 5} textAnchor="middle" fontSize="7" fill="#1e40af">Upper Basin</text>
-          <text x={screwEndX + 20} y={screwEndY + 5} textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(103).toFixed(0)}{u.length}</text>
+          <text x={screwEndX + 20} y={screwEndY + 5} textAnchor="middle" fontSize="6" fill="#3b82f6">El: {conv.length(103).toFixed(0)} {u.length}</text>
 
           <line x1={screwStartX} y1={screwStartY} x2={screwEndX} y2={screwEndY} stroke="#8B7355" strokeWidth="4" />
           <line x1={screwStartX} y1={screwStartY - D * 40} x2={screwEndX} y2={screwEndY - D * 40} stroke="#8B7355" strokeWidth="1.5" strokeDasharray="3,2" />
@@ -757,7 +757,7 @@ export function ArchimedesScrewAnimation() {
 
           <line x1={screwStartX + 10} y1={screwStartY + 30} x2={screwEndX - 10} y2={screwStartY + 30} stroke="#94a3b8" strokeWidth="0.5" strokeDasharray="2,2" />
           <text x={(screwStartX + screwEndX) / 2} y={screwStartY + 42} textAnchor="middle" fontSize="6" fill="#94a3b8">
-            L = {conv.length(screwLength).toFixed(1)}{u.length} | Lift = {conv.length(liftH).toFixed(1)}{u.length}
+            L = {conv.length(screwLength).toFixed(1)} {u.length} | Lift = {conv.length(liftH).toFixed(1)} {u.length}
           </text>
 
           <g transform="translate(290, 200)">

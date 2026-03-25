@@ -128,7 +128,7 @@ export function LIDLayerStackAnimation() {
             />
           )}
           <text x={layerX + layerW + 5} y={surfaceY + 15} fontSize="7" fill="#4a7c4f">Surface Layer</text>
-          <text x={layerX + layerW + 5} y={surfaceY + 25} fontSize="6" fill="#94a3b8">Berm: {conv.lengthSmall(6).toFixed(0)}{u.lengthSmall}, n=0.1</text>
+          <text x={layerX + layerW + 5} y={surfaceY + 25} fontSize="6" fill="#94a3b8">Berm: {conv.lengthSmall(6).toFixed(0)} {u.lengthSmall}, n=0.1</text>
           {isOverflow && (
             <g>
               <line x1={layerX + layerW} y1={surfaceY + 10} x2={layerX + layerW + 30} y2={surfaceY + 20} stroke="#ef4444" strokeWidth="2" />
@@ -141,7 +141,7 @@ export function LIDLayerStackAnimation() {
             <circle key={d.key} cx={d.x} cy={d.y} r="2" fill="#3b82f6" opacity="0.6" />
           ))}
           <text x={layerX + layerW + 5} y={soilY + 15} fontSize="7" fill="#8B7355">Soil Layer</text>
-          <text x={layerX + layerW + 5} y={soilY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(18).toFixed(0)}{u.lengthSmall}, φ=0.5</text>
+          <text x={layerX + layerW + 5} y={soilY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(18).toFixed(0)} {u.lengthSmall}, φ=0.5</text>
           <text x={layerX + layerW + 5} y={soilY + 35} fontSize="6" fill="#94a3b8">K={conv.rainfall(0.5).toFixed(1)} {u.rainfall}</text>
 
           <rect x={layerX} y={storageY} width={layerW} height={storageH} fill="#d4c5a9" stroke="#a0926b" strokeWidth="1.5" />
@@ -168,7 +168,7 @@ export function LIDLayerStackAnimation() {
             />
           )}
           <text x={layerX + layerW + 5} y={storageY + 15} fontSize="7" fill="#a0926b">Storage Layer</text>
-          <text x={layerX + layerW + 5} y={storageY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(12).toFixed(0)}{u.lengthSmall}, VR=0.75</text>
+          <text x={layerX + layerW + 5} y={storageY + 25} fontSize="6" fill="#94a3b8">{conv.lengthSmall(12).toFixed(0)} {u.lengthSmall}, VR=0.75</text>
 
           <line x1={layerX + 1} y1={storageY + storageH - (drainOffset / storageThickness) * storageH} x2={layerX + layerW - 1} y2={storageY + storageH - (drainOffset / storageThickness) * storageH} stroke="#f97316" strokeWidth="1" strokeDasharray="3,2" />
           <text x={layerX - 3} y={storageY + storageH - (drainOffset / storageThickness) * storageH + 3} fontSize="5" fill="#f97316" textAnchor="end">Drain offset</text>
@@ -184,7 +184,7 @@ export function LIDLayerStackAnimation() {
             </g>
           )}
           <text x={layerX + layerW + 5} y={drainY + 12} fontSize="7" fill="#6b7280">Underdrain</text>
-          <text x={layerX + layerW + 5} y={drainY + 22} fontSize="6" fill="#94a3b8">C=0.5, offset={conv.lengthSmall(6).toFixed(0)}{u.lengthSmall}</text>
+          <text x={layerX + layerW + 5} y={drainY + 22} fontSize="6" fill="#94a3b8">C=0.5, offset={conv.lengthSmall(6).toFixed(0)} {u.lengthSmall}</text>
 
           <text x={layerX - 5} y={surfaceY + surfaceH / 2} textAnchor="end" fontSize="6" fill="#64748b">↓ Rain</text>
           <text x={layerX - 5} y={soilY + soilH / 2} textAnchor="end" fontSize="6" fill="#64748b">↓ Infilt.</text>

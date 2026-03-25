@@ -615,6 +615,7 @@ export function ConduitLengthSensitivity() {
 }
 
 export function CommonPitfalls() {
+  const { u, conv, fmt } = useUnits();
   const [expandedPitfall, setExpandedPitfall] = useState<number | null>(null);
 
   const pitfalls = [
@@ -657,8 +658,8 @@ export function CommonPitfalls() {
     {
       title: "Long conduits in SWMM5",
       severity: "high",
-      explanation: "A 5,000-ft conduit is one element in SWMM5 but ~25 elements in ICM — this alone explains most result differences.",
-      fix: "Split long SWMM5 conduits into shorter segments (200-500 ft) to match ICM resolution."
+      explanation: `A ${fmt(conv.length(5000))} ${u.length} conduit is one element in SWMM5 but ~25 elements in ICM — this alone explains most result differences.`,
+      fix: `Split long SWMM5 conduits into shorter segments (${fmt(conv.length(200), 0)}-${fmt(conv.length(500), 0)} ${u.length}) to match ICM resolution.`
     }
   ];
 

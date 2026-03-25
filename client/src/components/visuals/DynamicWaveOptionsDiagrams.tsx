@@ -459,7 +459,7 @@ export function VariableTimestepDiagram() {
                 <div className="w-24 text-sm font-medium">{pipe.name}</div>
                 <div className="flex-1">
                   <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                    <span>L={conv.length(pipe.length).toFixed(0)}{u.length}, c={conv.velocity(pipe.waveSpeed).toFixed(1)}{u.velocity}</span>
+                    <span>L={conv.length(pipe.length).toFixed(0)} {u.length}, c={conv.velocity(pipe.waveSpeed).toFixed(1)} {u.velocity}</span>
                     <span className={isStable ? "text-green-600" : "text-red-600"}>
                       Cr = {courant.toFixed(2)}
                     </span>
@@ -534,7 +534,7 @@ export function ConduitLengtheningDiagram() {
       <CardContent className="space-y-6">
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">{`Actual Length: ${conv.length(actualLength[0]).toFixed(0)}${u.length}`}</Label>
+            <Label className="text-xs">{`Actual Length: ${conv.length(actualLength[0]).toFixed(0)} ${u.length}`}</Label>
             <Slider value={actualLength} onValueChange={setActualLength} min={5} max={100} step={5} />
           </div>
           <div className="space-y-2">
@@ -556,7 +556,7 @@ export function ConduitLengtheningDiagram() {
                 style={{ width: `${(actualLength[0] / 100) * 100}%` }}
               />
               <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-white">
-                L = {conv.length(actualLength[0]).toFixed(0)}{u.length}
+                L = {conv.length(actualLength[0]).toFixed(0)} {u.length}
               </div>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
@@ -575,7 +575,7 @@ export function ConduitLengtheningDiagram() {
                 transition={{ duration: 0.5 }}
               />
               <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-white">
-                L = {conv.length(virtualLength).toFixed(1)}{u.length}
+                L = {conv.length(virtualLength).toFixed(1)} {u.length}
               </div>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
@@ -592,7 +592,7 @@ export function ConduitLengtheningDiagram() {
           <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-300 text-sm">
             <AlertTriangle className="w-4 h-4 inline mr-2 text-amber-600" />
             <strong>Lengthening Applied:</strong> Wave travel time ({waveTravelTime.toFixed(2)}s) &lt; timestep ({lengtheningStep[0]}s). 
-            Pipe virtually stretched to {conv.length(virtualLength).toFixed(1)}{u.length} ({lengtheningRatio}% of actual).
+            Pipe virtually stretched to {conv.length(virtualLength).toFixed(1)} {u.length} ({lengtheningRatio}% of actual).
           </div>
         )}
         

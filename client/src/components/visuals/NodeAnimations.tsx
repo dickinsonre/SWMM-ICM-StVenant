@@ -456,7 +456,7 @@ export function ManholeStorageVolume() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">Water Depth: {conv.length(depth).toFixed(1)} {u.length}</label>
-            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)}{u.length}</span>
+            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)} {u.length}</span>
           </div>
           <Slider
             value={waterDepth}
@@ -513,9 +513,9 @@ export function ManholeStorageVolume() {
                 </g>
               )}
               <line x1="10" y1={groundYpx} x2={svgW - 10} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)}{u.length})</text>
+              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)} {u.length})</text>
               <text x={svgW / 2} y={invertYpx + 15} textAnchor="middle" fontSize="8" fill="#64748b">
-                Ø {conv.length(swmmDiameter).toFixed(1)}{u.length} uniform
+                Ø {conv.length(swmmDiameter).toFixed(1)} {u.length} uniform
               </text>
             </svg>
             <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
@@ -564,7 +564,7 @@ export function ManholeStorageVolume() {
                 );
               })()}
               <line x1="10" y1={groundYpx} x2={svgW - 10} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)}{u.length})</text>
+              <text x={svgW - 8} y={groundYpx - 3} fontSize="8" fill="#22c55e" textAnchor="end">GL ({conv.length(4).toFixed(0)} {u.length})</text>
               <text x={svgW / 2} y={invertYpx + 15} textAnchor="middle" fontSize="8" fill="#64748b">
                 Tapered (depth-area table)
               </text>
@@ -648,7 +648,7 @@ export function FloodTypeComparison() {
         strokeWidth="2"
       />
       <line x1="20" y1={groundYpx} x2={svgW - 20} y2={groundYpx} stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
-      <text x={svgW - 18} y={groundYpx - 4} fontSize="9" fill="#22c55e" textAnchor="end">Ground ({conv.length(4).toFixed(0)}{u.length})</text>
+      <text x={svgW - 18} y={groundYpx - 4} fontSize="9" fill="#22c55e" textAnchor="end">Ground ({conv.length(4).toFixed(0)} {u.length})</text>
       <line x1="20" y1={invertYpx} x2={svgW - 20} y2={invertYpx} stroke="#94a3b8" strokeWidth="1" />
       <text x={svgW - 18} y={invertYpx - 4} fontSize="8" fill="#94a3b8" textAnchor="end">Invert</text>
     </g>
@@ -809,7 +809,7 @@ export function FloodTypeComparison() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">Water Depth: {conv.length(depth).toFixed(1)} {u.length}</label>
-            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)}{u.length}</span>
+            <span className="text-xs text-muted-foreground">Ground at {conv.length(4).toFixed(0)} {u.length}</span>
           </div>
           <Slider
             value={waterDepth}
@@ -834,7 +834,7 @@ export function FloodTypeComparison() {
               </motion.g>
             </AnimatePresence>
             <text x={svgW / 2} y={svgH - 10} textAnchor="middle" fontSize="9" fill="#64748b">
-              Depth: {conv.length(depth).toFixed(1)}{u.length} | {isAboveGround ? `Excess: ${conv.length(excessDepth).toFixed(1)}${u.length}` : "Below ground"}
+              Depth: {conv.length(depth).toFixed(1)} {u.length} | {isAboveGround ? `Excess: ${conv.length(excessDepth).toFixed(1)} ${u.length}` : "Below ground"}
             </text>
           </svg>
         </div>

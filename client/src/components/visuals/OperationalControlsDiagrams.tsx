@@ -15,9 +15,9 @@ export function ControlLogicBuilderDiagram() {
   
   const icmComponents = [
     { id: "regulator", label: "Regulator", desc: "Pump P1", color: "bg-blue-500" },
-    { id: "range_hi", label: "Range", desc: `Level > ${conv.length(5.5).toFixed(1)}${u.length}`, color: "bg-amber-500" },
-    { id: "range_lo", label: "Range", desc: `Level < ${conv.length(4.5).toFixed(1)}${u.length}`, color: "bg-amber-500" },
-    { id: "pid", label: "PID Controller", desc: `SP: ${conv.length(5.0).toFixed(1)}${u.length}`, color: "bg-purple-500" },
+    { id: "range_hi", label: "Range", desc: `Level > ${conv.length(5.5).toFixed(1)} ${u.length}`, color: "bg-amber-500" },
+    { id: "range_lo", label: "Range", desc: `Level < ${conv.length(4.5).toFixed(1)} ${u.length}`, color: "bg-amber-500" },
+    { id: "pid", label: "PID Controller", desc: `SP: ${conv.length(5.0).toFixed(1)} ${u.length}`, color: "bg-purple-500" },
     { id: "rule", label: "Rule", desc: "→ Pump Setting", color: "bg-green-500" },
   ];
   
@@ -46,7 +46,7 @@ PRIORITY 2`;
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="p-3 bg-muted/50 rounded-lg text-sm">
-          <strong>Scenario:</strong> Maintain Tank 1 water level between {conv.length(4.5).toFixed(1)}{u.length} and {conv.length(5.5).toFixed(1)}{u.length} by modulating Pump 1.
+          <strong>Scenario:</strong> Maintain Tank 1 water level between {conv.length(4.5).toFixed(1)} {u.length} and {conv.length(5.5).toFixed(1)} {u.length} by modulating Pump 1.
         </div>
         
         <div className="grid grid-cols-2 gap-4">
@@ -137,7 +137,7 @@ PRIORITY 2`;
 }
 
 export function ExecutionTimelineDiagram() {
-  const { u } = useUnits();
+  const { u, conv } = useUnits();
   const [isAnimating, setIsAnimating] = useState(false);
   const [step, setStep] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -188,7 +188,7 @@ export function ExecutionTimelineDiagram() {
         <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Simulation Time: t = 1000s</span>
-            <Badge variant="outline">Tank Level: {conv.length(5.2).toFixed(1)}{u.length}</Badge>
+            <Badge variant="outline">Tank Level: {conv.length(5.2).toFixed(1)} {u.length}</Badge>
           </div>
           <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-2">
             <motion.div 
